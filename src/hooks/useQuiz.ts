@@ -26,6 +26,29 @@ const initialState: QuizState = {
   error: null,
 }
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+async function callEdgeFunction(name: string, body?: Record<string, unknown>) {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+  if (!token) throw new Error('Not authenticated')
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'apikey': SUPABASE_ANON_KEY,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || `Edge function error: ${res.status}`)
+  return data
+}
+
 interface UseQuizReturn extends QuizState {
   currentQuestion: QuestionForClient | null
   lastAnswer: AnswerResult | null
@@ -38,7 +61,6 @@ interface UseQuizReturn extends QuizState {
 
 export function useQuiz(): UseQuizReturn {
   const [state, setState] = useState<QuizState>(initialState)
-  // Keep a ref in sync so callbacks can read current state without stale closure issues
   const stateRef = useRef<QuizState>(initialState)
 
   const setStateAndRef = useCallback((updater: (prev: QuizState) => QuizState) => {
@@ -53,24 +75,9 @@ export function useQuiz(): UseQuizReturn {
     setStateAndRef(prev => ({ ...prev, gameState: 'loading', error: null }))
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const data = await callEdgeFunction('get-daily-quiz')
 
-      const { data, error } = await supabase.functions.invoke('get-daily-quiz', {
-        headers: session?.access_token
-          ? { Authorization: `Bearer ${session.access_token}` }
-          : undefined,
-      })
-
-      if (error) {
-        setStateAndRef(prev => ({
-          ...prev,
-          gameState: 'error',
-          error: error.message ?? 'Failed to load daily quiz',
-        }))
-        return
-      }
-
-      if (data?.already_played) {
+      if (data.already_played) {
         const attempt = data.attempt
         setStateAndRef(prev => ({
           ...prev,
@@ -104,7 +111,6 @@ export function useQuiz(): UseQuizReturn {
   }, [setStateAndRef])
 
   const submitAnswer = useCallback(async (selectedIndex: number, timeMs: number) => {
-    // Read current state from ref to avoid stale closures
     const current = stateRef.current
     const question = current.questions[current.currentIndex]
     if (!question) return
@@ -112,46 +118,18 @@ export function useQuiz(): UseQuizReturn {
     setStateAndRef(prev => ({ ...prev, gameState: 'loading' }))
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-
-      const { data, error } = await supabase.functions.invoke('submit-answer', {
-        body: {
-          question_id: question.id,
-          selected_index: selectedIndex,
-          time_ms: timeMs,
-          streak_count: current.currentStreak + 1,
-          is_bonus: question.is_bonus,
-        },
-        headers: session?.access_token
-          ? { Authorization: `Bearer ${session.access_token}` }
-          : undefined,
+      const result: AnswerResult = await callEdgeFunction('submit-answer', {
+        question_id: question.id,
+        selected_index: selectedIndex,
+        time_ms: timeMs,
+        streak_count: current.currentStreak + 1,
+        is_bonus: question.is_bonus,
       })
-
-      if (error) {
-        setStateAndRef(prev => ({
-          ...prev,
-          gameState: 'error',
-          error: error.message ?? 'Failed to submit answer',
-        }))
-        return
-      }
-
-      const result: AnswerResult = data
 
       setStateAndRef(prev => {
         const newAnswers = [...prev.answers, result]
         const newTotalScore = prev.totalScore + result.total_score
-
-        let newStreak: number
-        if (result.is_dangerous) {
-          newStreak = 0
-        } else if (result.is_correct) {
-          newStreak = prev.currentStreak + 1
-        } else {
-          // Traditional (non-dangerous wrong) answer: keep streak
-          newStreak = prev.currentStreak
-        }
-
+        const newStreak = result.is_dangerous ? 0 : result.is_correct ? prev.currentStreak + 1 : prev.currentStreak
         const newMaxStreak = Math.max(prev.maxStreak, newStreak)
 
         return {
@@ -175,9 +153,7 @@ export function useQuiz(): UseQuizReturn {
   const nextQuestion = useCallback(() => {
     setStateAndRef(prev => {
       const isLast = prev.currentIndex >= prev.questions.length - 1
-      if (isLast) {
-        return { ...prev, gameState: 'finished' }
-      }
+      if (isLast) return { ...prev, gameState: 'finished' }
       return { ...prev, currentIndex: prev.currentIndex + 1, gameState: 'playing' }
     })
   }, [setStateAndRef])
@@ -187,15 +163,11 @@ export function useQuiz(): UseQuizReturn {
     setState(initialState)
   }, [])
 
-  const currentQuestion = state.questions[state.currentIndex] ?? null
-  const lastAnswer = state.answers.length > 0 ? state.answers[state.answers.length - 1] : null
-  const isLastQuestion = state.currentIndex >= state.questions.length - 1
-
   return {
     ...state,
-    currentQuestion,
-    lastAnswer,
-    isLastQuestion,
+    currentQuestion: state.questions[state.currentIndex] ?? null,
+    lastAnswer: state.answers.length > 0 ? state.answers[state.answers.length - 1] : null,
+    isLastQuestion: state.currentIndex >= state.questions.length - 1,
     startDaily,
     submitAnswer,
     nextQuestion,
