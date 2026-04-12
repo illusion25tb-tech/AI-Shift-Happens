@@ -98,26 +98,27 @@ Deno.serve(async (req: Request) => {
     const questionIds = dailyQuiz.question_ids as string[]
     const bonusQuestionId = dailyQuiz.bonus_question_id as string | null
 
+    const allIds = [...questionIds, ...(bonusQuestionId ? [bonusQuestionId] : [])]
     const { data: questions, error: questionsError } = await serviceClient
       .from('questions')
-      .select('id, category, scenario_text, options, is_bonus')
-      .in('id', questionIds)
+      .select('id, category, scenario_text, options')
+      .in('id', allIds)
 
     if (questionsError || !questions) {
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch questions' }),
+        JSON.stringify({ error: 'Failed to fetch questions', details: questionsError?.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     // Strip scores from options — only return text and index (anti-cheat)
-    type RawOption = { text: string; score: number; index: number; feedback_text?: string; mindset_tip?: string }
+    type RawOption = { text: string; score: number; feedbackText: string }
     type SafeOption = { text: string; index: number }
 
     const sanitizedQuestions = questions.map((q) => {
-      const safeOptions: SafeOption[] = (q.options as RawOption[]).map((opt) => ({
+      const safeOptions: SafeOption[] = (q.options as RawOption[]).map((opt, i) => ({
         text: opt.text,
-        index: opt.index,
+        index: i,
       }))
 
       return {
