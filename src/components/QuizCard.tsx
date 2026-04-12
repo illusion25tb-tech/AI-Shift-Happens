@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { QuestionForClient, Locale } from '../types'
+import type { QuestionForClient, Locale } from '../types'
 import { CATEGORY_LABELS } from '../lib/constants'
 
 interface QuizCardProps {

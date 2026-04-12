@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { AnswerResult, Locale } from '../types'
+import type { AnswerResult, Locale } from '../types'
 import { LEVELS } from '../lib/constants'
 
 interface ResultScreenProps {

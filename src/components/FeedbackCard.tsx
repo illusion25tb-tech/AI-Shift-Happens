@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { AnswerResult } from '../types'
+import type { AnswerResult } from '../types'
 
 interface FeedbackCardProps {
   result: AnswerResult
