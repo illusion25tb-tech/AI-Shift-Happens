@@ -85,13 +85,13 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Get the selected option by array position
-    const options = question.options as Array<{ text: string; score: number; feedbackText: string }>
-    const selectedOption = options[selected_index]
+    // Get the selected option
+    const options = question.options as Array<{ text: string; score: number; index: number; feedback_text?: string; mindset_tip?: string }>
+    const selectedOption = options.find((o) => o.index === selected_index)
 
     if (!selectedOption) {
       return new Response(
-        JSON.stringify({ error: 'Invalid selected_index', received: selected_index, optionsLength: options.length }),
+        JSON.stringify({ error: 'Invalid selected_index' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -115,8 +115,8 @@ Deno.serve(async (req: Request) => {
       ? Math.round(base_score * streak_multi * bonus_multi + speed_bonus * bonus_multi)
       : base_score
 
-    const feedback_text = selectedOption.feedbackText ?? ''
-    const mindset_tip = question.mindset_tip ?? ''
+    const feedback_text = selectedOption.feedback_text ?? null
+    const mindset_tip = selectedOption.mindset_tip ?? null
 
     return new Response(
       JSON.stringify({

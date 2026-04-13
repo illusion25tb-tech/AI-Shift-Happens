@@ -43,15 +43,9 @@ export function useAuth(): UseAuthReturn {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        try {
-          const p = await fetchProfile(session.user.id)
-          setProfile(p)
-        } catch (e) {
-          console.error('Profile fetch failed:', e)
-        }
+        const p = await fetchProfile(session.user.id)
+        setProfile(p)
       }
-      setLoading(false)
-    }).catch(() => {
       setLoading(false)
     })
 
