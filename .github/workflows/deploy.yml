@@ -34,6 +34,9 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Rename dist for upload
+        run: mv dist mindset-shift
+
       - name: Deploy via SFTP
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
@@ -41,7 +44,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
-          local_path: './dist/'
-          remote_path: './mindset-shift/'
+          local_path: './mindset-shift/'
+          remote_path: './site/'
           sftpArgs: '-o ConnectTimeout=5'
           sftp_only: true
