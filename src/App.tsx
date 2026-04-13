@@ -3,6 +3,8 @@ import { useAuth } from './hooks/useAuth'
 import AuthScreen from './components/AuthScreen'
 import { DashboardPage } from './pages/DashboardPage'
 import { DailyQuizPage } from './pages/DailyQuizPage'
+import { LeaderboardPage } from './pages/LeaderboardPage'
+import { ProfilePage } from './pages/ProfilePage'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -21,6 +23,8 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<DashboardPage />} />
       <Route path="/daily" element={<DailyQuizPage />} />
+      <Route path="/leaderboard" element={<LeaderboardPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
