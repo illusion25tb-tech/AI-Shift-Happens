@@ -41,5 +41,9 @@
   "result.shareLinkedin": "Auf LinkedIn teilen",
   "result.challenge": "Jemanden herausfordern",
   "result.playAgain": "Nochmal spielen",
-  "result.back": "Zurück"
+  "result.back": "Zurück",
+  "result.xpGained": "+{xp} XP",
+  "result.levelUp": "Level Up!",
+  "result.newBadge": "Neues Badge!",
+  "result.streakCount": "{days} Tage Streak"
 }
