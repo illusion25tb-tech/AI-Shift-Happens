@@ -96,6 +96,13 @@ export type BadgeType = (typeof BADGES)[number]['type']
 
 export const STREAK_MULTIPLIERS = [1.0, 1.5, 2.0, 2.5, 3.0] as const
 
+export const STREAK_XP_MULTIPLIERS = [
+  { minDays: 0, multi: 1.0 },
+  { minDays: 5, multi: 1.25 },
+  { minDays: 10, multi: 1.5 },
+  { minDays: 20, multi: 2.0 },
+] as const
+
 export const DAILY_QUESTION_COUNT = 3
 export const BONUS_QUESTION_COUNT = 1
 export const FREEPLAY_QUESTION_COUNT = 10
