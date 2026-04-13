@@ -1,6 +1,7 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { useQuiz } from '../hooks/useQuiz'
@@ -10,12 +11,15 @@ import TimerBar from '../components/TimerBar'
 import QuizCard from '../components/QuizCard'
 import FeedbackCard from '../components/FeedbackCard'
 import ResultScreen from '../components/ResultScreen'
+import BadgeUnlock from '../components/BadgeUnlock'
 
 export function DailyQuizPage() {
   const navigate = useNavigate()
   const { profile } = useAuth()
   const { locale, t } = useLocale()
   const quiz = useQuiz()
+
+  const [showBadgeUnlock, setShowBadgeUnlock] = useState(true)
 
   const elapsedMsRef = useRef<number>(0)
 
@@ -80,14 +84,26 @@ export function DailyQuizPage() {
           </button>
         </header>
         <div className="flex-1 flex flex-col justify-center px-5 py-8 max-w-md mx-auto w-full">
-          <ResultScreen
-            score={quiz.totalScore}
-            answers={quiz.answers}
-            maxStreak={quiz.maxStreak}
-            locale={locale}
-            onBack={handleBack}
-            t={t}
-          />
+          <>
+            {showBadgeUnlock && quiz.gamificationResult?.new_badges && quiz.gamificationResult.new_badges.length > 0 && (
+              <AnimatePresence>
+                <BadgeUnlock
+                  badgeTypes={quiz.gamificationResult.new_badges}
+                  locale={locale}
+                  onClose={() => setShowBadgeUnlock(false)}
+                />
+              </AnimatePresence>
+            )}
+            <ResultScreen
+              score={quiz.totalScore}
+              answers={quiz.answers}
+              maxStreak={quiz.maxStreak}
+              locale={locale}
+              onBack={handleBack}
+              t={t}
+              gamificationResult={quiz.gamificationResult}
+            />
+          </>
         </div>
       </div>
     )

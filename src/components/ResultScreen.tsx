@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import type { AnswerResult, Locale } from '../types'
-import { LEVELS } from '../lib/constants'
+import { LEVELS, BADGES } from '../lib/constants'
 
 interface ResultScreenProps {
   score: number
@@ -9,6 +9,13 @@ interface ResultScreenProps {
   locale: Locale
   onBack: () => void
   t: (key: string, vars?: Record<string, string | number>) => string
+  gamificationResult?: {
+    xp_gained: number
+    total_xp: number
+    level: number
+    streak: number
+    new_badges: string[]
+  } | null
 }
 
 export default function ResultScreen({
@@ -18,6 +25,7 @@ export default function ResultScreen({
   locale,
   onBack,
   t,
+  gamificationResult,
 }: ResultScreenProps) {
   const correctCount = answers.filter(a => a.is_correct).length
   const totalMs = answers.reduce((sum, a) => sum + (a.speed_bonus > 0 ? a.speed_bonus : 0), 0)
@@ -81,6 +89,30 @@ export default function ResultScreen({
           <div className="text-xs text-text-muted mt-1">{t('result.avgSpeed')}</div>
         </div>
       </div>
+
+      {/* XP Gained */}
+      {gamificationResult && (
+        <div className="flex items-center justify-center gap-4 my-3">
+          <span className="text-teal font-mono font-bold text-lg">+{gamificationResult.xp_gained} XP</span>
+          {gamificationResult.streak > 0 && (
+            <span className="text-fire font-bold text-sm">🔥 {gamificationResult.streak} {t('result.streakCount', { days: gamificationResult.streak })}</span>
+          )}
+        </div>
+      )}
+
+      {/* New badges */}
+      {gamificationResult?.new_badges && gamificationResult.new_badges.length > 0 && (
+        <div className="flex gap-2 justify-center flex-wrap my-3">
+          {gamificationResult.new_badges.map(type => {
+            const badge = BADGES.find(b => b.type === type)
+            return badge ? (
+              <span key={type} className="bg-gold/10 border border-gold/20 text-gold px-3 py-1 rounded-full text-xs font-bold">
+                {badge.emoji} {badge.title[locale]}
+              </span>
+            ) : null
+          })}
+        </div>
+      )}
 
       {/* Back button */}
       <button
