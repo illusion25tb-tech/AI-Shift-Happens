@@ -30,7 +30,7 @@ export function ProfilePage() {
   return (
     <div className="min-h-screen bg-bg-base text-text-primary font-sans flex flex-col">
       <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
-        <button onClick={() => navigate('/')} className="text-text-secondary hover:text-text-primary text-lg">←</button>
+        <button onClick={() => navigate('/app')} className="text-text-secondary hover:text-text-primary text-lg">←</button>
         <h1 className="text-lg font-bold">{t('profile.title')}</h1>
       </header>
 

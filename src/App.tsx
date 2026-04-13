@@ -1,40 +1,42 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import { LandingPage } from './pages/LandingPage'
 import AuthScreen from './components/AuthScreen'
 import { DashboardPage } from './pages/DashboardPage'
 import { DailyQuizPage } from './pages/DailyQuizPage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
 import { ProfilePage } from './pages/ProfilePage'
 
-function AppRoutes() {
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-bg-base flex items-center justify-center">
-        <div className="text-text-muted animate-pulse">Loading...</div>
-      </div>
-    )
-  }
-
-  if (!user) return <AuthScreen />
-
-  return (
-    <Routes>
-      <Route path="/" element={<DashboardPage />} />
-      <Route path="/daily" element={<DailyQuizPage />} />
-      <Route path="/leaderboard" element={<LeaderboardPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+  if (loading) return (
+    <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <div className="text-text-muted animate-pulse">Loading...</div>
+    </div>
   )
+  if (!user) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
+function LoginPage() {
+  const { user } = useAuth()
+  if (user) return <Navigate to="/app" replace />
+  return <AuthScreen />
 }
 
 export default function App() {
   return (
     <BrowserRouter basename="/mindset-shift">
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
-        <AppRoutes />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/app" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/app/daily" element={<ProtectedRoute><DailyQuizPage /></ProtectedRoute>} />
+          <Route path="/app/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
+          <Route path="/app/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
     </BrowserRouter>
   )

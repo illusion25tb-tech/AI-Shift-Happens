@@ -19,10 +19,10 @@ export function DashboardPage() {
   const playedDays = profile?.last_played_at === todayStr ? [dayNames[now.getDay()]] : []
 
   const quickNav = [
-    { emoji: '🎮', label: t('dashboard.freePlay'), to: '/' },
-    { emoji: '🏆', label: t('dashboard.leaderboard'), to: '/leaderboard' },
-    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/' },
-    { emoji: '🎖️', label: t('dashboard.badges'), to: '/profile' },
+    { emoji: '🎮', label: t('dashboard.freePlay'), to: '/app' },
+    { emoji: '🏆', label: t('dashboard.leaderboard'), to: '/app/leaderboard' },
+    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app' },
+    { emoji: '🎖️', label: t('dashboard.badges'), to: '/app/profile' },
   ]
 
   return (
@@ -37,7 +37,7 @@ export function DashboardPage() {
           >
             {locale === 'de' ? 'EN' : 'DE'}
           </button>
-          <Link to="/profile" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
+          <Link to="/app/profile" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
             {avatarInitial}
           </Link>
         </div>
@@ -54,7 +54,7 @@ export function DashboardPage() {
 
         {/* Daily Quiz Card */}
         <Link
-          to="/daily"
+          to="/app/daily"
           className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
           style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, #3B82F6 100%)' }}
         >

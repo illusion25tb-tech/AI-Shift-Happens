@@ -41,7 +41,7 @@ export function DailyQuizPage() {
   }
 
   const handleBack = () => {
-    navigate('/')
+    navigate('/app')
   }
 
   // Bonus question index: last question (index = questions.length - 1)

@@ -114,6 +114,20 @@ export default function ResultScreen({
         </div>
       )}
 
+      {/* LinkedIn Share */}
+      <button
+        onClick={() => {
+          window.open(
+            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://tbai.com.de/mindset-shift/')}`,
+            '_blank',
+            'width=600,height=400'
+          )
+        }}
+        className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 mb-3"
+      >
+        🔗 {t('result.shareLinkedin')}
+      </button>
+
       {/* Back button */}
       <button
         onClick={onBack}
