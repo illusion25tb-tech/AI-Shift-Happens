@@ -45,5 +45,15 @@
   "result.xpGained": "+{xp} XP",
   "result.levelUp": "Level Up!",
   "result.newBadge": "Neues Badge!",
-  "result.streakCount": "{days} Tage Streak"
+  "result.streakCount": "{days} Tage Streak",
+  "leaderboard.title": "Leaderboard",
+  "leaderboard.weekly": "Diese Woche",
+  "leaderboard.alltime": "All-Time",
+  "leaderboard.hallOfFame": "Hall of Fame",
+  "leaderboard.points": "Pts",
+  "leaderboard.noEntries": "Noch keine Einträge",
+  "profile.title": "Profil",
+  "profile.totalXp": "Gesamt-XP",
+  "profile.longestStreak": "Längster Streak",
+  "profile.badgesEarned": "Badges"
 }

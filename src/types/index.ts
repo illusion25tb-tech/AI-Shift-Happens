@@ -65,6 +65,15 @@ export interface Profile {
   team_name: string | null
 }
 
+export interface LeaderboardEntry {
+  user_id: string
+  display_name: string
+  level: number
+  total_score: number
+  current_streak: number
+  rank: number
+}
+
 export type Locale = 'de' | 'en'
 
 export type GameState =
@@ -74,38 +83,3 @@ export type GameState =
   | 'feedback'
   | 'finished'
   | 'error'
-
-export interface Badge {
-  type: string
-  emoji: string
-  title: { de: string; en: string }
-  description: { de: string; en: string }
-}
-
-export interface UserBadge {
-  badge_type: string
-  earned_at: string
-}
-
-export interface WeeklyScore {
-  user_id: string
-  display_name: string
-  avatar_url: string | null
-  week_start: string
-  total_score: number
-  rank: number
-  is_champion: boolean
-  level: number
-  current_streak: number
-}
-
-export interface LeaderboardEntry {
-  rank: number
-  user_id: string
-  display_name: string
-  avatar_url: string | null
-  total_score: number
-  level: number
-  current_streak: number
-  is_champion: boolean
-}
