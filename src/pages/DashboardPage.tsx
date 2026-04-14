@@ -1,12 +1,24 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import StreakBar from '../components/StreakBar'
 import LevelBar from '../components/LevelBar'
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+interface WeeklyChampion {
+  display_name: string
+  total_score: number
+  week_start: string
+}
+
 export function DashboardPage() {
   const { profile, signOut } = useAuth()
   const { locale, setLocale, t } = useLocale()
+  const [champion, setChampion] = useState<WeeklyChampion | null>(null)
+  const [showChampion, setShowChampion] = useState(true)
 
   const now = new Date()
   const weekday = now.toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', { weekday: 'long' })
@@ -17,6 +29,28 @@ export function DashboardPage() {
   const todayStr = now.toISOString().split('T')[0]
   const dayNames = ['so', 'mo', 'di', 'mi', 'do', 'fr', 'sa']
   const playedDays = profile?.last_played_at === todayStr ? [dayNames[now.getDay()]] : []
+
+  // Load weekly champion on Mondays (or always for demo)
+  useEffect(() => {
+    async function loadChampion() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/get-leaderboard?tab=halloffame`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        })
+        const data = await res.json()
+        if (data.entries?.length > 0) {
+          const latest = data.entries[0]
+          setChampion({
+            display_name: latest.display_name,
+            total_score: latest.total_score,
+            week_start: latest.week_start ?? '',
+          })
+        }
+      } catch { /* ignore */ }
+    }
+    loadChampion()
+  }, [])
 
   const quickNav = [
     { emoji: '🎮', label: t('dashboard.freePlay'), to: '/app/freeplay' },
@@ -52,6 +86,26 @@ export function DashboardPage() {
           locale={locale}
           t={t}
         />
+
+        {/* Weekly Champion Banner */}
+        {champion && showChampion && (
+          <div className="relative rounded-2xl overflow-hidden border border-gold/20" style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.15) 0%, rgba(234,179,8,0.05) 100%)' }}>
+            <button onClick={() => setShowChampion(false)} className="absolute top-2 right-3 text-text-muted hover:text-text-primary text-xs">✕</button>
+            <div className="p-4 flex items-center gap-3">
+              <div className="text-3xl">👑</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gold">
+                  {locale === 'de' ? 'Wochen-Champion' : 'Weekly Champion'}
+                </p>
+                <p className="font-bold text-sm truncate">{champion.display_name}</p>
+                <p className="text-xs text-text-muted font-mono">{champion.total_score.toLocaleString()} Pts</p>
+              </div>
+              <Link to="/app/leaderboard" className="text-xs font-semibold text-gold hover:underline">
+                {locale === 'de' ? 'Rangliste →' : 'Rankings →'}
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Daily Quiz Card */}
         <Link

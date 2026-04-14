@@ -64,6 +64,7 @@ export interface Profile {
   invite_code: string
   team_name: string | null
   company_name: string | null
+  created_at: string
 }
 
 export interface LeaderboardEntry {

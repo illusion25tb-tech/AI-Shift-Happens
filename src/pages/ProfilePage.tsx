@@ -5,10 +5,19 @@ import { useLocale } from '../hooks/useLocale'
 import { supabase } from '../lib/supabase'
 import LevelBar from '../components/LevelBar'
 import BadgeGrid from '../components/BadgeGrid'
+import { CATEGORY_LABELS } from '../lib/constants'
+import type { CategoryId } from '../lib/constants'
+
+interface QuizStats {
+  totalQuizzes: number
+  totalCorrect: number
+  totalQuestions: number
+  categoryBreakdown: { category: string; count: number }[]
+}
 
 export function ProfilePage() {
   const navigate = useNavigate()
-  const { profile, signOut } = useAuth()
+  const { profile, user, signOut } = useAuth()
   const { locale, setLocale, t } = useLocale()
   const [earnedBadges, setEarnedBadges] = useState<string[]>([])
   const [companyInput, setCompanyInput] = useState('')
@@ -17,9 +26,23 @@ export function ProfilePage() {
   const [companySaving, setCompanySaving] = useState(false)
   const [companySaved, setCompanySaved] = useState(false)
 
+  // Display name editing
+  const [nameInput, setNameInput] = useState('')
+  const [editingName, setEditingName] = useState(false)
+  const [nameSaving, setNameSaving] = useState(false)
+
+  // Quiz stats
+  const [stats, setStats] = useState<QuizStats | null>(null)
+
+  // Account deletion
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
   useEffect(() => {
     if (!profile) return
     setCompanyInput(profile.company_name ?? '')
+    setNameInput(profile.display_name ?? '')
+
+    // Load badges
     supabase
       .from('user_badges')
       .select('badge_type')
@@ -27,7 +50,52 @@ export function ProfilePage() {
       .then(({ data }) => {
         setEarnedBadges((data ?? []).map(b => b.badge_type))
       })
+
+    // Load quiz stats
+    supabase
+      .from('quiz_attempts')
+      .select('answers, category')
+      .eq('user_id', profile.id)
+      .then(({ data }) => {
+        if (!data) return
+        const categoryMap = new Map<string, number>()
+        let totalCorrect = 0
+        let totalQuestions = 0
+
+        for (const attempt of data) {
+          const answers = attempt.answers as any[] ?? []
+          totalQuestions += answers.length
+          totalCorrect += answers.filter((a: any) => a.is_correct).length
+
+          // Count categories from answers
+          if (attempt.category) {
+            categoryMap.set(attempt.category, (categoryMap.get(attempt.category) ?? 0) + 1)
+          }
+        }
+
+        const categoryBreakdown = [...categoryMap.entries()]
+          .map(([category, count]) => ({ category, count }))
+          .sort((a, b) => b.count - a.count)
+
+        setStats({
+          totalQuizzes: data.length,
+          totalCorrect,
+          totalQuestions,
+          categoryBreakdown,
+        })
+      })
   }, [profile])
+
+  const saveName = useCallback(async () => {
+    if (!profile || !nameInput.trim()) return
+    setNameSaving(true)
+    await supabase
+      .from('profiles')
+      .update({ display_name: nameInput.trim() })
+      .eq('id', profile.id)
+    setNameSaving(false)
+    setEditingName(false)
+  }, [profile, nameInput])
 
   const searchCompanies = useCallback(async (query: string) => {
     if (query.trim().length < 2) {
@@ -42,7 +110,6 @@ export function ProfilePage() {
       .limit(20)
 
     if (data) {
-      // Deduplicate by normalized name, show original casing
       const seen = new Map<string, string>()
       for (const row of data) {
         if (row.company_name) {
@@ -59,7 +126,6 @@ export function ProfilePage() {
     setCompanySaving(true)
     setCompanySaved(false)
 
-    // Normalize: if an existing company matches (case-insensitive), use that exact spelling
     const trimmed = name.trim()
     let finalName: string | null = trimmed || null
 
@@ -90,14 +156,30 @@ export function ProfilePage() {
     setTimeout(() => setCompanySaved(false), 2000)
   }, [profile])
 
+  const deleteAccount = useCallback(async () => {
+    if (!user) return
+    // Sign out first, then user needs to contact admin for full deletion
+    // (Supabase doesn't allow self-deletion via client SDK)
+    await signOut()
+    navigate('/')
+  }, [user, signOut, navigate])
+
   if (!profile) return null
 
   const avatarInitial = (profile.display_name || '?').charAt(0).toUpperCase()
+  const memberSince = profile.created_at
+    ? new Date(profile.created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', {
+        year: 'numeric', month: 'long', day: 'numeric',
+      })
+    : null
+  const accuracy = stats && stats.totalQuestions > 0
+    ? Math.round((stats.totalCorrect / stats.totalQuestions) * 100)
+    : null
 
   return (
     <div className="min-h-screen bg-bg-base text-text-primary font-sans flex flex-col">
       <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
-        <button onClick={() => navigate('/app')} className="text-text-secondary hover:text-text-primary text-lg">←</button>
+        <button onClick={() => navigate('/app')} className="text-text-secondary hover:text-text-primary text-lg">&larr;</button>
         <h1 className="text-lg font-bold">{t('profile.title')}</h1>
       </header>
 
@@ -107,15 +189,61 @@ export function ProfilePage() {
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white text-2xl font-bold">
             {avatarInitial}
           </div>
-          <div className="text-lg font-bold">{profile.display_name || 'Anonym'}</div>
-          <div className="text-sm text-text-muted">{profile.invite_code ? `Code: ${profile.invite_code}` : ''}</div>
+
+          {editingName ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && saveName()}
+                className="bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-text-primary text-center focus:outline-none focus:border-primary w-48"
+                autoFocus
+              />
+              <button
+                onClick={saveName}
+                disabled={nameSaving}
+                className="text-xs font-semibold px-2 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+              >
+                {nameSaving ? '...' : '✓'}
+              </button>
+              <button
+                onClick={() => { setEditingName(false); setNameInput(profile.display_name ?? '') }}
+                className="text-xs text-text-muted hover:text-text-primary"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setEditingName(true)}
+              className="text-lg font-bold hover:text-primary transition-colors group flex items-center gap-1"
+            >
+              {profile.display_name || 'Anonym'}
+              <span className="text-text-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity">✏️</span>
+            </button>
+          )}
+
+          {user?.email && (
+            <div className="text-xs text-text-muted">{user.email}</div>
+          )}
+          {memberSince && (
+            <div className="text-xs text-text-muted">
+              {locale === 'de' ? `Mitglied seit ${memberSince}` : `Member since ${memberSince}`}
+            </div>
+          )}
+          {profile.invite_code && (
+            <div className="text-xs text-text-muted">
+              Code: <span className="font-mono text-primary">{profile.invite_code}</span>
+            </div>
+          )}
         </div>
 
         {/* Level */}
         <LevelBar totalXp={profile.total_xp ?? 0} locale={locale} />
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           <div className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
             <div className="text-lg font-bold font-mono text-primary">{(profile.total_xp ?? 0).toLocaleString()}</div>
             <div className="text-[10px] text-text-muted uppercase">{t('profile.totalXp')}</div>
@@ -128,7 +256,49 @@ export function ProfilePage() {
             <div className="text-lg font-bold font-mono text-gold">{earnedBadges.length}</div>
             <div className="text-[10px] text-text-muted uppercase">{t('profile.badgesEarned')}</div>
           </div>
+          <div className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
+            <div className="text-lg font-bold font-mono text-teal">{stats?.totalQuizzes ?? 0}</div>
+            <div className="text-[10px] text-text-muted uppercase">{locale === 'de' ? 'Quizzes' : 'Quizzes'}</div>
+          </div>
         </div>
+
+        {/* Accuracy + Category Stats */}
+        {stats && stats.totalQuestions > 0 && (
+          <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold">{locale === 'de' ? 'Trefferquote' : 'Accuracy'}</span>
+              <span className="font-mono font-bold text-primary">{accuracy}%</span>
+            </div>
+            <div className="w-full bg-white/6 rounded-full h-2">
+              <div
+                className="h-2 rounded-full transition-all"
+                style={{
+                  width: `${accuracy}%`,
+                  background: 'linear-gradient(to right, var(--color-primary), var(--color-teal))',
+                }}
+              />
+            </div>
+            <div className="text-xs text-text-muted">
+              {stats.totalCorrect} / {stats.totalQuestions} {locale === 'de' ? 'richtig' : 'correct'}
+            </div>
+
+            {stats.categoryBreakdown.length > 0 && (
+              <div className="pt-2 border-t border-white/6 space-y-1.5">
+                <span className="text-xs font-semibold text-text-muted uppercase">
+                  {locale === 'de' ? 'Kategorien gespielt' : 'Categories played'}
+                </span>
+                {stats.categoryBreakdown.slice(0, 5).map(c => (
+                  <div key={c.category} className="flex items-center justify-between text-xs">
+                    <span className="text-text-secondary">
+                      {CATEGORY_LABELS[c.category as CategoryId]?.[locale] ?? c.category}
+                    </span>
+                    <span className="font-mono text-text-muted">{c.count}×</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Company */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-2">
@@ -204,13 +374,13 @@ export function ProfilePage() {
               onClick={() => setLocale('de')}
               className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${locale === 'de' ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
             >
-              🇩🇪 DE
+              DE
             </button>
             <button
               onClick={() => setLocale('en')}
               className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${locale === 'en' ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
             >
-              🇬🇧 EN
+              EN
             </button>
           </div>
         </div>
@@ -218,10 +388,44 @@ export function ProfilePage() {
         {/* Sign Out */}
         <button
           onClick={() => signOut()}
-          className="w-full py-3 rounded-xl border border-danger/20 text-danger text-sm font-semibold hover:bg-danger/10 transition-colors"
+          className="w-full py-3 rounded-xl border border-white/10 text-text-secondary text-sm font-semibold hover:bg-white/4 transition-colors"
         >
           {t('auth.signOut')}
         </button>
+
+        {/* Danger Zone */}
+        <div className="pt-4 border-t border-white/6">
+          {!showDeleteConfirm ? (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="text-xs text-text-muted hover:text-danger transition-colors"
+            >
+              {locale === 'de' ? 'Account löschen...' : 'Delete account...'}
+            </button>
+          ) : (
+            <div className="bg-danger/10 border border-danger/20 rounded-xl p-4 space-y-3">
+              <p className="text-sm text-danger font-semibold">
+                {locale === 'de'
+                  ? 'Account wirklich löschen? Alle Daten gehen verloren.'
+                  : 'Really delete account? All data will be lost.'}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={deleteAccount}
+                  className="text-xs font-bold px-4 py-2 rounded-lg bg-danger text-white hover:bg-danger/80 transition-colors"
+                >
+                  {locale === 'de' ? 'Ja, löschen' : 'Yes, delete'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-xs font-semibold px-4 py-2 rounded-lg bg-white/6 text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  {locale === 'de' ? 'Abbrechen' : 'Cancel'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   )
