@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /mindset-shift/
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /mindset-shift/index.html [L]
