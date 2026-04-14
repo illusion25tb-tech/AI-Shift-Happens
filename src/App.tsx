@@ -9,6 +9,7 @@ import { ProfilePage } from './pages/ProfilePage'
 import { FaqPage } from './pages/FaqPage'
 import { FreePlayPage } from './pages/FreePlayPage'
 import { ChallengePage } from './pages/ChallengePage'
+import { AdminPage } from './pages/AdminPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/app/freeplay" element={<ProtectedRoute><FreePlayPage /></ProtectedRoute>} />
           <Route path="/app/challenge" element={<ProtectedRoute><ChallengePage /></ProtectedRoute>} />
           <Route path="/app/faq" element={<ProtectedRoute><FaqPage /></ProtectedRoute>} />
+          <Route path="/app/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

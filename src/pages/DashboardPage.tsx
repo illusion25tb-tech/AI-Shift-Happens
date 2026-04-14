@@ -58,6 +58,7 @@ export function DashboardPage() {
     { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app/challenge' },
     { emoji: '🎖️', label: t('dashboard.badges'), to: '/app/profile' },
     { emoji: '❓', label: 'FAQ', to: '/app/faq' },
+    ...(profile?.is_admin ? [{ emoji: '⚙️', label: 'Admin', to: '/app/admin' }] : []),
   ]
 
   return (
