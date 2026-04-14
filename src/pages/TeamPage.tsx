@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useLocale } from '../hooks/useLocale'
@@ -53,6 +53,7 @@ const ROLE_LABELS = {
 } as const
 
 export function TeamPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const { locale } = useLocale()
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
@@ -84,7 +85,19 @@ export function TeamPage() {
     } catch { /* ignore */ }
   }, [])
 
-  useEffect(() => { loadTeam(); loadRankings() }, [loadTeam, loadRankings])
+  // Auto-join if invite code in URL
+  const codeFromUrl = searchParams.get('code')
+
+  useEffect(() => {
+    loadTeam().then(() => {
+      if (codeFromUrl) {
+        setJoinCode(codeFromUrl)
+        // Clear URL param
+        setSearchParams({}, { replace: true })
+      }
+    })
+    loadRankings()
+  }, [loadTeam, loadRankings, codeFromUrl, setSearchParams])
 
   const createTeam = async () => {
     if (!createName.trim()) return
@@ -132,11 +145,52 @@ export function TeamPage() {
     setActionLoading(false)
   }
 
+  const inviteUrl = team?.invite_code
+    ? `${window.location.origin}/mindset-shift/app/team?code=${team.invite_code}`
+    : null
+
+  const inviteText = (name: string) => locale === 'de'
+    ? `Tritt meinem Team "${name}" bei AI-Shift Happens bei! 🧠⚔️`
+    : `Join my team "${name}" on AI-Shift Happens! 🧠⚔️`
+
   const copyCode = () => {
-    if (!team?.invite_code) return
-    navigator.clipboard.writeText(team.invite_code)
+    if (!inviteUrl) return
+    navigator.clipboard.writeText(inviteUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const shareNative = async () => {
+    if (!inviteUrl || !team) return
+    try {
+      await navigator.share({
+        title: `Team ${team.name} — AI-Shift Happens`,
+        text: inviteText(team.name),
+        url: inviteUrl,
+      })
+    } catch { /* user cancelled */ }
+  }
+
+  const shareWhatsApp = () => {
+    if (!inviteUrl || !team) return
+    window.open(`https://wa.me/?text=${encodeURIComponent(inviteText(team.name) + '\n' + inviteUrl)}`, '_blank')
+  }
+
+  const shareTelegram = () => {
+    if (!inviteUrl || !team) return
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${encodeURIComponent(inviteText(team.name))}`, '_blank')
+  }
+
+  const shareEmail = () => {
+    if (!inviteUrl || !team) return
+    const subject = encodeURIComponent(`Team ${team.name} — AI-Shift Happens`)
+    const body = encodeURIComponent(`${inviteText(team.name)}\n\n${inviteUrl}`)
+    window.open(`mailto:?subject=${subject}&body=${body}`)
+  }
+
+  const shareLinkedIn = () => {
+    if (!inviteUrl) return
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(inviteUrl)}`, '_blank', 'width=600,height=400')
   }
 
   const getLevelEmoji = (level: number) => LEVELS.find(l => l.level === level)?.emoji ?? '🌱'
@@ -192,20 +246,41 @@ export function TeamPage() {
                 <div className="text-3xl">⚔️</div>
                 <h2 className="text-xl font-bold">{team.name}</h2>
 
-                {/* Invite code — only captain + admin */}
+                {/* Invite — only captain + admin */}
                 {team.invite_code ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-xs text-text-muted">Invite-Code:</span>
-                    <span className="font-mono text-primary font-bold">{team.invite_code}</span>
-                    <button onClick={copyCode} className="text-[10px] px-2 py-0.5 rounded bg-primary/20 text-primary">
-                      {copied ? '✓' : (locale === 'de' ? 'Kopieren' : 'Copy')}
-                    </button>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-xs text-text-muted">Code:</span>
+                      <span className="font-mono text-primary font-bold">{team.invite_code}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      {'share' in navigator && (
+                        <button onClick={shareNative} className="text-[10px] px-2.5 py-1 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+                          📤 {locale === 'de' ? 'Teilen' : 'Share'}
+                        </button>
+                      )}
+                      <button onClick={shareWhatsApp} className="text-[10px] px-2.5 py-1 rounded-lg bg-[#25D366]/15 text-[#25D366] hover:bg-[#25D366]/25 transition-colors">
+                        WhatsApp
+                      </button>
+                      <button onClick={shareTelegram} className="text-[10px] px-2.5 py-1 rounded-lg bg-[#0088cc]/15 text-[#0088cc] hover:bg-[#0088cc]/25 transition-colors">
+                        Telegram
+                      </button>
+                      <button onClick={shareLinkedIn} className="text-[10px] px-2.5 py-1 rounded-lg bg-[#0A66C2]/15 text-[#0A66C2] hover:bg-[#0A66C2]/25 transition-colors">
+                        LinkedIn
+                      </button>
+                      <button onClick={shareEmail} className="text-[10px] px-2.5 py-1 rounded-lg bg-white/6 text-text-secondary hover:bg-white/10 transition-colors">
+                        ✉️ E-Mail
+                      </button>
+                      <button onClick={copyCode} className="text-[10px] px-2.5 py-1 rounded-lg bg-white/6 text-text-secondary hover:bg-white/10 transition-colors">
+                        {copied ? '✓' : '🔗 Link'}
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <p className="text-xs text-text-muted italic">
                     {locale === 'de'
-                      ? 'Invite-Code ist nur für Captain & Admins sichtbar.'
-                      : 'Invite code is only visible to Captain & Admins.'}
+                      ? 'Einladung nur durch Captain & Admins möglich.'
+                      : 'Only Captain & Admins can invite.'}
                   </p>
                 )}
 
