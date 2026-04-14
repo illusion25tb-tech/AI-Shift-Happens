@@ -55,7 +55,7 @@ export function DashboardPage() {
   const quickNav = [
     { emoji: '🎮', label: t('dashboard.freePlay'), to: '/app/freeplay' },
     { emoji: '🏆', label: t('dashboard.leaderboard'), to: '/app/leaderboard' },
-    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app' },
+    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app/challenge' },
     { emoji: '🎖️', label: t('dashboard.badges'), to: '/app/profile' },
     { emoji: '❓', label: 'FAQ', to: '/app/faq' },
   ]
