@@ -36,7 +36,6 @@ Deno.serve(async (req: Request) => {
       const { name } = body as { name: string }
       if (!name?.trim()) return jsonRes({ error: 'Team name required' }, 400)
 
-      // Check user not already in a team
       const { data: profile } = await db.from('profiles').select('team_id').eq('id', user.id).single()
       if (profile?.team_id) return jsonRes({ error: 'Already in a team. Leave first.' }, 400)
 
@@ -48,8 +47,8 @@ Deno.serve(async (req: Request) => {
 
       if (insertErr) return jsonRes({ error: insertErr.message }, 500)
 
-      // Join own team
-      await db.from('profiles').update({ team_id: team.id }).eq('id', user.id)
+      // Join as captain
+      await db.from('profiles').update({ team_id: team.id, team_role: 'captain' }).eq('id', user.id)
 
       return jsonRes({ team_id: team.id, invite_code: team.invite_code })
     }
@@ -70,20 +69,131 @@ Deno.serve(async (req: Request) => {
 
       if (!team) return jsonRes({ error: 'Team not found' }, 404)
 
-      await db.from('profiles').update({ team_id: team.id }).eq('id', user.id)
+      // Join as regular member
+      await db.from('profiles').update({ team_id: team.id, team_role: 'member' }).eq('id', user.id)
 
       return jsonRes({ team_id: team.id, team_name: team.name })
     }
 
     // ─── LEAVE TEAM ───
     if (action === 'leave') {
-      await db.from('profiles').update({ team_id: null }).eq('id', user.id)
+      const { data: profile } = await db.from('profiles').select('team_id, team_role').eq('id', user.id).single()
+      if (!profile?.team_id) return jsonRes({ ok: true })
+
+      // If captain leaves, promote first admin or oldest member
+      if (profile.team_role === 'captain') {
+        const { data: nextAdmin } = await db.from('profiles')
+          .select('id')
+          .eq('team_id', profile.team_id)
+          .eq('team_role', 'admin')
+          .neq('id', user.id)
+          .limit(1)
+          .single()
+
+        if (nextAdmin) {
+          await db.from('profiles').update({ team_role: 'captain' }).eq('id', nextAdmin.id)
+          await db.from('teams').update({ captain_id: nextAdmin.id }).eq('id', profile.team_id)
+        } else {
+          // No admin — promote oldest member
+          const { data: nextMember } = await db.from('profiles')
+            .select('id')
+            .eq('team_id', profile.team_id)
+            .neq('id', user.id)
+            .order('created_at', { ascending: true })
+            .limit(1)
+            .single()
+
+          if (nextMember) {
+            await db.from('profiles').update({ team_role: 'captain' }).eq('id', nextMember.id)
+            await db.from('teams').update({ captain_id: nextMember.id }).eq('id', profile.team_id)
+          } else {
+            // Last member — delete team
+            await db.from('teams').delete().eq('id', profile.team_id)
+          }
+        }
+      }
+
+      await db.from('profiles').update({ team_id: null, team_role: 'member' }).eq('id', user.id)
+      return jsonRes({ ok: true })
+    }
+
+    // ─── PROMOTE TO ADMIN ───
+    if (action === 'promote') {
+      const { target_user_id } = body as { target_user_id: string }
+
+      const { data: myProfile } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', user.id).single()
+
+      if (!myProfile?.team_id || !['captain', 'admin'].includes(myProfile.team_role ?? '')) {
+        return jsonRes({ error: 'Only captain or admin can promote' }, 403)
+      }
+
+      // Check target is in same team and is member
+      const { data: target } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', target_user_id).single()
+
+      if (target?.team_id !== myProfile.team_id) {
+        return jsonRes({ error: 'User not in your team' }, 400)
+      }
+      if (target.team_role === 'captain') {
+        return jsonRes({ error: 'Cannot change captain role' }, 400)
+      }
+
+      await db.from('profiles').update({ team_role: 'admin' }).eq('id', target_user_id)
+      return jsonRes({ ok: true })
+    }
+
+    // ─── DEMOTE TO MEMBER ───
+    if (action === 'demote') {
+      const { target_user_id } = body as { target_user_id: string }
+
+      const { data: myProfile } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', user.id).single()
+
+      if (myProfile?.team_role !== 'captain') {
+        return jsonRes({ error: 'Only captain can demote' }, 403)
+      }
+
+      const { data: target } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', target_user_id).single()
+
+      if (target?.team_id !== myProfile.team_id || target.team_role === 'captain') {
+        return jsonRes({ error: 'Invalid target' }, 400)
+      }
+
+      await db.from('profiles').update({ team_role: 'member' }).eq('id', target_user_id)
+      return jsonRes({ ok: true })
+    }
+
+    // ─── KICK MEMBER ───
+    if (action === 'kick') {
+      const { target_user_id } = body as { target_user_id: string }
+
+      const { data: myProfile } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', user.id).single()
+
+      if (!myProfile?.team_id || !['captain', 'admin'].includes(myProfile.team_role ?? '')) {
+        return jsonRes({ error: 'Only captain or admin can kick' }, 403)
+      }
+
+      const { data: target } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', target_user_id).single()
+
+      if (target?.team_id !== myProfile.team_id) return jsonRes({ error: 'Not in your team' }, 400)
+      if (target.team_role === 'captain') return jsonRes({ error: 'Cannot kick captain' }, 400)
+      // Admins can only kick members, not other admins
+      if (myProfile.team_role === 'admin' && target.team_role === 'admin') {
+        return jsonRes({ error: 'Admin cannot kick another admin' }, 400)
+      }
+
+      await db.from('profiles').update({ team_id: null, team_role: 'member' }).eq('id', target_user_id)
       return jsonRes({ ok: true })
     }
 
     // ─── GET MY TEAM ───
     if (action === 'my_team') {
-      const { data: profile } = await db.from('profiles').select('team_id').eq('id', user.id).single()
+      const { data: profile } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', user.id).single()
       if (!profile?.team_id) return jsonRes({ team: null })
 
       const { data: team } = await db
@@ -94,17 +204,24 @@ Deno.serve(async (req: Request) => {
 
       if (!team) return jsonRes({ team: null })
 
-      // Get members
+      const myRole = profile.team_role ?? 'member'
+      const canSeeCode = myRole === 'captain' || myRole === 'admin'
+
+      // Get members with roles
       const { data: members } = await db
         .from('profiles')
-        .select('id, display_name, level, total_xp, current_streak')
+        .select('id, display_name, level, total_xp, current_streak, team_role')
         .eq('team_id', team.id)
         .order('total_xp', { ascending: false })
 
       return jsonRes({
         team: {
-          ...team,
-          is_captain: team.captain_id === user.id,
+          id: team.id,
+          name: team.name,
+          invite_code: canSeeCode ? team.invite_code : null,
+          captain_id: team.captain_id,
+          created_at: team.created_at,
+          my_role: myRole,
           members: members ?? [],
           member_count: members?.length ?? 0,
         },
@@ -113,7 +230,6 @@ Deno.serve(async (req: Request) => {
 
     // ─── TEAM LEADERBOARD ───
     if (action === 'leaderboard') {
-      // Get current week
       const now = new Date()
       const dow = now.getUTCDay()
       const diff = dow === 0 ? 6 : dow - 1
@@ -121,7 +237,6 @@ Deno.serve(async (req: Request) => {
       monday.setUTCDate(monday.getUTCDate() - diff)
       const weekStart = monday.toISOString().split('T')[0]
 
-      // Get all teams with members who have weekly scores
       const { data: teams } = await db.from('teams').select('id, name')
       if (!teams || teams.length === 0) return jsonRes({ entries: [] })
 
