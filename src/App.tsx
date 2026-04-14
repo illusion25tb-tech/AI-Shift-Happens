@@ -6,6 +6,8 @@ import { DashboardPage } from './pages/DashboardPage'
 import { DailyQuizPage } from './pages/DailyQuizPage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { FaqPage } from './pages/FaqPage'
+import { FreePlayPage } from './pages/FreePlayPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -35,6 +37,8 @@ export default function App() {
           <Route path="/app/daily" element={<ProtectedRoute><DailyQuizPage /></ProtectedRoute>} />
           <Route path="/app/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
           <Route path="/app/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/app/freeplay" element={<ProtectedRoute><FreePlayPage /></ProtectedRoute>} />
+          <Route path="/app/faq" element={<ProtectedRoute><FaqPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

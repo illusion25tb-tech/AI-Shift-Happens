@@ -15,7 +15,7 @@ import BadgeUnlock from '../components/BadgeUnlock'
 
 export function DailyQuizPage() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
+  useAuth()
   const { locale, t } = useLocale()
   const quiz = useQuiz()
 

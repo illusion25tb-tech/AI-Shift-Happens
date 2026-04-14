@@ -10,7 +10,7 @@ export interface LevelInfo {
 }
 
 export function getLevelForXp(xp: number): LevelInfo {
-  let matched = LEVELS[0]
+  let matched: (typeof LEVELS)[number] = LEVELS[0]
   for (const lvl of LEVELS) {
     if (xp >= lvl.xp) matched = lvl
   }

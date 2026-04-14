@@ -20,11 +20,7 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
 }
