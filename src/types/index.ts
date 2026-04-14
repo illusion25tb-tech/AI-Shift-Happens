@@ -66,6 +66,7 @@ export interface Profile {
   company_name: string | null
   created_at: string
   is_admin: boolean
+  team_id: string | null
 }
 
 export interface LeaderboardEntry {
