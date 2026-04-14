@@ -28,7 +28,16 @@ Deno.serve(async (req: Request) => {
     const db = createClient(supabaseUrl, serviceKey)
     const results: Record<string, { before: number; generated: number }> = {}
 
-    for (const category of CATEGORIES) {
+    // Support single category mode via POST body
+    let targetCategories = CATEGORIES
+    try {
+      const body = await req.json()
+      if (body?.category && CATEGORIES.includes(body.category)) {
+        targetCategories = [body.category]
+      }
+    } catch { /* no body = all categories */ }
+
+    for (const category of targetCategories) {
       // Count active questions per locale
       const { count: deCount } = await db.from('questions')
         .select('*', { count: 'exact', head: true })
