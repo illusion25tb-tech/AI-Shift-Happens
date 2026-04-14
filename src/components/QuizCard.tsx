@@ -39,13 +39,9 @@ export default function QuizCard({ question, locale, disabled, onSelect }: QuizC
 
       {/* Scenario card */}
       <div
-        className="bg-white/4 border border-bg-card-border rounded-2xl p-5 relative overflow-hidden"
+        className="bg-white/4 rounded-2xl p-5 relative overflow-hidden"
         style={{
-          borderTop: '2px solid transparent',
-          backgroundImage:
-            'linear-gradient(var(--color-bg-card), var(--color-bg-card)), linear-gradient(to right, var(--color-primary), var(--color-teal))',
-          backgroundOrigin: 'border-box',
-          backgroundClip: 'padding-box, border-box',
+          border: '1.5px solid var(--color-primary)',
         }}
       >
         <p className="text-text-primary text-base leading-relaxed">{question.scenario_text}</p>
