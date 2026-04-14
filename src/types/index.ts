@@ -63,6 +63,7 @@ export interface Profile {
   last_played_at: string | null
   invite_code: string
   team_name: string | null
+  company_name: string | null
 }
 
 export interface LeaderboardEntry {

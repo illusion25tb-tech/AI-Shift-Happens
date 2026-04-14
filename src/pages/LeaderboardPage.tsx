@@ -4,10 +4,53 @@ import { useLocale } from '../hooks/useLocale'
 import { useLeaderboard } from '../hooks/useLeaderboard'
 import LeaderboardTable from '../components/LeaderboardTable'
 import { Loader2 } from 'lucide-react'
+import type { Locale } from '../types'
+
+function CompanyLeaderboard({ entries, locale }: { entries: any[]; locale: Locale }) {
+  if (entries.length === 0) {
+    return (
+      <p className="text-text-muted text-center py-8 text-sm">
+        {locale === 'de'
+          ? 'Noch keine Firmen mit mindestens 3 Spielern.'
+          : 'No companies with at least 3 players yet.'}
+      </p>
+    )
+  }
+
+  const medals = ['', '🥇', '🥈', '🥉']
+
+  return (
+    <div className="bg-white/4 border border-white/6 rounded-2xl divide-y divide-white/6">
+      {entries.map((entry: any) => (
+        <div key={entry.company_name} className="flex items-center gap-3 px-4 py-3">
+          <span className="w-6 text-center font-mono font-bold text-sm text-text-muted">
+            {entry.rank <= 3 ? medals[entry.rank] : entry.rank}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            🏢
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold truncate">{entry.company_name}</div>
+            <div className="text-xs text-text-muted">
+              {entry.member_count} {locale === 'de' ? 'Spieler' : 'players'}
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="font-mono font-semibold text-sm text-primary">
+              ⌀ {entry.avg_xp?.toLocaleString() ?? 0}
+            </span>
+            <div className="text-[10px] text-text-muted">XP</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const TABS = [
   { key: 'weekly' as const, de: 'Diese Woche', en: 'This Week' },
   { key: 'alltime' as const, de: 'All-Time', en: 'All-Time' },
+  { key: 'company' as const, de: 'Firmen', en: 'Companies' },
   { key: 'halloffame' as const, de: 'Hall of Fame', en: 'Hall of Fame' },
 ]
 
@@ -47,6 +90,8 @@ export function LeaderboardPage() {
           </div>
         ) : lb.error ? (
           <p className="text-danger text-center py-8 text-sm">{lb.error}</p>
+        ) : lb.tab === 'company' ? (
+          <CompanyLeaderboard entries={lb.entries} locale={locale} />
         ) : (
           <LeaderboardTable entries={lb.entries} currentUserId={user?.id ?? ''} locale={locale} />
         )}

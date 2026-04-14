@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import type { LeaderboardEntry } from '../types'
 
-type Tab = 'weekly' | 'alltime' | 'halloffame'
+type Tab = 'weekly' | 'alltime' | 'halloffame' | 'company'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
