@@ -35,6 +35,17 @@ export function ProfilePage() {
   // Quiz stats
   const [stats, setStats] = useState<QuizStats | null>(null)
 
+  // Avatar upload
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [avatarUploading, setAvatarUploading] = useState(false)
+
+  // Password change (email users only)
+  const [showPasswordChange, setShowPasswordChange] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordSaving, setPasswordSaving] = useState(false)
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+
   // Account deletion
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -42,6 +53,7 @@ export function ProfilePage() {
     if (!profile) return
     setCompanyInput(profile.company_name ?? '')
     setNameInput(profile.display_name ?? '')
+    setAvatarUrl(profile.avatar_url ?? null)
 
     // Load badges
     supabase
@@ -97,6 +109,61 @@ export function ProfilePage() {
     setNameSaving(false)
     setEditingName(false)
   }, [profile, nameInput])
+
+  const uploadAvatar = useCallback(async (file: File) => {
+    if (!profile) return
+    setAvatarUploading(true)
+
+    const ext = file.name.split('.').pop() ?? 'png'
+    const path = `${profile.id}/avatar.${ext}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true })
+
+    if (uploadError) {
+      console.error('Avatar upload error:', uploadError)
+      setAvatarUploading(false)
+      return
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(path)
+
+    const publicUrl = urlData.publicUrl + '?t=' + Date.now()
+
+    await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', profile.id)
+
+    setAvatarUrl(publicUrl)
+    setAvatarUploading(false)
+  }, [profile])
+
+  const changePassword = useCallback(async () => {
+    setPasswordMsg(null)
+    if (newPassword.length < 6) {
+      setPasswordMsg({ type: 'err', text: locale === 'de' ? 'Mindestens 6 Zeichen' : 'Minimum 6 characters' })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordMsg({ type: 'err', text: locale === 'de' ? 'Passwörter stimmen nicht überein' : 'Passwords do not match' })
+      return
+    }
+    setPasswordSaving(true)
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setPasswordSaving(false)
+    if (error) {
+      setPasswordMsg({ type: 'err', text: error.message })
+    } else {
+      setPasswordMsg({ type: 'ok', text: locale === 'de' ? 'Passwort geändert!' : 'Password changed!' })
+      setNewPassword('')
+      setConfirmPassword('')
+      setShowPasswordChange(false)
+    }
+  }, [newPassword, confirmPassword, locale])
 
   const searchCompanies = useCallback(async (query: string) => {
     if (query.trim().length < 2) {
@@ -187,9 +254,31 @@ export function ProfilePage() {
       <main className="flex-1 px-5 py-6 max-w-md mx-auto w-full space-y-5">
         {/* Avatar + Name */}
         <div className="flex flex-col items-center gap-2">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white text-2xl font-bold">
-            {avatarInitial}
-          </div>
+          <label className="relative cursor-pointer group">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Avatar"
+                className="w-16 h-16 rounded-full object-cover border-2 border-primary/30 group-hover:border-primary transition-colors"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white text-2xl font-bold">
+                {avatarInitial}
+              </div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-white text-xs">{avatarUploading ? '...' : '📷'}</span>
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) uploadAvatar(file)
+              }}
+            />
+          </label>
 
           {editingName ? (
             <div className="flex items-center gap-2">
@@ -420,6 +509,53 @@ export function ProfilePage() {
             </button>
           </div>
         </div>
+
+        {/* Password Change — only for email users */}
+        {user?.app_metadata?.provider === 'email' && (
+          <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
+            <button
+              onClick={() => setShowPasswordChange(!showPasswordChange)}
+              className="text-sm font-semibold w-full text-left flex items-center justify-between"
+            >
+              <span>{locale === 'de' ? 'Passwort ändern' : 'Change password'}</span>
+              <span className="text-text-muted text-xs">{showPasswordChange ? '▲' : '▼'}</span>
+            </button>
+
+            {showPasswordChange && (
+              <div className="space-y-2 pt-1">
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder={locale === 'de' ? 'Neues Passwort (min. 6 Zeichen)' : 'New password (min. 6 chars)'}
+                  className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+                />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && changePassword()}
+                  placeholder={locale === 'de' ? 'Passwort bestätigen' : 'Confirm password'}
+                  className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+                />
+                {passwordMsg && (
+                  <p className={`text-xs ${passwordMsg.type === 'ok' ? 'text-teal' : 'text-danger'}`}>
+                    {passwordMsg.text}
+                  </p>
+                )}
+                <button
+                  onClick={changePassword}
+                  disabled={passwordSaving}
+                  className="w-full bg-primary/20 text-primary font-semibold py-2 rounded-lg text-sm hover:bg-primary/30 transition-colors disabled:opacity-50"
+                >
+                  {passwordSaving
+                    ? (locale === 'de' ? 'Speichern...' : 'Saving...')
+                    : (locale === 'de' ? 'Passwort speichern' : 'Save password')}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Sign Out */}
         <button

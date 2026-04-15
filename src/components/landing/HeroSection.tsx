@@ -1,4 +1,8 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 interface HeroSectionProps {
   onStart: () => void
@@ -7,6 +11,17 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onStart, locale }: HeroSectionProps) {
   const isDE = locale === 'de'
+  const [liveStats, setLiveStats] = useState<{ players: number; questions: number; quizzes_played: number } | null>(null)
+
+  useEffect(() => {
+    fetch(`${SUPABASE_URL}/functions/v1/get-public-stats`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    })
+      .then(r => r.json())
+      .then(d => { if (d.players) setLiveStats(d) })
+      .catch(() => {})
+  }, [])
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-5 py-16 overflow-hidden"
@@ -78,9 +93,9 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
           className="flex gap-8 justify-center pt-6 border-t border-white/6"
         >
           {[
-            { num: '10', label: isDE ? 'Kategorien' : 'Categories' },
-            { num: '3 Min', label: isDE ? 'Pro Tag' : 'Per Day' },
-            { num: '100%', label: isDE ? 'Kostenlos' : 'Free' },
+            { num: liveStats ? `${liveStats.players}+` : '10', label: isDE ? (liveStats ? 'Spieler' : 'Kategorien') : (liveStats ? 'Players' : 'Categories') },
+            { num: liveStats ? `${liveStats.questions}` : '3 Min', label: isDE ? (liveStats ? 'Fragen' : 'Pro Tag') : (liveStats ? 'Questions' : 'Per Day') },
+            { num: liveStats ? `${liveStats.quizzes_played}+` : '100%', label: isDE ? (liveStats ? 'Quizzes gespielt' : 'Kostenlos') : (liveStats ? 'Quizzes played' : 'Free') },
           ].map(item => (
             <div key={item.label} className="text-center">
               <div className="text-xl font-extrabold font-mono bg-gradient-to-r from-[#A78BFA] to-[#38BDF8] bg-clip-text text-transparent">{item.num}</div>
