@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
+import { supabase } from '../lib/supabase'
 import StreakBar from '../components/StreakBar'
 import LevelBar from '../components/LevelBar'
+import Onboarding from '../components/Onboarding'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -14,11 +16,24 @@ interface WeeklyChampion {
   week_start: string
 }
 
+interface FreezeStatus {
+  eligible: boolean
+  streak_at_risk: boolean
+  current_streak: number
+  cost_xp: number
+  can_afford: boolean
+}
+
 export function DashboardPage() {
   const { profile, signOut } = useAuth()
   const { locale, setLocale, t } = useLocale()
   const [champion, setChampion] = useState<WeeklyChampion | null>(null)
   const [showChampion, setShowChampion] = useState(true)
+  const [freezeStatus, setFreezeStatus] = useState<FreezeStatus | null>(null)
+  const [freezing, setFreezing] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => !localStorage.getItem('shift-happens-onboarded')
+  )
 
   const now = new Date()
   const weekday = now.toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', { weekday: 'long' })
@@ -50,7 +65,34 @@ export function DashboardPage() {
       } catch { /* ignore */ }
     }
     loadChampion()
+
+    // Check streak freeze eligibility
+    async function checkFreeze() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
+        const { data } = await supabase.functions.invoke('streak-freeze', {
+          body: { action: 'check' },
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (data?.streak_at_risk) setFreezeStatus(data)
+      } catch { /* ignore */ }
+    }
+    checkFreeze()
   }, [])
+
+  const useStreakFreeze = async () => {
+    setFreezing(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      await supabase.functions.invoke('streak-freeze', {
+        body: { action: 'freeze' },
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined,
+      })
+      setFreezeStatus(null)
+    } catch { /* ignore */ }
+    setFreezing(false)
+  }
 
   const quickNav = [
     { emoji: '🎮', label: t('dashboard.freePlay'), to: '/app/freeplay' },
@@ -65,6 +107,8 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-bg-base text-text-primary font-sans flex flex-col">
+      {showOnboarding && <Onboarding locale={locale} onComplete={() => setShowOnboarding(false)} />}
+
       {/* Header */}
       <header className="flex items-center justify-between px-5 py-4 border-b border-white/6">
         <span className="text-lg font-bold tracking-tight text-primary">AI-SHIFT HAPPENS</span>
@@ -107,6 +151,44 @@ export function DashboardPage() {
                 {locale === 'de' ? 'Rangliste →' : 'Rankings →'}
               </Link>
             </div>
+          </div>
+        )}
+
+        {/* Streak Freeze Banner */}
+        {freezeStatus && freezeStatus.streak_at_risk && (
+          <div className="bg-fire/10 border border-fire/20 rounded-2xl p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🥶</span>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-fire">
+                  {locale === 'de'
+                    ? `Dein ${freezeStatus.current_streak}-Tage-Streak ist in Gefahr!`
+                    : `Your ${freezeStatus.current_streak}-day streak is at risk!`}
+                </p>
+                <p className="text-xs text-text-muted">
+                  {locale === 'de'
+                    ? `${freezeStatus.cost_xp} XP ausgeben um den Streak zu retten`
+                    : `Spend ${freezeStatus.cost_xp} XP to save your streak`}
+                </p>
+              </div>
+            </div>
+            {freezeStatus.can_afford ? (
+              <button
+                onClick={useStreakFreeze}
+                disabled={freezing}
+                className="w-full bg-fire/20 text-fire font-semibold py-2 rounded-xl text-sm hover:bg-fire/30 transition-colors disabled:opacity-50"
+              >
+                {freezing
+                  ? '...'
+                  : (locale === 'de' ? `🧊 Streak Freeze (${freezeStatus.cost_xp} XP)` : `🧊 Streak Freeze (${freezeStatus.cost_xp} XP)`)}
+              </button>
+            ) : (
+              <p className="text-xs text-text-muted text-center">
+                {locale === 'de'
+                  ? `Nicht genug XP (brauchst ${freezeStatus.cost_xp}, hast ${profile?.total_xp ?? 0})`
+                  : `Not enough XP (need ${freezeStatus.cost_xp}, have ${profile?.total_xp ?? 0})`}
+              </p>
+            )}
           </div>
         )}
 
