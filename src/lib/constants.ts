@@ -131,5 +131,5 @@ export const DAILY_QUESTION_COUNT = 3
 export const BONUS_QUESTION_COUNT = 1
 export const FREEPLAY_QUESTION_COUNT = 10
 export const SPEED_BONUS_MAX = 50
-export const SPEED_BONUS_DECAY = 2.5
+export const SPEED_BONUS_DECAY = 1.67  // 50 / 30s = ~1.67 per second
 export const BONUS_MULTIPLIER = 1.5

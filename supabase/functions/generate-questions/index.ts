@@ -81,6 +81,10 @@ Each question must have:
   - One with score -100 (dangerous: data privacy risk, hallucination trust, etc.)
 - Each option has: text, score, feedbackText
 
+CRITICAL: All 3 option texts MUST be approximately the same length (15-25 words each).
+Do NOT make the correct answer longer than the others — this is a common quiz design flaw.
+The wrong answers should be equally detailed and plausible-sounding.
+
 Generate BOTH German (de) and English (en) versions of each question as pairs.
 German text must use correct umlauts (ä, ö, ü, ß).
 

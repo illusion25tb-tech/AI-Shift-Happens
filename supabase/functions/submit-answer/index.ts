@@ -3,7 +3,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 
 const STREAK_MULTIPLIERS = [1.0, 1.5, 2.0, 2.5, 3.0]
 const SPEED_BONUS_MAX = 50
-const SPEED_BONUS_DECAY = 2.5
+const SPEED_BONUS_DECAY = 1.67  // 50 / 30s timer
 const BONUS_MULTIPLIER = 1.5
 
 function getStreakMultiplier(streakCount: number, isBonus: boolean): number {

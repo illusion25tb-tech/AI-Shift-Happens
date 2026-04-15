@@ -137,7 +137,7 @@ export function DailyQuizPage() {
           bonusIndex={bonusIndex}
         />
         <TimerBar
-          maxSeconds={20}
+          maxSeconds={30}
           onTimeUpdate={onTimeUpdate}
           running={isPlaying}
         />

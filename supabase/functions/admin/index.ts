@@ -178,6 +178,77 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ id: data.id })
     }
 
+    // ─── REBALANCE OPTIONS ───
+
+    if (action === 'rebalance_options') {
+      const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')
+      if (!anthropicKey) return jsonResponse({ error: 'ANTHROPIC_API_KEY not set' }, 500)
+
+      const batchSize = 8
+      const { data: allQ } = await db.from('questions').select('id, locale, scenario_text, options').eq('is_active', true)
+      if (!allQ) return jsonResponse({ error: 'No questions' }, 500)
+
+      const imbalanced = allQ.filter(q => {
+        const opts = q.options as Array<{ text: string; score: number; feedbackText: string }>
+        if (opts.length !== 3) return false
+        const correct = opts.find(o => o.score === 100)
+        const wrong = opts.filter(o => o.score !== 100)
+        if (!correct || wrong.length === 0) return false
+        const cl = correct.text.length
+        const awl = wrong.reduce((s, o) => s + o.text.length, 0) / wrong.length
+        return awl > 0 && cl > awl * 1.5
+      })
+
+      const batch = imbalanced.slice(0, batchSize)
+      if (batch.length === 0) return jsonResponse({ fixed: 0, remaining: 0 })
+
+      const prompt = `Rewrite the answer options for these ${batch.length} quiz questions.
+RULES:
+- Keep the EXACT same meaning and score for each option
+- Keep feedbackText unchanged
+- Make ALL 3 options approximately the same length (15-25 words each)
+- If correct answer (score=100) is too long, shorten while keeping the key insight
+- If wrong answers are too short, add plausible detail
+- Maintain the same language (de or en), use correct umlauts
+
+Input:
+${JSON.stringify(batch.map(q => ({ id: q.id, locale: q.locale, options: q.options })), null, 0)}
+
+Return JSON array with same structure but rebalanced option texts. ONLY JSON, no markdown.`
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+      })
+
+      if (!response.ok) return jsonResponse({ error: 'Claude API error', status: response.status }, 500)
+
+      const result = await response.json()
+      const text = result.content?.[0]?.text ?? ''
+      let parsed: Array<{ id: string; options: Array<{ text: string; score: number; feedbackText: string }> }>
+      try {
+        parsed = JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim())
+      } catch {
+        return jsonResponse({ error: 'JSON parse error' }, 500)
+      }
+
+      let fixed = 0
+      for (const item of parsed) {
+        if (!item.id || !item.options || item.options.length !== 3) continue
+        const orig = batch.find(q => q.id === item.id)
+        if (!orig) continue
+        const origScores = (orig.options as any[]).map(o => o.score).sort()
+        const newScores = item.options.map(o => o.score).sort()
+        if (JSON.stringify(origScores) !== JSON.stringify(newScores)) continue
+
+        await db.from('questions').update({ options: item.options }).eq('id', item.id)
+        fixed++
+      }
+
+      return jsonResponse({ fixed, remaining: imbalanced.length - fixed, total_imbalanced: imbalanced.length })
+    }
+
     return jsonResponse({ error: `Unknown action: ${action}` }, 400)
 
   } catch (err) {
