@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import LevelBar from '../components/LevelBar'
 import BadgeGrid from '../components/BadgeGrid'
 import { CATEGORY_LABELS } from '../lib/constants'
+import { canNotify, notificationPermission, requestNotificationPermission, isReminderEnabled, setReminderEnabled, scheduleLocalReminder } from '../lib/notifications'
 import type { CategoryId } from '../lib/constants'
 
 interface QuizStats {
@@ -365,6 +366,41 @@ export function ProfilePage() {
           <h2 className="text-sm font-bold mb-3">🎖️ {t('profile.badgesEarned')}</h2>
           <BadgeGrid earnedBadges={earnedBadges} locale={locale} />
         </div>
+
+        {/* Notifications */}
+        {canNotify() && (
+          <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <span className="text-sm font-semibold">{locale === 'de' ? 'Erinnerungen' : 'Reminders'}</span>
+              <p className="text-[10px] text-text-muted mt-0.5">
+                {locale === 'de' ? 'Daily Quiz Erinnerung (Mo-Fr)' : 'Daily quiz reminder (Mon-Fri)'}
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                if (!isReminderEnabled()) {
+                  const granted = notificationPermission() === 'granted' || await requestNotificationPermission()
+                  if (granted) {
+                    setReminderEnabled(true)
+                    scheduleLocalReminder()
+                  }
+                } else {
+                  setReminderEnabled(false)
+                }
+                // Force re-render
+                setCompanySaved(prev => !prev)
+                setTimeout(() => setCompanySaved(prev => !prev), 0)
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                isReminderEnabled()
+                  ? 'bg-primary text-white'
+                  : 'bg-white/6 text-text-muted'
+              }`}
+            >
+              {isReminderEnabled() ? (locale === 'de' ? 'An' : 'On') : (locale === 'de' ? 'Aus' : 'Off')}
+            </button>
+          </div>
+        )}
 
         {/* Language Toggle */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">

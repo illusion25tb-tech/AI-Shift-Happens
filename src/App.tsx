@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import { registerServiceWorker, scheduleLocalReminder, isReminderEnabled } from './lib/notifications'
 import { LandingPage } from './pages/LandingPage'
 import AuthScreen from './components/AuthScreen'
 import { DashboardPage } from './pages/DashboardPage'
@@ -31,6 +33,11 @@ function LoginPage() {
 }
 
 export default function App() {
+  useEffect(() => {
+    registerServiceWorker()
+    if (isReminderEnabled()) scheduleLocalReminder()
+  }, [])
+
   return (
     <BrowserRouter basename="/mindset-shift">
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
