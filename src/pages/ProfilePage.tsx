@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import LevelBar from '../components/LevelBar'
 import BadgeGrid from '../components/BadgeGrid'
 import { CATEGORY_LABELS } from '../lib/constants'
+import ShareStatsCard from '../components/ShareStatsCard'
 import { canNotify, notificationPermission, requestNotificationPermission, isReminderEnabled, setReminderEnabled, scheduleLocalReminder } from '../lib/notifications'
 import type { CategoryId } from '../lib/constants'
 
@@ -389,6 +390,17 @@ export function ProfilePage() {
             )}
           </div>
         )}
+
+        {/* Share Stats Card */}
+        <ShareStatsCard
+          displayName={profile.display_name ?? 'Player'}
+          totalXp={profile.total_xp ?? 0}
+          level={profile.level ?? 1}
+          longestStreak={profile.longest_streak ?? 0}
+          quizCount={stats?.totalQuizzes ?? 0}
+          accuracy={accuracy ?? 0}
+          locale={locale}
+        />
 
         {/* Company */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-2">
