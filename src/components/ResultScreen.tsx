@@ -114,19 +114,31 @@ export default function ResultScreen({
         </div>
       )}
 
-      {/* LinkedIn Share */}
+      {/* LinkedIn Share with pre-filled text */}
       <button
         onClick={() => {
-          window.open(
-            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://tbai.com.de/mindset-shift/')}`,
-            '_blank',
-            'width=600,height=400'
-          )
+          const pct = correctCount > 0 ? Math.round((correctCount / answers.length) * 100) : 0
+          const postText = locale === 'de'
+            ? `🧠 Gerade mein AI-Mindset getestet: ${score} Punkte, ${pct}% richtig!\n\nAI-Shift Happens — das tägliche KI-Quiz. Wie AI-ready bist du?\n\n👉 `
+            : `🧠 Just tested my AI mindset: ${score} points, ${pct}% correct!\n\nAI-Shift Happens — the daily AI quiz. How AI-ready are you?\n\n👉 `
+          const url = 'https://tbai.com.de/mindset-shift/'
+
+          // Copy post text to clipboard, then open LinkedIn
+          navigator.clipboard.writeText(postText + url).then(() => {
+            window.open(
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+              '_blank',
+              'width=600,height=400'
+            )
+          })
         }}
-        className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 mb-3"
+        className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
       >
         🔗 {t('result.shareLinkedin')}
       </button>
+      <p className="text-[10px] text-text-muted text-center">
+        {locale === 'de' ? 'Post-Text wird in die Zwischenablage kopiert' : 'Post text copied to clipboard'}
+      </p>
 
       {/* Back button */}
       <button

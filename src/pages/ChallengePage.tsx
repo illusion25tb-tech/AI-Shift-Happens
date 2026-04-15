@@ -168,12 +168,19 @@ export function ChallengePage() {
         const scoreField = challengeInfo.is_challenger ? 'challenger_score' : 'challenged_score'
         const updateData: Record<string, any> = { [scoreField]: totalScore }
 
-        // If opponent already played, mark challenge as completed
+        // If opponent already played, mark challenge as completed + check winner
         const opponentScore = challengeInfo.is_challenger
           ? challengeInfo.challenged_score
           : challengeInfo.challenger_score
         if (opponentScore !== null) {
           updateData.completed_at = new Date().toISOString()
+
+          // Award duelist badge if we won
+          if (totalScore > opponentScore) {
+            supabase.from('user_badges')
+              .upsert({ user_id: user?.id, badge_type: 'duelist' }, { onConflict: 'user_id,badge_type' })
+              .then(() => {})
+          }
         }
 
         // Update challenged_id if we're the opponent

@@ -1,0 +1,3452 @@
+[
+  {
+    "id": "DE-PA-001",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du möchtest, dass die KI einen Blogpost im Stil deines Unternehmens schreibt. Der Stil ist schwer zu beschreiben.",
+    "mindsetTip": "Few-Shot Prompting: Zeige der KI Beispiele, statt nur zu beschreiben.",
+    "options": [
+      {
+        "text": "Schreibe einen professionellen Blogpost über unser neues Produkt.",
+        "score": 0,
+        "feedbackText": "Zu generisch. Professionell kann alles bedeuten."
+      },
+      {
+        "text": "Kopiere 3 alte Blogposts als Beispiele und sage: Analysiere den Stil und schreibe im gleichen Ton.",
+        "score": 100,
+        "feedbackText": "Perfekt! Few-Shot Prompting mit echten Beispielen liefert die besten Ergebnisse."
+      },
+      {
+        "text": "Kopiere den gesamten Styleguide in den Prompt.",
+        "score": -20,
+        "feedbackText": "Vorsicht! Ein ganzer Styleguide überfordert das Kontextfenster und kann sensible Infos enthalten."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-002",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du brauchst eine E-Mail-Vorlage für Kundenbeschwerden. Die KI liefert jedes Mal unterschiedliche Ergebnisse.",
+    "mindsetTip": "Definiere Format, Ton und Struktur explizit im Prompt für konsistente Ausgaben.",
+    "options": [
+      {
+        "text": "Schreibe eine E-Mail-Vorlage für Kundenbeschwerden.",
+        "score": 0,
+        "feedbackText": "Funktioniert, aber ohne Vorgaben variiert das Ergebnis stark."
+      },
+      {
+        "text": "Definiere: Betreff-Zeile, 3 Absätze (Empathie, Lösung, Nächste Schritte), formeller Ton, max. 150 Wörter.",
+        "score": 100,
+        "feedbackText": "Exzellent! Strukturvorgaben führen zu konsistenten, sofort nutzbaren Ergebnissen."
+      },
+      {
+        "text": "Lass die KI mehrere Varianten erstellen und wähle die beste aus.",
+        "score": -20,
+        "feedbackText": "Ineffizient. Definiere das Format direkt, statt durch Iteration zu suchen."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-003",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du willst komplexe juristische Vertragsklauseln zusammenfassen. Die Ausgaben sind oft zu lang.",
+    "mindsetTip": "Weise der KI eine Rolle zu und definiere die Zielgruppe explizit.",
+    "options": [
+      {
+        "text": "Fasse diese Vertragsklauseln zusammen.",
+        "score": 0,
+        "feedbackText": "Zu vage. Die KI weiß nicht, wie detailliert die Zusammenfassung sein soll."
+      },
+      {
+        "text": "Gib sensible Vertragsdaten ohne Anonymisierung in den Prompt ein.",
+        "score": -20,
+        "feedbackText": "Kritisches Datenschutzrisiko! Vertragsdaten können bei Cloud-KI-Diensten gespeichert werden."
+      },
+      {
+        "text": "Agiere als Anwalt, der Laien erklärt. Fasse in 3 Bullet Points zusammen, maximal 20 Wörter je Punkt.",
+        "score": 100,
+        "feedbackText": "Perfekt! Rolle + Zielgruppe + Format = präzise, nutzbare Ausgabe."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-004",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Dein Team nutzt KI für verschiedene Aufgaben, aber jeder schreibt Prompts anders – die Qualität schwankt stark.",
+    "mindsetTip": "Erstelle Prompt-Templates mit festen Variablen, die dein Team befüllen kann.",
+    "options": [
+      {
+        "text": "Jeder schreibt Prompts nach eigenem Ermessen – Hauptsache das Ergebnis stimmt.",
+        "score": -20,
+        "feedbackText": "Ohne Standards entstehen ineffiziente Workflows und inkonsistente Qualität."
+      },
+      {
+        "text": "Erstelle eine Prompt-Bibliothek mit Templates für häufige Aufgaben und schulle das Team.",
+        "score": 100,
+        "feedbackText": "Ausgezeichnet! Standardisierte Prompts steigern Qualität und Effizienz im gesamten Team."
+      },
+      {
+        "text": "Nutze nur vorgefertigte KI-Tools ohne eigene Prompts.",
+        "score": 0,
+        "feedbackText": "Sicher, aber du verzichtest auf die Flexibilität individueller Prompts."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-005",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du fragst die KI nach einer Marktanalyse, bekommst aber Antworten, die oberflächlich und zu allgemein sind.",
+    "mindsetTip": "Chain-of-Thought: Bitte die KI, schrittweise vorzugehen und ihre Überlegungen offenzulegen.",
+    "options": [
+      {
+        "text": "Erstelle eine Marktanalyse für unsere Branche.",
+        "score": 0,
+        "feedbackText": "Zu vage – keine Branche, kein Zeitraum, keine Zieldimension angegeben."
+      },
+      {
+        "text": "Lass uns schrittweise vorgehen: 1. Definiere den Markt, 2. Analysiere 3 Hauptwettbewerber, 3. Identifiziere 3 Chancen.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Strukturiertes Chain-of-Thought-Prompting liefert tiefere Analysen."
+      },
+      {
+        "text": "Gib alle Umsatzdaten des Unternehmens in den Prompt, damit die KI besser analysieren kann.",
+        "score": -20,
+        "feedbackText": "Datenschutzrisiko! Interne Finanzdaten gehören nicht in externe KI-Systeme."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-006",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du benutzt einen langen System-Prompt für Kundensupport, aber die KI ignoriert manchmal wichtige Regeln.",
+    "mindsetTip": "Platziere kritische Anweisungen am Anfang und Ende – diese Positionen werden stärker gewichtet.",
+    "options": [
+      {
+        "text": "Schreibe alle Regeln in einem langen Absatz in der Mitte des Prompts.",
+        "score": -20,
+        "feedbackText": "Mittlere Textteile werden von KI-Modellen oft weniger gewichtet – kritische Regeln gehen verloren."
+      },
+      {
+        "text": "Platziere die wichtigsten Regeln am Anfang als nummerierte Liste und wiederhole die kritischste am Ende.",
+        "score": 100,
+        "feedbackText": "Perfekt! Anfang und Ende haben die höchste Aufmerksamkeit des Modells."
+      },
+      {
+        "text": "Nutze ausschließlich kurze Prompts ohne Systemanweisungen.",
+        "score": 0,
+        "feedbackText": "Für einfache Aufgaben okay, aber Kundensupport braucht klare Rahmenbedingungen."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-007",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du willst mit KI kreative Ideen generieren, aber die Ausgaben sind immer vorhersehbar und konservativ.",
+    "mindsetTip": "Bitte explizit um unkonventionelle, überraschende oder provokative Ideen.",
+    "options": [
+      {
+        "text": "Gib mir kreative Ideen für unsere nächste Kampagne.",
+        "score": 0,
+        "feedbackText": "Ohne Vorgabe bleibt die KI bei sicheren, generischen Ideen."
+      },
+      {
+        "text": "Gib mir 5 provokative, unkonventionelle Ideen – absurd ist erlaubt, Hauptsache originell.",
+        "score": 100,
+        "feedbackText": "Sehr gut! Explizite Erlaubnis zum Unkonventionellen öffnet den kreativen Raum der KI."
+      },
+      {
+        "text": "Nutze für Kreativaufgaben keine KI – das ist nicht ihre Stärke.",
+        "score": -20,
+        "feedbackText": "Falsch. KI ist ein exzellenter Brainstorming-Partner, wenn man sie richtig brieft."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-008",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du möchtest, dass die KI bei einer Analyse keine Annahmen trifft, sondern nachfragt, wenn Informationen fehlen.",
+    "mindsetTip": "Explizite Metaanweisungen steuern das Verhalten der KI bei Informationslücken.",
+    "options": [
+      {
+        "text": "Analysiere diese Daten und erstelle einen Bericht.",
+        "score": 0,
+        "feedbackText": "Ohne Anweisung füllt die KI Lücken mit Annahmen – das kann zu falschen Schlüssen führen."
+      },
+      {
+        "text": "Wenn dir Informationen fehlen, mache keine Annahmen – stelle stattdessen konkrete Rückfragen.",
+        "score": 100,
+        "feedbackText": "Ausgezeichnet! Diese Metaanweisung verhindert halluzinierte Annahmen in kritischen Analysen."
+      },
+      {
+        "text": "Gib der KI alle verfügbaren Unternehmensdaten, damit sie keine Lücken hat.",
+        "score": -20,
+        "feedbackText": "Datenschutzproblem! Nicht alle Daten sind für externe KI-Systeme geeignet."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-009",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du möchtest von der KI eine Ja/Nein-Entscheidung, bekommst aber immer lange Aufsätze.",
+    "mindsetTip": "Formatvorgaben im Prompt zwingen die KI zu präzisen, strukturierten Antworten.",
+    "options": [
+      {
+        "text": "Beantworte diese Frage mit Ja oder Nein, gefolgt von maximal einem Satz Begründung.",
+        "score": 100,
+        "feedbackText": "Perfekt! Klare Formatvorgabe = klare Antwort. Spart Zeit und reduziert Rauschen."
+      },
+      {
+        "text": "Frage einfach und hoffe auf eine kurze Antwort.",
+        "score": 0,
+        "feedbackText": "KI-Modelle neigen zu ausführlichen Antworten, wenn keine Formatvorgabe gesetzt wird."
+      },
+      {
+        "text": "Akzeptiere die langen Antworten – mehr Information ist immer besser.",
+        "score": -20,
+        "feedbackText": "In Entscheidungssituationen erhöht Informationsüberflutung die kognitive Last, nicht den Nutzen."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-010",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Ein Kollege hat einen Prompt, der für ihn hervorragend funktioniert. Du kopierst ihn, aber bei dir kommen schlechte Ergebnisse.",
+    "mindsetTip": "Prompts sind kontextabhängig – Aufgabe, Tool und Zielgruppe bestimmen den Erfolg.",
+    "options": [
+      {
+        "text": "Benutze den Prompt unverändert – vielleicht liegt der Fehler woanders.",
+        "score": -20,
+        "feedbackText": "Blindes Kopieren ohne Anpassung ist eine häufige Fehlerquelle. Kontext ist entscheidend."
+      },
+      {
+        "text": "Analysiere, was am Prompt funktioniert, und passe ihn an deinen spezifischen Kontext an.",
+        "score": 100,
+        "feedbackText": "Richtig! Prompt-Engineering ist keine Kopierübung, sondern eine Adaptionsleistung."
+      },
+      {
+        "text": "Wechsle zu einem anderen KI-Tool.",
+        "score": 0,
+        "feedbackText": "Das Tool ist oft nicht das Problem – der Prompt und der Kontext schon."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-011",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du nutzt KI, um Code zu debuggen. Die KI liefert Lösungen, erklärt aber nicht, was das eigentliche Problem war.",
+    "mindsetTip": "Bitte explizit um eine Erklärung des Fehlers, bevor die Lösung präsentiert wird.",
+    "options": [
+      {
+        "text": "Finde den Fehler in diesem Code und korrigiere ihn.",
+        "score": 0,
+        "feedbackText": "Du bekommst eine Lösung, lernst aber nicht aus dem Fehler."
+      },
+      {
+        "text": "Erkläre zuerst, was der Fehler ist und warum er auftritt, dann zeige die korrigierte Version.",
+        "score": 100,
+        "feedbackText": "Perfekt! Erklärung vor Lösung fördert das Verständnis und verhindert denselben Fehler künftig."
+      },
+      {
+        "text": "Lass die KI den Code komplett neu schreiben.",
+        "score": -20,
+        "feedbackText": "Unnötig aufwändig und du verlierst den Lerneffekt aus dem ursprünglichen Fehler."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-012",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du arbeitest an einem langen Projekt und nutzt KI über mehrere Sitzungen. Jedes Mal musst du den Kontext neu erklären.",
+    "mindsetTip": "Erstelle eine kompakte Kontext-Zusammenfassung für jede neue Sitzung.",
+    "options": [
+      {
+        "text": "Erkläre den Kontext jedes Mal ausführlich von vorne.",
+        "score": 0,
+        "feedbackText": "Funktioniert, kostet aber viel Zeit und Tokens."
+      },
+      {
+        "text": "Erstelle eine 5-Zeilen-Kontext-Karte (Projekt, Ziel, Status, Ton, Einschränkungen) und füge sie immer ein.",
+        "score": 100,
+        "feedbackText": "Sehr effizient! Eine standardisierte Kontext-Karte spart Zeit und liefert konsistente Ergebnisse."
+      },
+      {
+        "text": "Arbeite immer in derselben Sitzung, ohne sie zu schließen.",
+        "score": -20,
+        "feedbackText": "Nicht praktikabel für längere Projekte – bei technischen Problemen verlierst du alles."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-013",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du testest verschiedene KI-Antworten für eine wichtige Präsentation und willst die beste auswählen.",
+    "mindsetTip": "A/B-Testing von Prompts mit minimalen Variationen hilft, systematisch den besten Ansatz zu finden.",
+    "options": [
+      {
+        "text": "Führe 5 verschiedene Prompts gleichzeitig aus und wähle intuitiv die beste Antwort.",
+        "score": 0,
+        "feedbackText": "Okay, aber ohne systematischen Vergleich lernst du nicht, welcher Prompt-Typ besser ist."
+      },
+      {
+        "text": "Teste zwei Prompt-Varianten (z.B. mit/ohne Rollenanweisung), dokumentiere und iteriere.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Systematisches Prompt-Testing führt zu dauerhaft besseren Ergebnissen."
+      },
+      {
+        "text": "Nutze den ersten Prompt, der eine akzeptable Antwort liefert.",
+        "score": -20,
+        "feedbackText": "Du verpasst die Chance auf optimale Ergebnisse und lernst nichts über deine Prompting-Qualität."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-014",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du möchtest, dass die KI einen Text in einem sehr spezifischen Schreibstil verfasst, den du schwer beschreiben kannst.",
+    "mindsetTip": "Negative Beispiele (was der Text NICHT sein soll) sind oft effektiver als positive Beschreibungen.",
+    "options": [
+      {
+        "text": "Schreibe wie Ernest Hemingway.",
+        "score": 0,
+        "feedbackText": "Für literarische Stile funktioniert das – für Unternehmensstile ist es zu vage."
+      },
+      {
+        "text": "Schreibe NICHT wie ein Unternehmensberater, KEIN Fachjargon, KEINE Passivkonstruktionen – klar und direkt.",
+        "score": 100,
+        "feedbackText": "Ausgezeichnet! Negative Constraints definieren oft klarer als positive Beschreibungen."
+      },
+      {
+        "text": "Lasse den Text unbearbeitet und passe ihn manuell an.",
+        "score": -20,
+        "feedbackText": "Ineffizient. Du verlierst den Vorteil der KI-Geschwindigkeit durch manuelle Nacharbeit."
+      }
+    ]
+  },
+  {
+    "id": "DE-PA-015",
+    "category": "Prompt-Architektur",
+    "scenarioText": "Du willst einen mehrsprachigen Marketingtext erstellen. Bisher nutzt du zwei getrennte Prompts für DE und EN.",
+    "mindsetTip": "Mehrsprachige Aufgaben sind effizienter in einem einzigen Prompt formuliert.",
+    "options": [
+      {
+        "text": "Erstelle DE und EN in separaten Prompts für maximale Kontrolle.",
+        "score": 0,
+        "feedbackText": "Funktioniert, aber zweistufig. Kontext geht zwischen den Prompts verloren."
+      },
+      {
+        "text": "Schreibe einen deutschen Marketingtext und liefere sofort auch die englische Version – gleicher Ton, gleiche Zielgruppe.",
+        "score": 100,
+        "feedbackText": "Optimal! Ein Prompt, zwei Outputs – effizienter und konsistenter in Ton und Stil."
+      },
+      {
+        "text": "Schreibe den Text auf Englisch und übersetze ihn selbst ins Deutsche.",
+        "score": -20,
+        "feedbackText": "Das kostet unnötig Zeit und du verlierst den kulturellen Kontext des deutschen Originals."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-001",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du brauchst 20 Ideen für eine Marketingkampagne. Die ersten Ergebnisse der KI sind vorhersehbar und generisch.",
+    "mindsetTip": "Divergentes Denken: Bitte die KI um absurde Ideen – die besten Konzepte entstehen an den Rändern.",
+    "options": [
+      {
+        "text": "Schreibe: Gib mir 20 Marketingideen für unser Produkt.",
+        "score": 0,
+        "feedbackText": "Funktioniert, aber die Ideen werden generisch. Ohne Kontext keine echte Kreativität."
+      },
+      {
+        "text": "Beschreibe Zielgruppe, Ton und Constraints, dann bitte um 10 konventionelle und 10 wilde Ideen.",
+        "score": 100,
+        "feedbackText": "Perfekt! Der Mix aus konventionell und wild plus klarer Kontext liefert die besten Ergebnisse."
+      },
+      {
+        "text": "Nutze nur eigene Ideen – KI ist nicht wirklich kreativ.",
+        "score": -20,
+        "feedbackText": "KI ist ein exzellenter Brainstorming-Partner. Diese Einstellung verschenkt enormes Potenzial."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-002",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Dein Team steckt bei der Produktentwicklung fest. Alle internen Ideen drehen sich im Kreis.",
+    "mindsetTip": "KI kann als externer Perspektivgeber fungieren – bitte sie, aus der Sicht deiner Kunden zu denken.",
+    "options": [
+      {
+        "text": "Frage die KI nach allgemeinen Produktideen.",
+        "score": 0,
+        "feedbackText": "Zu allgemein. Ohne Kontext liefert die KI generische Ideen ohne echten Mehrwert."
+      },
+      {
+        "text": "Beschreibe das Problem aus Kundensicht und bitte die KI, wie ein frustrierter Nutzer zu denken.",
+        "score": 100,
+        "feedbackText": "Exzellent! Perspektivwechsel durch Rollenanweisung erzeugt nutzerzentrierte Ideen."
+      },
+      {
+        "text": "Veröffentliche das Problem in sozialen Netzwerken für Crowdsourcing-Ideen.",
+        "score": -20,
+        "feedbackText": "Interne Produktprobleme sollten nicht öffentlich diskutiert werden – Wettbewerbsvorteil geht verloren."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-003",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du sollst in einer Stunde ein Konzept für einen neuen Service-Workshop präsentieren. Dir fehlt ein roter Faden.",
+    "mindsetTip": "KI als Strukturierungs-Assistent: Gib grobe Ideen ein und lass die KI eine Struktur ableiten.",
+    "options": [
+      {
+        "text": "Bitte die KI um eine vollständige Workshop-Agenda ohne weitere Vorgaben.",
+        "score": 0,
+        "feedbackText": "Liefert eine generische Struktur ohne Bezug zu deinem spezifischen Kontext."
+      },
+      {
+        "text": "Teile deine 3 Hauptgedanken mit und bitte die KI, daraus eine 60-Minuten-Agenda mit Zeitplanung abzuleiten.",
+        "score": 100,
+        "feedbackText": "Sehr gut! Deine Ideen als Basis + KI-Struktur = personalisiertes, umsetzungsfähiges Konzept."
+      },
+      {
+        "text": "Nutze eine PowerPoint-Vorlage aus dem Internet als Grundlage.",
+        "score": -20,
+        "feedbackText": "Vorlagen ohne Anpassung wirken unprofessionell und passen selten zum spezifischen Kontext."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-004",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Dein Team soll einen neuen Firmennamen für eine Tochtergesellschaft finden. Alle Vorschläge sind zu ähnlich.",
+    "mindsetTip": "Kombinationsm-Prompts: Lass KI unerwartete Wortfelder kombinieren für originelle Namen.",
+    "options": [
+      {
+        "text": "Generiere 10 Firmennamen für eine IT-Beratung.",
+        "score": 0,
+        "feedbackText": "Zu generisch – du bekommst Standard-Namen wie TechConsult oder DigiSolutions."
+      },
+      {
+        "text": "Kombiniere Begriffe aus Architektur und Meeresbiologie zu einprägsamen 1-2 Wort-Namen für eine IT-Firma.",
+        "score": 100,
+        "feedbackText": "Kreativ und effektiv! Unerwartete Wortfeld-Kombinationen erzeugen einzigartige Namen."
+      },
+      {
+        "text": "Beauftrage eine teure Naming-Agentur.",
+        "score": -20,
+        "feedbackText": "KI kann in Minuten Hunderte Optionen liefern. Eine Agentur kostet Wochen und viel Geld."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-005",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du willst eine originelle Metapher für digitale Transformation finden. Alle bisherigen Ideen sind abgedroschen.",
+    "mindsetTip": "Bitte die KI, Metaphern aus unerwarteten Domänen (Kochen, Sport, Natur) zu übertragen.",
+    "options": [
+      {
+        "text": "Finde eine Metapher für digitale Transformation.",
+        "score": 0,
+        "feedbackText": "Du bekommst wahrscheinlich Reise, Schmetterling oder Welle – alles bereits überstrapaziert."
+      },
+      {
+        "text": "Beschreibe digitale Transformation als Kochrezept – was sind die Zutaten, wann ist das Gericht fertig?",
+        "score": 100,
+        "feedbackText": "Hervorragend! Domänenfremde Metaphern überraschen und bleiben in Erinnerung."
+      },
+      {
+        "text": "Verzichte auf Metaphern und bleibe bei faktenbasierter Kommunikation.",
+        "score": -20,
+        "feedbackText": "Metaphern sind kognitive Brücken. Auf sie zu verzichten macht Kommunikation weniger einprägsam."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-006",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Dein Marketing-Team braucht täglich frische Social-Media-Ideen. Der manuelle Prozess kostet 2 Stunden pro Tag.",
+    "mindsetTip": "Erstelle einen KI-Workflow mit Vorlagen, der aus wenigen Inputs automatisch Ideen generiert.",
+    "options": [
+      {
+        "text": "Nutze KI ad hoc, wenn Ideen gebraucht werden.",
+        "score": 0,
+        "feedbackText": "Ad-hoc-Nutzung ohne System bleibt zeitaufwändig und inkonsistent."
+      },
+      {
+        "text": "Erstelle eine Prompt-Vorlage mit Thema, Zielgruppe und Ton – täglich in 10 Minuten 10 Ideen generieren.",
+        "score": 100,
+        "feedbackText": "Exzellent! Systematisierte KI-Nutzung spart Zeit und steigert die Konsistenz erheblich."
+      },
+      {
+        "text": "Kaufe teure Social-Media-Content-Tools.",
+        "score": -20,
+        "feedbackText": "Unnötige Ausgaben. Ein gutes Prompt-Template mit Standard-KI löst das Problem kosteneffizient."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-007",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du entwickelst ein neues Produkt und willst verstehen, wie potenzielle Nutzer über das Problem denken.",
+    "mindsetTip": "KI kann Kundenperspektiven simulieren – lass sie die Gedanken verschiedener Nutzertypen artikulieren.",
+    "options": [
+      {
+        "text": "Frage Kollegen im Büro nach ihrer Meinung zum Produkt.",
+        "score": -20,
+        "feedbackText": "Kollegen sind keine repräsentative Zielgruppe und neigen zu Höflichkeits-Bias."
+      },
+      {
+        "text": "Bitte die KI, als drei verschiedene Nutzertypen zu sprechen und ihr Problem in eigenen Worten zu beschreiben.",
+        "score": 100,
+        "feedbackText": "Sehr gut! KI-Personas sind kein Ersatz für echte Nutzerforschung, aber exzellent für erste Insights."
+      },
+      {
+        "text": "Führe sofort teure Marktforschungsstudien durch.",
+        "score": 0,
+        "feedbackText": "Marktforschung ist wertvoll, aber in frühen Phasen sind KI-Personas schneller und günstiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-008",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du sollst einen Artikel schreiben, leidest aber unter einer klassischen Schreibblockade.",
+    "mindsetTip": "KI überwindet Schreibblockaden durch Anfangshilfe – der erste Satz ist oft der schwerste.",
+    "options": [
+      {
+        "text": "Bitte die KI, den gesamten Artikel zu schreiben und veröffentliche ihn direkt.",
+        "score": -20,
+        "feedbackText": "Ohne deine Perspektive und Überarbeitung wirkt der Artikel generisch und unpersönlich."
+      },
+      {
+        "text": "Bitte die KI um 5 mögliche Einstiegssätze, wähle einen aus und schreibe von dort weiter.",
+        "score": 100,
+        "feedbackText": "Ideal! KI als Anlasser, du als Fahrer – authentisch und effizient zugleich."
+      },
+      {
+        "text": "Warte auf Inspiration und schreibe erst, wenn die Ideen kommen.",
+        "score": 0,
+        "feedbackText": "Manchmal klappt das, aber als Strategie ist Warten ineffizient und unzuverlässig."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-009",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Dein Team will einen internen Newsletter gestalten. Bisher war er trocken und wurde kaum gelesen.",
+    "mindsetTip": "Storytelling-Prompts: Bitte KI, trockene Fakten in kleine Geschichten zu verwandeln.",
+    "options": [
+      {
+        "text": "Fasse die wichtigsten Unternehmensnews in einem Newsletter zusammen.",
+        "score": 0,
+        "feedbackText": "Das Ergebnis wird informativ, aber weiterhin trocken und wenig lesenswert."
+      },
+      {
+        "text": "Verwandle diese drei Unternehmensnews in kurze Geschichten aus der Perspektive eines betroffenen Mitarbeiters.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Storytelling macht Newsletter lesbarer und erhöht die Engagement-Rate signifikant."
+      },
+      {
+        "text": "Verschicke keine internen Newsletter – E-Mail-Overload ist ein Problem.",
+        "score": -20,
+        "feedbackText": "Interne Kommunikation ist wichtig. Statt abzuschaffen, lohnt es sich, sie zu verbessern."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-010",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du willst ein Training zu KI-Grundlagen entwickeln. Der klassische Vortrag-Ansatz erscheint dir langweilig.",
+    "mindsetTip": "Interaktive Formate wie Szenarien sind lernwirksamer als Frontalunterricht.",
+    "options": [
+      {
+        "text": "Erstelle Folien für einen 60-Minuten-Vortrag über KI-Grundlagen.",
+        "score": 0,
+        "feedbackText": "Folien sind okay, aber Vorträge allein führen selten zu dauerhaftem Lernen."
+      },
+      {
+        "text": "Erstelle 10 Praxisszenarien, bei denen Teilnehmer entscheiden müssen, wie sie KI einsetzen würden.",
+        "score": 100,
+        "feedbackText": "Exzellent! Szenariobasiertes Lernen ist nachweislich effektiver als passives Zuhören."
+      },
+      {
+        "text": "Kaufe fertiges KI-Training von einem externen Anbieter.",
+        "score": -20,
+        "feedbackText": "Teuer und oft nicht auf eure spezifischen Arbeitsweisen zugeschnitten."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-011",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du brauchst einen Claim für ein neues Produkt. Alle bisherigen Vorschläge klingen zu ähnlich wie Wettbewerber.",
+    "mindsetTip": "Kontra-intuitives Prompting: Bitte KI, das Gegenteil des Erwarteten zu formulieren.",
+    "options": [
+      {
+        "text": "Erstelle 5 Produkt-Claims für unser Produkt.",
+        "score": 0,
+        "feedbackText": "Standard-Anfrage liefert Standard-Ergebnisse – ähnlich wie bei den Wettbewerbern."
+      },
+      {
+        "text": "Erstelle Claims, die absichtlich provozieren oder das Gegenteil des Erwarteten sagen – dann zeige die stärksten.",
+        "score": 100,
+        "feedbackText": "Perfekt! Kontra-intuitives Prompting bricht aus dem Muster aus und erzeugt einprägsame Differenzierung."
+      },
+      {
+        "text": "Beauftrage eine Werbeagentur für den Claim.",
+        "score": -20,
+        "feedbackText": "Kostenintensiv. KI-gestütztes Ideation in Minuten liefert vergleichbare Ausgangsideen."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-012",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du planst ein Team-Event zum Thema Innovation. Das Budget ist knapp, der Wow-Faktor wichtig.",
+    "mindsetTip": "KI kann unerwartete Event-Konzepte kombinieren – Kontext + Constraint + Kreativformat.",
+    "options": [
+      {
+        "text": "Frage KI nach Event-Ideen für ein Team von 15 Personen.",
+        "score": 0,
+        "feedbackText": "Ohne Budget und Thema kommen Standard-Ideen wie Escape Room oder Kochkurs."
+      },
+      {
+        "text": "Bitte um 5 ungewöhnliche Event-Ideen zum Thema Innovation, Budget unter 500€, für 15 Personen, 4 Stunden.",
+        "score": 100,
+        "feedbackText": "Spezifische Constraints erzwingen kreative Lösungen. Du bekommst wirklich originelle Ideen."
+      },
+      {
+        "text": "Kopiere das Format vom letzten Jahr – es hat gut funktioniert.",
+        "score": -20,
+        "feedbackText": "Wiederholung reduziert den Wow-Effekt erheblich. Innovation braucht neue Formate."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-013",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du willst eine Produktbeschreibung schreiben, die emotional anspricht statt nur Fakten zu listen.",
+    "mindsetTip": "Emotionale Texte entstehen, wenn man die KI bittet, Nutzerprobleme und -wünsche in den Vordergrund zu stellen.",
+    "options": [
+      {
+        "text": "Beschreibe unser Produkt mit seinen wichtigsten Features.",
+        "score": 0,
+        "feedbackText": "Feature-Listen sind informativ, aber selten emotional überzeugend."
+      },
+      {
+        "text": "Beschreibe nicht das Produkt, sondern wie sich das Leben des Nutzers nach dem Kauf verändert hat.",
+        "score": 100,
+        "feedbackText": "Ausgezeichnet! Transformation statt Feature – das ist emotionales Copywriting."
+      },
+      {
+        "text": "Kopiere Beschreibungen von Wettbewerbern und passe sie an.",
+        "score": -20,
+        "feedbackText": "Plagiatsrisiko und strategisch falsch – Differenzierung entsteht durch Einzigartigkeit."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-014",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Dein Team braucht einen Namen für ein internes Projekt, aber alle Vorschläge aus dem Brainstorming waren fad.",
+    "mindsetTip": "Kombiniere zwei unerwartete Konzeptfelder für originelle Projektnamen.",
+    "options": [
+      {
+        "text": "Frage die KI nach 10 Projektnamen.",
+        "score": 0,
+        "feedbackText": "Ohne Kontext kommen generische Vorschläge wie ProjectX oder Zukunftsvision."
+      },
+      {
+        "text": "Erkläre das Projektziel in einem Satz und bitte um Namen, die aus Naturphänomenen und Technologie kombiniert werden.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Domänen-Kombination erzeugt einzigartige, merkfähige Namen mit Bedeutungstiefe."
+      },
+      {
+        "text": "Nutze einfach eine Nummerierung wie Projekt 2026-A.",
+        "score": -20,
+        "feedbackText": "Nummern haben keine emotionale Bindungskraft. Ein guter Name motiviert das Team."
+      }
+    ]
+  },
+  {
+    "id": "DE-KI-015",
+    "category": "Kreativität & Ideation",
+    "scenarioText": "Du willst Ideen für innovative Kundengeschenke zur Weihnachtszeit. Das Budget ist begrenzt, der Wow-Faktor wichtig.",
+    "mindsetTip": "Constraints fördern Kreativität – gib Budget, Personalisierungsgrad und Wow-Faktor als Parameter vor.",
+    "options": [
+      {
+        "text": "Frage nach Geschenkideen für Kunden.",
+        "score": 0,
+        "feedbackText": "Ohne Kontext kommen Gutscheine, Wein oder Kalender – nichts Besonderes."
+      },
+      {
+        "text": "Budget 30€ pro Person, soll persönlich wirken, KI-Bezug zum Unternehmen, kein Standardgeschenk – 5 Ideen.",
+        "score": 100,
+        "feedbackText": "Perfekt! Klare Constraints + Differenzierungsanforderung = kreative, passende Geschenkideen."
+      },
+      {
+        "text": "Schenke nichts – Kundengeschenke sind überholt.",
+        "score": -20,
+        "feedbackText": "Wertschätzung ist nie überholt. Schlechte Ausführung ist das Problem, nicht das Konzept."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-001",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI hat eine medizinische Information geliefert, die überzeugend klingt, aber du bist dir nicht sicher, ob sie stimmt.",
+    "mindsetTip": "KI-Outputs in kritischen Bereichen immer mit verifizierten Quellen abgleichen – KI halluziniert.",
+    "options": [
+      {
+        "text": "Veröffentliche die Information, da die KI sehr überzeugend klang.",
+        "score": -20,
+        "feedbackText": "Kritischer Fehler! KI-Modelle halluzinieren plausibel klingende, aber falsche Fakten."
+      },
+      {
+        "text": "Recherchiere die Information in 2–3 seriösen Quellen, bevor du sie verwendest.",
+        "score": 100,
+        "feedbackText": "Richtig! KI-Output ist ein Ausgangspunkt, kein Endpunkt – Verifikation ist Pflicht."
+      },
+      {
+        "text": "Frage die KI erneut, ob die Information korrekt ist.",
+        "score": 0,
+        "feedbackText": "KI bestätigt meist ihre eigenen Aussagen. Das ist kein valider Verifikationsweg."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-002",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du nutzt KI für eine Marktforschungsanalyse. Die KI nennt spezifische Zahlen und Quellen, die sehr professionell wirken.",
+    "mindsetTip": "Spezifische Zahlen und Quellangaben von KI sind besonders halluzinationsanfällig – immer prüfen.",
+    "options": [
+      {
+        "text": "Übernehme die Zahlen und Quellen direkt in deinen Report.",
+        "score": -20,
+        "feedbackText": "Fataler Fehler! KI erfindet häufig Statistiken und Quellen, die nicht existieren."
+      },
+      {
+        "text": "Prüfe jede genannte Quelle und Zahl direkt in der Originalquelle nach.",
+        "score": 100,
+        "feedbackText": "Korrekt! Quellenangaben von KI müssen immer primärquellenmäßig verifiziert werden."
+      },
+      {
+        "text": "Füge einen Disclaimer hinzu, dass die Daten von KI stammen.",
+        "score": 0,
+        "feedbackText": "Ein Disclaimer schützt nicht vor dem Reputationsschaden falscher Daten in einem Report."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-003",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI gibt dir bei einer Rechtsfrage eine eindeutige Antwort. Die Information klingt logisch und gut begründet.",
+    "mindsetTip": "Rechtliche und steuerliche KI-Outputs immer von einem Fachexperten prüfen lassen.",
+    "options": [
+      {
+        "text": "Handle nach der KI-Antwort ohne weitere Prüfung.",
+        "score": -20,
+        "feedbackText": "Gefährlich! KI ist kein Rechtsanwalt und kann erhebliche Fehler bei Rechtsfragen machen."
+      },
+      {
+        "text": "Nutze die KI-Antwort als erste Orientierung und kläre die konkrete Frage mit einem Fachanwalt.",
+        "score": 100,
+        "feedbackText": "Richtig! KI als Recherche-Einstieg ist wertvoll – aber keine Grundlage für rechtliche Entscheidungen."
+      },
+      {
+        "text": "Frage eine andere KI und vergleiche die Antworten.",
+        "score": 0,
+        "feedbackText": "Mehrere KI-Systeme können denselben Fehler machen. Fachmeinung ersetzt keine andere KI."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-004",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du fragst die KI nach einem historischen Ereignis und bekommst Details, die sich von dem unterscheiden, was du gelernt hast.",
+    "mindsetTip": "KI hat einen Trainings-Cutoff und kann veraltete oder fehlerhafte historische Informationen liefern.",
+    "options": [
+      {
+        "text": "Vertraue der KI – sie hat Millionen von Texten gelesen und weiß es besser als du.",
+        "score": -20,
+        "feedbackText": "Falsches Vertrauen! KI-Wissen hat einen Cutoff und kann fehlerhafte Infos enthalten."
+      },
+      {
+        "text": "Vergleiche mit mindestens zwei unabhängigen, seriösen Quellen (z.B. Enzyklopädien, Fachbücher).",
+        "score": 100,
+        "feedbackText": "Richtig! Quellen-Triangulierung ist die Grundregel für alle KI-generierten Fakten."
+      },
+      {
+        "text": "Ignoriere den Unterschied – Details sind bei historischen Ereignissen egal.",
+        "score": 0,
+        "feedbackText": "Details können entscheidend sein. Historische Fehlinformationen setzen sich viral fort."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-005",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI empfiehlt dir eine Investitionsstrategie, die auf soliden Argumenten zu basieren scheint.",
+    "mindsetTip": "KI kann keine zukunftssicheren Finanzprognosen machen – das Risiko liegt immer beim Nutzer.",
+    "options": [
+      {
+        "text": "Befolge die KI-Empfehlung, da die Argumente überzeugend waren.",
+        "score": -20,
+        "feedbackText": "Kritisch! KI-Finanzempfehlungen sind keine zugelassene Anlageberatung und können falsch sein."
+      },
+      {
+        "text": "Nutze die Argumente als Grundlage für ein Gespräch mit einem zertifizierten Finanzberater.",
+        "score": 100,
+        "feedbackText": "Korrekt! KI als Ideengeber für Fachgespräche – aber nie als Ersatz für regulierte Beratung."
+      },
+      {
+        "text": "Teste die Strategie mit kleinem Betrag und schau, was passiert.",
+        "score": 0,
+        "feedbackText": "Besser als alles investieren, aber du trägst das Risiko eines unvalidierten KI-Outputs."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-006",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du erhältst einen KI-generierten Text und willst ihn für einen offiziellen Bericht nutzen. Er klingt professionell.",
+    "mindsetTip": "KI-generierte Texte müssen redigiert werden – sprachlich korrekt bedeutet nicht inhaltlich korrekt.",
+    "options": [
+      {
+        "text": "Veröffentliche den Text ohne Überarbeitung – er klingt gut.",
+        "score": -20,
+        "feedbackText": "Inhaltliche Fehler können versteckt sein. Professionelles Klingen ≠ inhaltliche Korrektheit."
+      },
+      {
+        "text": "Überprüfe alle Fakten, überarbeite den Stil und lass ihn von einem Kollegen Korrektur lesen.",
+        "score": 100,
+        "feedbackText": "Professionell! Dreistufiger Review-Prozess: Faktencheck, Stil, Peer-Review."
+      },
+      {
+        "text": "Ändere nur Formatierung und Überschriften, der Rest passt schon.",
+        "score": 0,
+        "feedbackText": "Oberflächliche Bearbeitung reicht nicht – inhaltliche Verifikation bleibt notwendig."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-007",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI schlägt dir eine bestimmte Software vor und nennt konkrete Preise. Du willst das Tool kaufen.",
+    "mindsetTip": "Preisangaben und Produktverfügbarkeiten von KI sind oft veraltet oder frei erfunden.",
+    "options": [
+      {
+        "text": "Bestelle die Software basierend auf den KI-Angaben.",
+        "score": -20,
+        "feedbackText": "Preise und Produktversionen ändern sich – KI-Informationen können Monate oder Jahre alt sein."
+      },
+      {
+        "text": "Nutze die Empfehlung als Ausgangspunkt und verifiziere Preis und Verfügbarkeit direkt beim Anbieter.",
+        "score": 100,
+        "feedbackText": "Richtig! KI-Empfehlungen sind Orientierung – aktuelle Fakten immer primär prüfen."
+      },
+      {
+        "text": "Frage die KI nach dem Stand ihrer Informationen.",
+        "score": 0,
+        "feedbackText": "KI kann ihren eigenen Cutoff nicht zuverlässig einschätzen. Primärquelle ist immer besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-008",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Dein Kollege hat einen KI-generierten Report als seine eigene Arbeit eingereicht. Du weißt davon.",
+    "mindsetTip": "Transparenz über KI-Nutzung ist nicht nur ethisch geboten, sondern schützt auch vor Vertrauensverlust.",
+    "options": [
+      {
+        "text": "Ignoriere es – das geht dich nichts an.",
+        "score": -20,
+        "feedbackText": "Schweigen unterstützt intransparente KI-Nutzung und schädigt langfristig das Teamvertrauen."
+      },
+      {
+        "text": "Sprich deinen Kollegen direkt an und empfiehl, KI-Nutzung zu deklarieren.",
+        "score": 100,
+        "feedbackText": "Richtig! Transparenz über KI-Tools schützt alle Beteiligten und fördert ethisches Handeln."
+      },
+      {
+        "text": "Melde es sofort der Führungsebene ohne Vorwarnung.",
+        "score": 0,
+        "feedbackText": "Direkte Kommunikation zuerst ist meist produktiver als direkte Eskalation."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-009",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI analysiert Kundenfeedback und sagt, dass 73% der Kunden zufrieden sind. Diese Zahl klingt präzise.",
+    "mindsetTip": "Präzise Zahlen ohne Quellangabe sind ein klassisches Halluzinationsmuster.",
+    "options": [
+      {
+        "text": "Präsentiere die Zahl dem Vorstand als verlässliche Kennzahl.",
+        "score": -20,
+        "feedbackText": "Kritisch! KI erfindet gerne präzise klingende Zahlen ohne Datenbasis."
+      },
+      {
+        "text": "Frage die KI, auf welchen konkreten Datensätzen diese Zahl basiert, und prüfe die Quelle.",
+        "score": 100,
+        "feedbackText": "Korrekt! Präzise KI-Zahlen ohne Quellenangabe sind immer mit höchster Skepsis zu behandeln."
+      },
+      {
+        "text": "Runde die Zahl auf 70% – dann klingt sie weniger präzise.",
+        "score": 0,
+        "feedbackText": "Das ändert nichts an der Validitätsfrage. Die Quelle der Zahl ist das eigentliche Problem."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-010",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du nutzt KI-Outputs für wichtige Unternehmensentscheidungen, aber dein Team zweifelt an der Verlässlichkeit.",
+    "mindsetTip": "Etabliere ein KI-Validierungsprotokoll: welche Outputs brauchen Verifikation, welche nicht.",
+    "options": [
+      {
+        "text": "Vertraue KI-Outputs generell – Fehler passieren überall.",
+        "score": -20,
+        "feedbackText": "Unkritische KI-Nutzung bei wichtigen Entscheidungen erhöht das Risiko teurer Fehler."
+      },
+      {
+        "text": "Erstelle eine Risikomatrix: KI-Outputs nach Kritikalität einordnen und entsprechend verifizieren.",
+        "score": 100,
+        "feedbackText": "Sehr professionell! Nicht jeder Output braucht denselben Verifikationsaufwand – differenziert handeln."
+      },
+      {
+        "text": "Verzichte auf KI für wichtige Entscheidungen.",
+        "score": 0,
+        "feedbackText": "Übervorsichtig. Mit dem richtigen Validierungsprotokoll ist KI auch für wichtige Entscheidungen wertvoll."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-011",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI erstellt einen Wettbewerbsvergleich mit detaillierten Infos über Konkurrenten. Einige Details scheinen veraltet.",
+    "mindsetTip": "Wettbewerbs-Informationen von KI immer mit aktuellen Quellen abgleichen.",
+    "options": [
+      {
+        "text": "Nutze den Vergleich als Grundlage für die Strategiepräsentation.",
+        "score": -20,
+        "feedbackText": "Veraltete Wettbewerbsinfos können zu falschen strategischen Entscheidungen führen."
+      },
+      {
+        "text": "Prüfe alle kritischen Punkte auf den aktuellen Websites und in jüngsten Pressemitteilungen der Wettbewerber.",
+        "score": 100,
+        "feedbackText": "Richtig! KI liefert den Rahmen, du füllst ihn mit verifizierten, aktuellen Infos."
+      },
+      {
+        "text": "Füge ein Erstellungsdatum hinzu und weise auf mögliche Veralterung hin.",
+        "score": 0,
+        "feedbackText": "Transparenz ist gut, löst aber nicht das Problem der inhaltlichen Qualität."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-012",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Verschiedene KI-Systeme geben zum gleichen Problem widersprüchliche Antworten.",
+    "mindsetTip": "Widersprüche zwischen KI-Systemen sind ein Signal, die Frage mit Primärquellen zu klären.",
+    "options": [
+      {
+        "text": "Nimm das KI-System mit der überzeugendsten Argumentation.",
+        "score": 0,
+        "feedbackText": "Überzeugend klingen und korrekt sein sind unterschiedliche Dinge bei KI-Modellen."
+      },
+      {
+        "text": "Interpretiere den Widerspruch als Signal zur Primärquellen-Recherche – die Wahrheit liegt in den Fakten.",
+        "score": 100,
+        "feedbackText": "Exzellent! Widersprüchliche KI-Outputs sind ein wertvolles Hinweissignal für tiefere Recherche."
+      },
+      {
+        "text": "Präsentiere beide Meinungen als gleichwertig gültige Perspektiven.",
+        "score": -20,
+        "feedbackText": "Bei Faktenfragen gibt es meist eine korrekte Antwort. Äquidistanz ist kein Qualitätsmerkmal."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-013",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du lässt KI deine E-Mails analysieren, um Kommunikationsmuster zu verstehen. Die KI hat Zugriff auf alle E-Mails.",
+    "mindsetTip": "Vollständiger E-Mail-Zugriff für KI-Tools birgt erhebliche Datenschutzrisiken.",
+    "options": [
+      {
+        "text": "Gib der KI vollen Zugriff – das liefert die beste Analyse.",
+        "score": -20,
+        "feedbackText": "Massive Datenschutzverletzung! E-Mails enthalten PII von Kollegen, Kunden und Geschäftspartnern."
+      },
+      {
+        "text": "Anonymisiere E-Mails vor der Analyse und kläre Datenschutzrichtlinien mit der IT-Abteilung.",
+        "score": 100,
+        "feedbackText": "Korrekt! DSGVO-konformes Vorgehen schützt alle Beteiligten und vermeidet rechtliche Risiken."
+      },
+      {
+        "text": "Analysiere nur eigene E-Mails, nicht die von Kollegen.",
+        "score": 0,
+        "feedbackText": "Besser, aber auch eigene E-Mails können PII Dritter enthalten. Anonymisierung bleibt wichtig."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-014",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Du fragst die KI nach aktuellen Branchentrends. Die Antwort klingt informativ, aber du weißt nicht, wie aktuell sie ist.",
+    "mindsetTip": "KI-Modelle haben einen Trainings-Cutoff – für aktuelle Trends immer aktuelle Branchenquellen prüfen.",
+    "options": [
+      {
+        "text": "Nutze die KI-Trendanalyse direkt für deine Jahresstrategie.",
+        "score": -20,
+        "feedbackText": "KI-Wissen kann 1–2 Jahre alt sein. Strategie auf veralteten Trends ist ein ernstes Risiko."
+      },
+      {
+        "text": "Prüfe die genannten Trends gegen aktuelle Branchenberichte, Analysten-Reports und Fachmedien.",
+        "score": 100,
+        "feedbackText": "Richtig! KI liefert einen guten Startpunkt, aktualisierte Quellen geben das nötige Fundament."
+      },
+      {
+        "text": "Frage die KI, bis wann ihre Daten aktuell sind, und nutze nur neuere Informationen.",
+        "score": 0,
+        "feedbackText": "KI kann ihren Cutoff oft nicht präzise angeben. Primärquellen sind zuverlässiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-KD-015",
+    "category": "Kritisches Denken & Validierung",
+    "scenarioText": "Die KI schlägt eine innovative HR-Maßnahme vor, die angeblich in vielen Unternehmen erfolgreich eingesetzt wird.",
+    "mindsetTip": "Anekdotische KI-Belege brauchen empirische Bestätigung – nach konkreten Studien fragen.",
+    "options": [
+      {
+        "text": "Implementiere die Maßnahme direkt – die KI hat überzeugende Argumente geliefert.",
+        "score": -20,
+        "feedbackText": "Überzeugend klingende KI-Argumente ersetzen keine empirische Evidenz. Halluzinationsrisiko hoch."
+      },
+      {
+        "text": "Bitte die KI, konkrete Studien oder Unternehmen zu nennen, und prüfe diese Quellen direkt.",
+        "score": 100,
+        "feedbackText": "Korrekt! Empirische Evidenz ist die Grundlage für HR-Entscheidungen, nicht KI-Anekdoten."
+      },
+      {
+        "text": "Pilot-teste die Maßnahme mit einer kleinen Gruppe.",
+        "score": 0,
+        "feedbackText": "Pilot-Tests sind wertvoll, aber idealerweise nach einer Grundlagenprüfung der Evidenz."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-001",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du sollst einen 50-seitigen Bericht zusammenfassen. Die KI liefert bei direkter Eingabe unvollständige Ergebnisse.",
+    "mindsetTip": "Chunking: Teile große Dokumente in Abschnitte, statt alles auf einmal einzugeben.",
+    "options": [
+      {
+        "text": "Kopiere den gesamten Report in den Chat und sage: Fasse zusammen.",
+        "score": -20,
+        "feedbackText": "Der Report überschreitet wahrscheinlich das Kontextlimit. Das Ergebnis wird unvollständig."
+      },
+      {
+        "text": "Fasse jeden Abschnitt einzeln zusammen, dann erstelle eine Gesamtzusammenfassung aus den Teilergebnissen.",
+        "score": 100,
+        "feedbackText": "Perfekt! Chunking liefert präzisere Ergebnisse und respektiert Kontextlimits."
+      },
+      {
+        "text": "Lese den Report selbst und nutze KI nur für Formulierungshilfe.",
+        "score": 0,
+        "feedbackText": "Sicher, aber ineffizient. KI kann auch bei der inhaltlichen Zusammenfassung helfen."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-002",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du verbringst täglich 2 Stunden mit der Beantwortung von Routine-E-Mails. Das kostet wertvolle Zeit.",
+    "mindsetTip": "Erstelle KI-gestützte E-Mail-Vorlagen – 80% der Antworten lassen sich standardisieren.",
+    "options": [
+      {
+        "text": "Beantworte alle E-Mails manuell – persönliche Note ist wichtig.",
+        "score": -20,
+        "feedbackText": "Routine-E-Mails brauchen keine persönliche Note. Deine Zeit ist für strategische Aufgaben wertvoller."
+      },
+      {
+        "text": "Kategorisiere häufige E-Mail-Typen und erstelle KI-Vorlagen, die du individuell anpasst.",
+        "score": 100,
+        "feedbackText": "Exzellent! 80% Standardisierung + 20% Individualisierung spart Zeit und behält Qualität."
+      },
+      {
+        "text": "Delegiere alle E-Mails an eine Assistenz.",
+        "score": 0,
+        "feedbackText": "Delegation ist eine Lösung, aber KI kann schneller und günstiger standardisieren."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-003",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du analysierst monatlich Excel-Berichte manuell. Jeder Bericht dauert 4 Stunden – 12 Berichte pro Jahr.",
+    "mindsetTip": "KI kann Analyse-Schritte beschleunigen, wenn du sie mit klaren Analyse-Fragen plus Kontext briefst.",
+    "options": [
+      {
+        "text": "Füge Excel-Daten direkt in die KI ein ohne Erläuterung.",
+        "score": 0,
+        "feedbackText": "Ohne Kontext liefert die KI allgemeine Beobachtungen, keine strategisch relevanten Insights."
+      },
+      {
+        "text": "Exportiere als CSV, füge in KI mit 3 konkreten Analysefragen ein (Trend, Ausreißer, Empfehlung).",
+        "score": 100,
+        "feedbackText": "Sehr gut! Strukturierte Analysefragen + saubere Daten = schnelle, relevante Insights."
+      },
+      {
+        "text": "Gib alle Rohdaten inklusive vertraulicher Finanzkennzahlen in externe KI ein.",
+        "score": -20,
+        "feedbackText": "Datenschutzverletzung! Vertrauliche Finanzdaten gehören nicht in externe KI-Systeme."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-004",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Dein Team hat wöchentliche Meetings, deren Protokolle niemand schreibt, weil es als lästige Pflicht gilt.",
+    "mindsetTip": "KI-gestützte Transkription macht aus lästiger Pflicht eine 5-Minuten-Aufgabe.",
+    "options": [
+      {
+        "text": "Verzichte auf Protokolle – mündliche Absprachen reichen.",
+        "score": -20,
+        "feedbackText": "Fehlende Dokumentation führt zu Missverständnissen und wiederholten Diskussionen."
+      },
+      {
+        "text": "Nutze KI-Transkription des Meetings, lass KI daraus ein strukturiertes Protokoll mit APs generieren.",
+        "score": 100,
+        "feedbackText": "Ideal! 5-Minuten-Aufwand statt 1 Stunde manuell – und konsistentere Dokumentation."
+      },
+      {
+        "text": "Rotiere die Protokollpflicht im Team.",
+        "score": 0,
+        "feedbackText": "Fairer Ansatz, aber jeder Schreiber hat einen anderen Stil. KI-Protokolle sind konsistenter."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-005",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du recherchierst für eine Präsentation und verbringst Stunden damit, relevante Informationen aus langen Artikeln zu extrahieren.",
+    "mindsetTip": "KI als Recherche-Extraktor: Lass KI die relevanten Passagen herausfinden.",
+    "options": [
+      {
+        "text": "Lies alle Artikel vollständig durch und markiere relevante Stellen.",
+        "score": 0,
+        "feedbackText": "Gründlich, aber zeitintensiv. KI kann diesen Prozess erheblich beschleunigen."
+      },
+      {
+        "text": "Kopiere Artikel-Inhalte in KI mit der Frage: Was ist für [mein Thema] relevant? Liefere Bullet Points.",
+        "score": 100,
+        "feedbackText": "Perfekt! KI als Extraktions-Tool spart Stunden ohne Qualitätsverlust."
+      },
+      {
+        "text": "Verlasse dich nur auf KI-generierte Zusammenfassungen ohne die Originaltexte zu prüfen.",
+        "score": -20,
+        "feedbackText": "Verifikationsrisiko! KI-Zusammenfassungen können Nuancen verzerren. Primärquellen bleiben wichtig."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-006",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du erstellst Präsentationen manuell mit PowerPoint. Jede Folienerstellung dauert 30 Minuten für die Struktur allein.",
+    "mindsetTip": "KI kann Präsentationsstrukturen in Sekunden skizzieren – spart die kognitive Strukturierungsarbeit.",
+    "options": [
+      {
+        "text": "Strukturiere Präsentationen weiterhin manuell – Kreativität lässt sich nicht delegieren.",
+        "score": -20,
+        "feedbackText": "Struktur und Kreativität sind zwei verschiedene Dinge. KI übernimmt die Strukturarbeit, du die Kreativarbeit."
+      },
+      {
+        "text": "Lass KI eine Foliengliederung erstellen, überarbeite sie kurz und füge dann Inhalte ein.",
+        "score": 100,
+        "feedbackText": "Effizient! 5 Minuten KI-Struktur statt 30 Minuten manuell – du konzentrierst dich aufs Wesentliche."
+      },
+      {
+        "text": "Kaufe Premium-PowerPoint-Vorlagen.",
+        "score": 0,
+        "feedbackText": "Vorlagen helfen beim Design, nicht bei der inhaltlichen Strukturierung – KI macht mehr."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-007",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Dein Team analysiert täglich Kundenfeedback aus verschiedenen Kanälen. Die manuelle Kategorisierung ist fehleranfällig.",
+    "mindsetTip": "KI-gestützte Kategorisierung ist schneller und konsistenter als manuelle Arbeit.",
+    "options": [
+      {
+        "text": "Kategorisiere Feedback manuell – nur Menschen verstehen Nuancen.",
+        "score": 0,
+        "feedbackText": "Für sehr nuanciertes Feedback stimmt das, aber für Routinekategorisierung ist KI besser."
+      },
+      {
+        "text": "Nutze KI mit klaren Kategorie-Definitionen zur Erst-Klassifizierung, Menschen prüfen Grenzfälle.",
+        "score": 100,
+        "feedbackText": "Optimal! KI für Routine, Mensch für Grenzfälle – das beste aus beiden Welten."
+      },
+      {
+        "text": "Gib alle Kundendaten inklusive Namen in die KI für präzisere Analyse.",
+        "score": -20,
+        "feedbackText": "DSGVO-Verstoß! Kundendaten müssen vor KI-Analyse anonymisiert werden."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-008",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du schreibst Stellenausschreibungen manuell. Ähnliche Positionen beginnen jedes Mal von vorne.",
+    "mindsetTip": "Standardisierte KI-Prompt-Templates für Stellenausschreibungen sparen Stunden.",
+    "options": [
+      {
+        "text": "Schreibe jede Ausschreibung individuell – jede Position ist einzigartig.",
+        "score": 0,
+        "feedbackText": "Stimmt, aber 70% der Struktur ist immer gleich. KI übernimmt den Standard, du ergänzt das Individuelle."
+      },
+      {
+        "text": "Erstelle ein KI-Prompt-Template mit Positionsdetails als Variable – Ausschreibung in 5 statt 120 Minuten.",
+        "score": 100,
+        "feedbackText": "Sehr effizient! Template + KI = konsistente Qualität bei drastisch reduziertem Zeitaufwand."
+      },
+      {
+        "text": "Kaufe teure HR-Software für Stellenausschreibungen.",
+        "score": -20,
+        "feedbackText": "Überteuert für eine Aufgabe, die KI mit einem guten Prompt kostenlos lösen kann."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-009",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du erstellst monatliche Management-Berichte, die 80% Routinedaten und 20% Interpretation enthalten.",
+    "mindsetTip": "Automatisiere den 80%-Teil mit KI und konzentriere dich auf den strategisch wertvollen 20%-Teil.",
+    "options": [
+      {
+        "text": "Erstelle den gesamten Bericht manuell – Verlässlichkeit ist wichtiger als Effizienz.",
+        "score": 0,
+        "feedbackText": "Verlässlichkeit und KI-Unterstützung schließen sich nicht aus. Für Routinedaten ist KI zuverlässiger."
+      },
+      {
+        "text": "Lass KI die Routinedaten zusammenstellen und formatieren, füge eigene strategische Interpretation hinzu.",
+        "score": 100,
+        "feedbackText": "Ideal! Du sparst Stunden und konzentrierst dich auf den echten Mehrwert deiner Arbeit."
+      },
+      {
+        "text": "Übergib den gesamten Bericht an KI – sie erstellt alles eigenständig.",
+        "score": -20,
+        "feedbackText": "Strategische Interpretation braucht deinen Kontext und dein Urteil. Vollautomatisierung ist hier riskant."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-010",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Dein Team führt aufwändige SWOT-Analysen durch, die 3–4 Stunden pro Projekt dauern.",
+    "mindsetTip": "KI kann eine SWOT-Erststruktur in Minuten liefern – der Wert liegt im kritischen Review.",
+    "options": [
+      {
+        "text": "Führe SWOT-Analysen ausschließlich im Team durch – externe Perspektive ist nicht nötig.",
+        "score": -20,
+        "feedbackText": "Teams haben inhärente blinde Flecken. KI als externer Perspektivgeber ist hier wertvoll."
+      },
+      {
+        "text": "Lass KI eine initiale SWOT-Analyse erstellen, diskutiere und verfeinere sie im Team.",
+        "score": 100,
+        "feedbackText": "Effizient! KI liefert den Startpunkt, das Team bringt den Kontext und das Urteil."
+      },
+      {
+        "text": "Ersetze SWOT komplett durch KI-Analyse ohne Team-Input.",
+        "score": 0,
+        "feedbackText": "Team-Wissen und lokaler Kontext sind unverzichtbar. KI ersetzt den Prozess nicht vollständig."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-011",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du hast eine riesige Datenbank mit Kundenbeschwerden, aber keine Zeit, alle zu lesen und Muster zu erkennen.",
+    "mindsetTip": "KI kann große Textmengen nach Mustern, Häufigkeiten und Themen analysieren.",
+    "options": [
+      {
+        "text": "Lese alle Beschwerden manuell und notiere Muster.",
+        "score": 0,
+        "feedbackText": "Bei hunderten Beschwerden unrealistisch zeitaufwändig. KI-gestützte Analyse ist effizienter."
+      },
+      {
+        "text": "Lade die anonymisierten Beschwerden in KI und frage nach Top-5-Themen, Häufigkeiten und Trendmustern.",
+        "score": 100,
+        "feedbackText": "Perfekt! KI-Textanalyse liefert in Minuten Insights, für die du sonst Tage bräuchtest."
+      },
+      {
+        "text": "Gib alle Kundendaten inklusive persönlicher Infos in die KI für präzisere Analyse.",
+        "score": -20,
+        "feedbackText": "DSGVO-Verstoß! Kundendaten müssen vor KI-Verarbeitung anonymisiert werden."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-012",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du erstellst Schulungsunterlagen für neue Mitarbeiter. Der Prozess dauert Wochen und die Inhalte veralten schnell.",
+    "mindsetTip": "Modulare KI-gestützte Schulungsunterlagen lassen sich schnell anpassen.",
+    "options": [
+      {
+        "text": "Erstelle alle Unterlagen einmal komplett und aktualisiere sie jährlich.",
+        "score": 0,
+        "feedbackText": "Jährliche Updates sind besser als nichts, aber bei schnellen Prozessänderungen zu langsam."
+      },
+      {
+        "text": "Erstelle KI-Prompt-Templates für jedes Modul – bei Änderungen regenerierst du nur das betroffene Modul.",
+        "score": 100,
+        "feedbackText": "Sehr gut! Modularer Ansatz ermöglicht schnelle, gezielte Updates ohne Gesamtüberarbeitung."
+      },
+      {
+        "text": "Beauftrage eine externe Agentur für professionelle Schulungsunterlagen.",
+        "score": -20,
+        "feedbackText": "Teuer und nicht flexibel genug für häufige Updates."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-013",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du willst wissen, welche deiner Arbeitsaufgaben sich am besten für KI-Automatisierung eignen.",
+    "mindsetTip": "Auditiere deine Aufgaben nach Wiederholbarkeit, Regelbasigkeit und Dokumentierbarkeit.",
+    "options": [
+      {
+        "text": "Automatisiere spontan, was sich gerade anbietet.",
+        "score": 0,
+        "feedbackText": "Ad-hoc-Automatisierung ohne Systematik führt zu inkonsistenten Ergebnissen."
+      },
+      {
+        "text": "Erstelle eine Liste deiner Aufgaben und bewerte sie nach Häufigkeit, Regelbasigkeit und Zeitaufwand.",
+        "score": 100,
+        "feedbackText": "Strategisch richtig! Systematisches Aufgaben-Audit identifiziert die wertvollsten Automatisierungschancen."
+      },
+      {
+        "text": "Automatisiere möglichst alles – KI kann alle Aufgaben besser erledigen.",
+        "score": -20,
+        "feedbackText": "Übertrieben. Strategische, kreative und empathische Aufgaben brauchen menschliches Urteil."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-014",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du analysierst Vertriebsdaten und bemerkst, dass dein Analyse-Report immer die gleiche Struktur hat.",
+    "mindsetTip": "Wiederkehrende Analysestrukturen sind ideal für KI-Vorlagen.",
+    "options": [
+      {
+        "text": "Erstelle jeden Report von Grund auf neu für maximale Flexibilität.",
+        "score": -20,
+        "feedbackText": "Unnötiger Mehraufwand. Struktur-Konsistenz ist ein Vorteil, kein Nachteil."
+      },
+      {
+        "text": "Erstelle eine Analyse-Vorlage als KI-Prompt mit fixen Strukturelementen und variablen Datenpunkten.",
+        "score": 100,
+        "feedbackText": "Sehr effizient! Standardisierte Analyse-Vorlagen sparen Zeit und sorgen für Konsistenz."
+      },
+      {
+        "text": "Delegiere die Analyse an einen Junior-Mitarbeiter.",
+        "score": 0,
+        "feedbackText": "Delegation ist eine Option, aber KI ist schneller und konsistenter für Routineanalysen."
+      }
+    ]
+  },
+  {
+    "id": "DE-EA-015",
+    "category": "Effizienz & Analyse",
+    "scenarioText": "Du nutzt KI für viele Aufgaben, verlierst aber den Überblick, welche Outputs du bereits verifiziert hast.",
+    "mindsetTip": "Führe ein einfaches KI-Output-Log mit Aufgabe, Datum, Verifikationsstatus und verwendetem Prompt.",
+    "options": [
+      {
+        "text": "Vertraue deiner Erinnerung – du weißt schon, was du geprüft hast.",
+        "score": -20,
+        "feedbackText": "Bei vielen KI-Tasks ist Gedächtnismanagement fehleranfällig. Ein Log ist unverzichtbar."
+      },
+      {
+        "text": "Führe ein strukturiertes Log aller KI-Outputs mit Verifikationsstatus und verwendetem Prompt.",
+        "score": 100,
+        "feedbackText": "Professionell! Ein KI-Output-Log macht deinen Workflow auditierbar und qualitätssicher."
+      },
+      {
+        "text": "Prüfe alle KI-Outputs erneut bevor du sie nutzt, auch bereits verifizierte.",
+        "score": 0,
+        "feedbackText": "Doppelprüfung bei bereits verifizierten Outputs ist ineffizient. Ein Log vermeidet redundante Arbeit."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-001",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Dein Team will einen KI-Chatbot für Kundenservice einsetzen, der auf echten Kundengesprächen trainiert wurde.",
+    "mindsetTip": "Synthetische Trainingsdaten sind oft besser als echte – ohne Datenschutzrisiko und kontrollierbar.",
+    "options": [
+      {
+        "text": "Trainiere auf echten Kundengesprächen – das ist am realistischsten.",
+        "score": -20,
+        "feedbackText": "Vorsicht! Echte Kundendaten enthalten PII und verstoßen ohne explizite Einwilligung gegen die DSGVO."
+      },
+      {
+        "text": "Erstelle synthetische Daten basierend auf realen Mustern, ohne personenbezogene Informationen.",
+        "score": 100,
+        "feedbackText": "Perfekt! Synthetische Daten schützen die Privatsphäre und sind qualitativ kontrollierbar."
+      },
+      {
+        "text": "Das überlassen wir dem KI-Anbieter.",
+        "score": 0,
+        "feedbackText": "Riskant. Du bist als Auftraggeber für den Datenschutz verantwortlich, nicht der Anbieter."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-002",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du willst für eine Analyse Mitarbeiterdaten in ein externes KI-Tool eingeben, um Performancemuster zu erkennen.",
+    "mindsetTip": "Mitarbeiterdaten unterliegen besonders strengem Datenschutz – immer Betriebsrat und Datenschutzbeauftragten einbinden.",
+    "options": [
+      {
+        "text": "Gib die Mitarbeiterdaten direkt in die KI ein – die Analyse ist vertraulich.",
+        "score": -20,
+        "feedbackText": "Schwerwiegende Datenschutzverletzung! Mitarbeiterdaten dürfen ohne Einwilligung nicht extern verarbeitet werden."
+      },
+      {
+        "text": "Anonymisiere alle Daten vollständig und hole das Datenschutz-Okay bevor du das Tool nutzt.",
+        "score": 100,
+        "feedbackText": "Korrekt! Anonymisierung + Datenschutzprüfung sind Voraussetzung für legale KI-Nutzung mit Mitarbeiterdaten."
+      },
+      {
+        "text": "Nutze nur aggregierte Teamdaten, keine Individualwerte.",
+        "score": 0,
+        "feedbackText": "Besser als Individualdaten, aber auch aggregierte Daten können unter Umständen personenbeziehbar sein."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-003",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du nutzt ein kostenloses KI-Tool und fragst dich, ob deine Eingaben für das Training des Modells genutzt werden.",
+    "mindsetTip": "Kostenlose KI-Tools finanzieren sich oft durch Datennutzung – prüfe die AGBs vor sensiblen Eingaben.",
+    "options": [
+      {
+        "text": "Nutze das Tool ohne Einschränkungen – kostenlos bedeutet sicher.",
+        "score": -20,
+        "feedbackText": "Falsch! Kostenlose Tools können Eingaben für Training nutzen. Sensible Daten haben dort nichts verloren."
+      },
+      {
+        "text": "Lese die Datenschutzrichtlinien des Tools und deaktiviere Trainingsoptionen, falls verfügbar.",
+        "score": 100,
+        "feedbackText": "Richtig! Informierte Nutzung schützt Geschäftsgeheimnisse und personenbezogene Daten."
+      },
+      {
+        "text": "Nutze das Tool nur für nicht-geschäftliche Zwecke.",
+        "score": 0,
+        "feedbackText": "Sinnvoller Ansatz, aber kläre trotzdem die Datenschutzbedingungen."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-004",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Die KI soll bei der Personalauswahl helfen, indem sie Bewerbungen automatisch vorselektiert.",
+    "mindsetTip": "KI-gestützte Personalauswahl birgt Diskriminierungsrisiken – Transparenz und menschliche Kontrolle sind Pflicht.",
+    "options": [
+      {
+        "text": "Lass KI Bewerbungen vollautomatisch selektieren und informiere Bewerber nicht darüber.",
+        "score": -20,
+        "feedbackText": "Rechtlich und ethisch problematisch! Automatisierte Entscheidungen bei Einstellungen müssen deklariert werden."
+      },
+      {
+        "text": "Nutze KI als Vorfilter mit menschlichem Review aller Grenzfälle und informiere Bewerber transparent.",
+        "score": 100,
+        "feedbackText": "Korrekt! Mensch in der Schleife + Transparenz ist der ethische und rechtskonforme Standard."
+      },
+      {
+        "text": "Nutze KI nur für administrative Aufgaben in HR, nicht für Personalentscheidungen.",
+        "score": 0,
+        "feedbackText": "Vorsichtiger Ansatz, aber mit dem richtigen Framework kann KI auch bei Vorselektion wertvoll sein."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-005",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du möchtest KI nutzen, um Texte zu schreiben, die als deine eigene Arbeit ausgegeben werden.",
+    "mindsetTip": "Transparenz über KI-Nutzung in Texten ist ethische Grundlage – besonders in offiziellen Kontexten.",
+    "options": [
+      {
+        "text": "Veröffentliche KI-Texte ohne Kennzeichnung – das macht jeder so.",
+        "score": -20,
+        "feedbackText": "Ethisch problematisch und in akademischen oder journalistischen Kontexten regelwidrig."
+      },
+      {
+        "text": "Nutze KI als Schreibhilfe, überarbeite alle Inhalte und deklariere KI-Nutzung wenn erforderlich.",
+        "score": 100,
+        "feedbackText": "Korrekt! KI als Werkzeug mit Transparenz ist ethisch einwandfrei und professionell."
+      },
+      {
+        "text": "Nutze KI nur für Recherche, nicht für das Schreiben.",
+        "score": 0,
+        "feedbackText": "Das ist eine Option, aber mit der richtigen Transparenz ist KI-gestütztes Schreiben ebenfalls legitim."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-006",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Dein Unternehmen will KI einsetzen, hat aber noch keine interne KI-Richtlinie.",
+    "mindsetTip": "Eine KI-Richtlinie schützt das Unternehmen vor Datenschutzverletzungen und schafft Rechtssicherheit.",
+    "options": [
+      {
+        "text": "Warte auf eine gesetzliche Regulierung und handle dann entsprechend.",
+        "score": 0,
+        "feedbackText": "EU AI Act ist bereits in Kraft. Abwarten erhöht das Risiko von Compliance-Verstößen."
+      },
+      {
+        "text": "Entwickle eine KI-Nutzungsrichtlinie mit erlaubten Tools, verbotenen Datenarten und Schulungspflicht.",
+        "score": 100,
+        "feedbackText": "Professionell! Eine klare Richtlinie schützt Unternehmen und Mitarbeiter gleichzeitig."
+      },
+      {
+        "text": "Verbiete alle KI-Tools bis zur vollständigen regulatorischen Klarheit.",
+        "score": -20,
+        "feedbackText": "Zu restriktiv. Wettbewerbsnachteile entstehen durch Nicht-Nutzung. Kontrollierte Nutzung ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-007",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "KI analysiert Kundendaten für personalisierte Angebote. Bestimmte Gruppen werden systematisch schlechter behandelt.",
+    "mindsetTip": "Algorithmische Diskriminierung ist eine Realität – regelmäßige Fairness-Audits sind notwendig.",
+    "options": [
+      {
+        "text": "Ignoriere das Muster – KI-Entscheidungen sind objektiv.",
+        "score": -20,
+        "feedbackText": "Gefährlich falsch! KI kann systemische Diskriminierung aus Trainingsdaten verstärken und reproduzieren."
+      },
+      {
+        "text": "Führe ein Fairness-Audit durch, identifiziere die Ursache und passe das Modell oder die Daten an.",
+        "score": 100,
+        "feedbackText": "Korrekt! Algorithmisches Diskriminierungsmanagement ist eine rechtliche und ethische Pflicht."
+      },
+      {
+        "text": "Weise intern auf das Muster hin und warte auf Anweisungen vom Management.",
+        "score": 0,
+        "feedbackText": "Eskalation ist gut, aber kein Ersatz für aktives Handeln bei potenzieller Diskriminierung."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-008",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du nutzt ein KI-Tool eines US-amerikanischen Anbieters für die Verarbeitung europäischer Kundendaten.",
+    "mindsetTip": "Datentransfer in Drittländer erfordert geeignete Garantien nach DSGVO Art. 46.",
+    "options": [
+      {
+        "text": "Nutze das Tool ohne weiteres – die USA sind ein Verbündeter.",
+        "score": -20,
+        "feedbackText": "Politische Beziehungen ersetzen keine DSGVO-Compliance! US-Datentransfer braucht rechtliche Grundlage."
+      },
+      {
+        "text": "Prüfe, ob der Anbieter EU-Standardvertragsklauseln oder andere geeignete Garantien anbietet.",
+        "score": 100,
+        "feedbackText": "Korrekt! SCCs sind die rechtliche Grundlage für US-Datentransfers."
+      },
+      {
+        "text": "Anonymisiere alle Daten vollständig bevor sie das Tool erreichen.",
+        "score": 0,
+        "feedbackText": "Vollständige Anonymisierung ist DSGVO-konform, aber oft nicht praktikabel für alle Analyse-Zwecke."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-009",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du bemerkst, dass die KI in Texten implizit Stereotype über bestimmte Berufsgruppen verstärkt.",
+    "mindsetTip": "KI-Outputs auf Bias prüfen und explizite Anweisung zur neutralen Darstellung geben.",
+    "options": [
+      {
+        "text": "Ignoriere die Stereotype – die KI hat das aus dem Internet gelernt.",
+        "score": -20,
+        "feedbackText": "Verantwortungslosigkeit! Wer stereotypenbehaftete KI-Outputs nutzt, reproduziert diese."
+      },
+      {
+        "text": "Weise die KI explizit an, neutral und ausgewogen zu formulieren, und prüfe Outputs vor der Nutzung.",
+        "score": 100,
+        "feedbackText": "Richtig! Explizite Bias-Anweisungen + redaktionelle Kontrolle minimieren Stereotype in KI-Outputs."
+      },
+      {
+        "text": "Wechsle zu einem anderen KI-Anbieter, der keine Stereotypen hat.",
+        "score": 0,
+        "feedbackText": "Bias-Freiheit ist nicht durch Anbieterwechsel garantiert. Alle Modelle können Bias enthalten."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-010",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du sollst für einen Kunden eine KI-Lösung implementieren, die zur Massenüberwachung eingesetzt werden könnte.",
+    "mindsetTip": "Ethische Folgenabschätzung vor der Implementierung ist professionelle Pflicht.",
+    "options": [
+      {
+        "text": "Implementiere die Lösung – deine Aufgabe ist technisch, nicht ethisch.",
+        "score": -20,
+        "feedbackText": "Techniker tragen Mitverantwortung für die Konsequenzen ihrer Arbeit. Ethik ist kein Opt-out."
+      },
+      {
+        "text": "Führe eine ethische Impact-Analyse durch, kommuniziere Bedenken und lehne ab, wenn Missbrauchspotenzial besteht.",
+        "score": 100,
+        "feedbackText": "Professionell und ethisch korrekt! Responsible AI bedeutet Verantwortung zu übernehmen."
+      },
+      {
+        "text": "Frage deinen Vorgesetzten und handle nach dessen Anweisung.",
+        "score": 0,
+        "feedbackText": "Eskalation ist sinnvoll, aber eigene ethische Bewertung ist keine delegierbare Pflicht."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-011",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Dein Unternehmen will KI einsetzen, um Mitarbeitergespräche automatisch aufzuzeichnen und zu analysieren.",
+    "mindsetTip": "Mitarbeiterüberwachung durch KI ist ein gravierender Eingriff in Persönlichkeitsrechte.",
+    "options": [
+      {
+        "text": "Implementiere das System ohne Mitarbeiterinformation – Sicherheit geht vor.",
+        "score": -20,
+        "feedbackText": "Rechtswidrig! Heimliche Überwachung von Mitarbeitern ist in Deutschland grundsätzlich verboten."
+      },
+      {
+        "text": "Prüfe Rechtslage, hole Betriebsrat und Datenschutzbeauftragten ein, informiere alle Mitarbeiter offen.",
+        "score": 100,
+        "feedbackText": "Korrekt! Transparenz, Mitbestimmung und Rechtsprüfung sind unverzichtbare Schritte."
+      },
+      {
+        "text": "Nutze nur anonymisierte Auswertungen ohne individuelle Zuordnung.",
+        "score": 0,
+        "feedbackText": "Besser, aber auch anonymisierte Überwachungssysteme brauchen Betriebsrat-Zustimmung in Deutschland."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-012",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du hast KI genutzt, um einen Rechtstext zu erstellen, gibst ihn aber als von einem Anwalt erstellt aus.",
+    "mindsetTip": "KI-generierte Rechtstexte als Anwaltswerk auszugeben ist eine Irreführung mit rechtlichen Konsequenzen.",
+    "options": [
+      {
+        "text": "Nutze den Text – er klingt professionell genug.",
+        "score": -20,
+        "feedbackText": "Irreführung über die Herkunft rechtlicher Texte kann Haftungsfragen aufwerfen."
+      },
+      {
+        "text": "Deklariere den Text als KI-unterstützt und lasse ihn von einem echten Anwalt prüfen und gegenzeichnen.",
+        "score": 100,
+        "feedbackText": "Korrekt! Transparenz über KI-Herkunft + Fachanwalt-Review ist der professionelle Weg."
+      },
+      {
+        "text": "Überarbeite den Text so stark, dass er nicht mehr als KI-generiert erkennbar ist.",
+        "score": 0,
+        "feedbackText": "Das löst nicht das ethische Problem der Irreführung."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-013",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du nutzt KI zur Erstellung von Deepfakes von Kollegen für einen internen Witz-Beitrag im Firmennewsletter.",
+    "mindsetTip": "Deepfakes ohne explizite Einwilligung der abgebildeten Person sind ethisch und rechtlich problematisch.",
+    "options": [
+      {
+        "text": "Erstelle die Deepfakes – es ist ja nur ein Witz und intern.",
+        "score": -20,
+        "feedbackText": "Auch intern: Deepfakes ohne Einwilligung verletzen Persönlichkeitsrechte und können strafrechtlich relevant sein."
+      },
+      {
+        "text": "Hole die ausdrückliche Einwilligung der betroffenen Kollegen und mache den KI-Ursprung deutlich.",
+        "score": 100,
+        "feedbackText": "Richtig! Einwilligung + Transparenz machen auch kreative KI-Nutzung rechtssicher."
+      },
+      {
+        "text": "Nutze Karikaturen statt Deepfakes – weniger rechtliches Risiko.",
+        "score": 0,
+        "feedbackText": "Karikaturen sind rechtlich sicherer, aber die grundsätzliche Frage der Einwilligung bleibt relevant."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-014",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Dein Unternehmen überlegt, Kundenpräferenzen mittels KI-Analyse ohne explizites Opt-in zu erfassen.",
+    "mindsetTip": "Implizite Datenerfassung ohne Rechtsgrundlage ist ein klarer DSGVO-Verstoß.",
+    "options": [
+      {
+        "text": "Führe die Analyse durch – die Kunden haben durch die Nutzung implizit zugestimmt.",
+        "score": -20,
+        "feedbackText": "Nein! Implizite Zustimmung reicht für Profilbildung nach DSGVO nicht aus. Opt-in ist erforderlich."
+      },
+      {
+        "text": "Hole explizites Opt-in ein, erkläre den Nutzen für Kunden und biete einfaches Opt-out an.",
+        "score": 100,
+        "feedbackText": "DSGVO-konform und vertrauensbildend! Transparentes Consent-Management ist Best Practice."
+      },
+      {
+        "text": "Nutze anonymisierte Aggregatdaten – da braucht es kein Opt-in.",
+        "score": 0,
+        "feedbackText": "Wirklich anonymisierte Aggregatdaten können ohne Opt-in genutzt werden, aber prüfe die Definition genau."
+      }
+    ]
+  },
+  {
+    "id": "DE-DE-015",
+    "category": "Datenschutz & Ethik",
+    "scenarioText": "Du entwickelst eine KI-Anwendung und überlegst, wie du Nutzern erklärst, wie die KI Entscheidungen trifft.",
+    "mindsetTip": "Explainability ist nach EU AI Act für Hochrisikoanwendungen Pflicht.",
+    "options": [
+      {
+        "text": "Verzichte auf Erklärungen – Nutzer interessieren sich nicht für technische Details.",
+        "score": -20,
+        "feedbackText": "Falsch! Bei Entscheidungen, die Nutzer betreffen, ist Erklärbarkeit ein Recht und eine Pflicht."
+      },
+      {
+        "text": "Implementiere einfache, verständliche Erklärungen in natürlicher Sprache für jede KI-Entscheidung.",
+        "score": 100,
+        "feedbackText": "Korrekt! Menschenverständliche Erklärungen sind das Kernstück von Transparent-AI und rechtlicher Compliance."
+      },
+      {
+        "text": "Verweise auf die technische Dokumentation in den AGBs.",
+        "score": 0,
+        "feedbackText": "Rechtlich unzureichend. Technische Dokumentation in AGBs ist kein Ersatz für verständliche Erklärungen."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-001",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst KI in deinen täglichen Workflow integrieren, weißt aber nicht, wo du anfangen sollst.",
+    "mindsetTip": "Beginne mit der schmerzhaftesten, zeitaufwändigsten Aufgabe – das zeigt schnell den größten ROI.",
+    "options": [
+      {
+        "text": "Integriere KI in alle Prozesse gleichzeitig für maximale Wirkung.",
+        "score": -20,
+        "feedbackText": "Zu viel auf einmal führt zu Chaos und Frustration. Fokus ist besser als Breite."
+      },
+      {
+        "text": "Identifiziere deine zeitaufwändigste Routineaufgabe und integriere KI dort zuerst.",
+        "score": 100,
+        "feedbackText": "Richtig! Quick Win durch fokussierte Integration schafft Motivation und Erfahrung für weitere Schritte."
+      },
+      {
+        "text": "Warte, bis dein Unternehmen eine offizielle KI-Strategie hat.",
+        "score": 0,
+        "feedbackText": "Auf Top-Down-Strategie zu warten bedeutet Wettbewerbsnachteile. Bottom-Up-Integration ist wertvoller."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-002",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du nutzt viele verschiedene KI-Tools für unterschiedliche Aufgaben. Der Wechsel kostet täglich viel Zeit.",
+    "mindsetTip": "Tool-Konsolidierung: Weniger Tools, tiefer integriert sind produktiver als viele Tools oberflächlich.",
+    "options": [
+      {
+        "text": "Nutze für jede Aufgabe das beste spezialisierte Tool – Qualität geht vor Effizienz.",
+        "score": 0,
+        "feedbackText": "Spezialisierung hat Wert, aber der Tool-Wechsel-Overhead summiert sich erheblich."
+      },
+      {
+        "text": "Evaluiere, welche 2–3 Tools 80% deiner Aufgaben abdecken, und konsolidiere auf diese.",
+        "score": 100,
+        "feedbackText": "Sehr gut! Tiefe Expertise in wenigen Tools schlägt oberflächliche Nutzung vieler Tools."
+      },
+      {
+        "text": "Kaufe eine All-in-One-KI-Plattform, die alle Aufgaben übernimmt.",
+        "score": -20,
+        "feedbackText": "All-in-One-Plattformen sind oft Kompromisslösungen. Analyse vor Investition ist wichtiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-003",
+    "category": "Workflow-Integration",
+    "scenarioText": "Dein Team nutzt KI-Tools, die nicht mit eurem bestehenden CRM oder ERP-System verbunden sind.",
+    "mindsetTip": "KI-Integration ohne Datenverbindung zu bestehenden Systemen schafft Datensilos und Doppelarbeit.",
+    "options": [
+      {
+        "text": "Nutze KI-Tools parallel – manueller Datentransfer ist okay.",
+        "score": -20,
+        "feedbackText": "Manueller Datentransfer ist fehleranfällig, zeitaufwändig und schafft Inkonsistenzen."
+      },
+      {
+        "text": "Evaluiere API-Integrationen oder Middleware-Lösungen, um KI direkt mit bestehenden Systemen zu verbinden.",
+        "score": 100,
+        "feedbackText": "Richtig! Systemintegration multipliziert den KI-Nutzen durch Eliminierung von Medienbrüchen."
+      },
+      {
+        "text": "Ersetze das bestehende CRM/ERP durch ein KI-natives System.",
+        "score": 0,
+        "feedbackText": "Systemwechsel sind teuer und riskant. Integration ist meist der bessere erste Schritt."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-004",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst KI für die Erstellung von Angeboten nutzen. Der Prozess ist komplex und umfasst viele Datenquellen.",
+    "mindsetTip": "Zerlege komplexe Workflows in KI-taugliche Teilschritte – nicht alles auf einmal automatisieren.",
+    "options": [
+      {
+        "text": "Lass KI das gesamte Angebot von A bis Z erstellen.",
+        "score": -20,
+        "feedbackText": "Ohne strukturierten Prozess und Qualitätskontrolle entstehen fehlerhafte Angebote."
+      },
+      {
+        "text": "Identifiziere die repetitiven Teilschritte (Textbausteine, Formatierung) und automatisiere diese gezielt.",
+        "score": 100,
+        "feedbackText": "Klug! Teilautomatisierung der repetitiven Schritte spart Zeit ohne Qualitätsverlust."
+      },
+      {
+        "text": "Behalte den Angebotsprozess komplett manuell – zu hohe Fehlertoleranz.",
+        "score": 0,
+        "feedbackText": "Verständliche Vorsicht, aber zumindest Textbausteine und Formatierung lassen sich sicher automatisieren."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-005",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du möchtest KI in Meetings einsetzen, weißt aber nicht, welche Phasen sinnvoll sind.",
+    "mindsetTip": "KI-Wert entsteht vor und nach Meetings (Vorbereitung/Protokoll), selten währenddessen.",
+    "options": [
+      {
+        "text": "Nutze KI live im Meeting für Echtzeit-Antworten auf alle Fragen.",
+        "score": -20,
+        "feedbackText": "Live-KI-Nutzung im Meeting lenkt ab und wirkt unprofessionell. Vorbereitung ist wertvoller."
+      },
+      {
+        "text": "Nutze KI für Meeting-Vorbereitung (Agenda, Recherche) und danach für Protokoll und Action Items.",
+        "score": 100,
+        "feedbackText": "Perfekt! Vor- und Nachbereitung sind die produktivsten KI-Einsatzpunkte im Meeting-Zyklus."
+      },
+      {
+        "text": "Ersetze Meetings komplett durch KI-Kommunikation.",
+        "score": 0,
+        "feedbackText": "Meetings erfüllen soziale Funktionen, die KI nicht ersetzen kann. Optimierung ist besser als Abschaffung."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-006",
+    "category": "Workflow-Integration",
+    "scenarioText": "Dein Team erstellt täglich Statusberichte. Jeder schreibt sie anders, was den Überblick erschwert.",
+    "mindsetTip": "Standardisierte KI-Templates für Statusberichte schaffen Konsistenz und sparen Zeit.",
+    "options": [
+      {
+        "text": "Lass jeden im Team Statusberichte nach eigenem Format schreiben.",
+        "score": -20,
+        "feedbackText": "Inkonsistente Formate erschweren das Management-Reporting und erhöhen den Leseaufwand erheblich."
+      },
+      {
+        "text": "Erstelle ein standardisiertes Berichts-Template als KI-Prompt, den alle befüllen.",
+        "score": 100,
+        "feedbackText": "Exzellent! Einheitliche Struktur + KI-Unterstützung = konsistentes Reporting in Minuten statt Stunden."
+      },
+      {
+        "text": "Kaufe ein teures Projektmanagement-Tool für standardisiertes Reporting.",
+        "score": 0,
+        "feedbackText": "Software kann helfen, aber ein KI-Prompt-Template löst das Problem günstiger und flexibler."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-007",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du nutzt KI für Kundenkorrespondenz, musst aber jeden Text einzeln in dein E-Mail-System kopieren.",
+    "mindsetTip": "Copy-Paste-Workflows zwischen KI und anderen Tools sind ein Signal für fehlende Integration.",
+    "options": [
+      {
+        "text": "Akzeptiere den Copy-Paste-Schritt – es dauert nur 30 Sekunden.",
+        "score": 0,
+        "feedbackText": "30 Sekunden mal 50 E-Mails täglich = 25 Minuten verloren. Bei 220 Arbeitstagen = 91 Stunden pro Jahr."
+      },
+      {
+        "text": "Evaluiere Browser-Extensions oder API-Integrationen, die KI direkt in dein E-Mail-Tool bringen.",
+        "score": 100,
+        "feedbackText": "Richtig! Workflow-Integration eliminiert Reibung und macht KI-Nutzung nachhaltig."
+      },
+      {
+        "text": "Wechsle zu einem E-Mail-Tool mit eingebauter KI.",
+        "score": -20,
+        "feedbackText": "Tool-Wechsel für eine Funktion ist übertrieben. Integration in bestehende Tools ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-008",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst KI-Outputs direkt in deine Dokumentenmanagement-System übertragen, ohne manuellen Aufwand.",
+    "mindsetTip": "Automatisierungstools wie Make oder Zapier verbinden KI-Tools mit bestehenden Systemen.",
+    "options": [
+      {
+        "text": "Kopiere KI-Outputs manuell in das DMS – Automatisierung ist zu komplex.",
+        "score": -20,
+        "feedbackText": "Manuelle Übertragung ist fehleranfällig und ineffizient. Low-Code-Automatisierung ist zugänglich."
+      },
+      {
+        "text": "Nutze Automatisierungstools (Make, Zapier, Power Automate) für den direkten Transfer.",
+        "score": 100,
+        "feedbackText": "Perfekt! Low-Code-Automatisierung verbindet KI-Outputs nahtlos mit bestehenden Systemen."
+      },
+      {
+        "text": "Beauftrage die IT-Abteilung mit einer maßgeschneiderten Lösung.",
+        "score": 0,
+        "feedbackText": "Maßgeschneiderte Lösungen dauern lang und sind teuer. Low-Code-Tools lösen das Problem schneller."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-009",
+    "category": "Workflow-Integration",
+    "scenarioText": "Deine Abteilung will KI einführen, aber das IT-Sicherheitsteam blockiert alle externen Tools.",
+    "mindsetTip": "KI-Governance braucht IT-Security als Partner, nicht als Gegner – gemeinsame Spielregeln entwickeln.",
+    "options": [
+      {
+        "text": "Nutze externe KI-Tools heimlich – IT ist zu langsam.",
+        "score": -20,
+        "feedbackText": "Shadow-IT ist ein ernstes Sicherheits- und Compliance-Risiko. Das kann zu Entlassung führen."
+      },
+      {
+        "text": "Entwickle gemeinsam mit IT und Security ein Freigabeprozess für KI-Tools mit klaren Sicherheitskriterien.",
+        "score": 100,
+        "feedbackText": "Richtig! Strukturierter Freigabeprozess schafft Sicherheit und Agilität gleichzeitig."
+      },
+      {
+        "text": "Verzichte auf KI, solange IT keine Tools freigibt.",
+        "score": 0,
+        "feedbackText": "Abwarten kostet Wettbewerbsvorteile. Proaktiver Dialog mit IT ist produktiver."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-010",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst KI für die Vertriebspipeline nutzen, aber dein Team hat unterschiedliche Meinungen dazu.",
+    "mindsetTip": "Change Management ist bei KI-Integration oft wichtiger als die technische Umsetzung.",
+    "options": [
+      {
+        "text": "Implementiere KI top-down und erzwinge die Nutzung durch das Team.",
+        "score": -20,
+        "feedbackText": "Erzwungene Tool-Nutzung ohne Buy-in führt zu Widerstand und oberflächlicher Adoption."
+      },
+      {
+        "text": "Starte mit einem Pilot mit freiwilligen Early Adopters, zeige Erfolge und gewinne schrittweise das Team.",
+        "score": 100,
+        "feedbackText": "Exzellent! Bottom-up Adoption durch Erfolgsbeispiele ist die nachhaltigste Change-Strategie."
+      },
+      {
+        "text": "Lasse jeden selbst entscheiden, ob er KI nutzt oder nicht.",
+        "score": 0,
+        "feedbackText": "Vollständige Wahlfreiheit führt zu inkonsistenten Prozessen und verhindert Skaleneffekte."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-011",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du hast einen KI-gestützten Workflow aufgebaut, aber wenn die KI einen Fehler macht, bricht der ganze Prozess zusammen.",
+    "mindsetTip": "Robuste KI-Workflows brauchen Fehlerbehandlung und menschliche Kontrollpunkte.",
+    "options": [
+      {
+        "text": "Erhöhe das Vertrauen in die KI und entferne Kontrollpunkte für mehr Effizienz.",
+        "score": -20,
+        "feedbackText": "Ohne Kontrollpunkte propagieren KI-Fehler unkontrolliert durch den Workflow."
+      },
+      {
+        "text": "Integriere explizite Qualitätsprüf-Schritte und definiere, wann ein Mensch eingreifen muss.",
+        "score": 100,
+        "feedbackText": "Richtig! Human-in-the-loop an kritischen Stellen macht KI-Workflows robust und verlässlich."
+      },
+      {
+        "text": "Nutze nur KI für unkritische Aufgaben, bei denen Fehler keine Konsequenzen haben.",
+        "score": 0,
+        "feedbackText": "Zu restriktiv. Mit den richtigen Kontrollpunkten kann KI auch in kritischen Workflows eingesetzt werden."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-012",
+    "category": "Workflow-Integration",
+    "scenarioText": "Dein Unternehmen hat viele Abteilungen, die alle eigene KI-Tools kaufen. Es gibt keine Koordination.",
+    "mindsetTip": "Dezentrales Tool-Buying ohne Koordination erzeugt Ineffizienzen, Sicherheitsrisiken und Kosten.",
+    "options": [
+      {
+        "text": "Lass jede Abteilung selbst entscheiden – sie kennt ihre Bedürfnisse am besten.",
+        "score": 0,
+        "feedbackText": "Abteilungsautonomie hat Wert, aber fehlende Koordination kostet Skalierungseffekte und Sicherheit."
+      },
+      {
+        "text": "Etabliere ein zentrales KI-Governance-Gremium mit Vertreten aller Abteilungen für koordinierte Beschaffung.",
+        "score": 100,
+        "feedbackText": "Excellent! Koordinierte Governance spart Kosten, verbessert Sicherheit und ermöglicht Skalierung."
+      },
+      {
+        "text": "Verbiete abteilungsspezifische Tools und standardisiere auf ein einziges KI-Tool für alle.",
+        "score": -20,
+        "feedbackText": "Zu restriktiv. Verschiedene Abteilungen haben unterschiedliche Bedürfnisse. Ein Tool passt nicht für alle."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-013",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst KI-Tools in die Onboarding-Prozesse für neue Mitarbeiter integrieren.",
+    "mindsetTip": "KI im Onboarding beschleunigt die Einarbeitungszeit und gibt neuen Mitarbeitern 24/7-Support.",
+    "options": [
+      {
+        "text": "Nutze KI nur für FAQ-Antworten – persönlicher Kontakt ist im Onboarding wichtiger.",
+        "score": 0,
+        "feedbackText": "Persönlicher Kontakt ist wertvoll, aber KI kann repetitive Infofragen abnehmen und Zeit schaffen."
+      },
+      {
+        "text": "Erstelle einen KI-Assistenten mit Unternehmenswissen, der neue Mitarbeiter durch die ersten Wochen begleitet.",
+        "score": 100,
+        "feedbackText": "Ideal! KI-Onboarding-Assistent skaliert Wissenstransfer und reduziert Belastung von Kollegen."
+      },
+      {
+        "text": "Automatisiere das gesamte Onboarding mit KI ohne menschliche Begleitung.",
+        "score": -20,
+        "feedbackText": "Vollautomatisiertes Onboarding ohne menschliche Begleitung führt zu schlechter Kulturintegration."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-014",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du willst die Qualität deiner KI-gestützten Workflows regelmäßig messen, weißt aber nicht wie.",
+    "mindsetTip": "Definiere KPIs für KI-Workflows: Zeitersparnis, Fehlerrate, Nutzerzufriedenheit und Output-Qualität.",
+    "options": [
+      {
+        "text": "Messe nichts – wenn der Workflow funktioniert, ist das ausreichend.",
+        "score": -20,
+        "feedbackText": "Ohne Messung erkennst du keine Verschlechterungen, Optimierungspotenziale oder Fehlentwicklungen."
+      },
+      {
+        "text": "Definiere klare KPIs (Zeitersparnis, Fehlerrate, Qualität) und messe sie regelmäßig.",
+        "score": 100,
+        "feedbackText": "Professionell! Datengetriebene Workflow-Optimierung ist die Grundlage für kontinuierliche Verbesserung."
+      },
+      {
+        "text": "Befrage Mitarbeiter sporadisch nach ihrer Zufriedenheit mit den KI-Tools.",
+        "score": 0,
+        "feedbackText": "Subjektive Befragungen sind wertvoll, aber nicht ausreichend für objektive Workflow-Optimierung."
+      }
+    ]
+  },
+  {
+    "id": "DE-WI-015",
+    "category": "Workflow-Integration",
+    "scenarioText": "Du nutzt KI-Tools, die von einem Anbieter abhängig sind. Du machst dir Sorgen über Vendor-Lock-in.",
+    "mindsetTip": "Vendor-Lock-in bei KI-Tools minimieren durch portierbare Prompt-Bibliotheken und API-Abstraktionsschichten.",
+    "options": [
+      {
+        "text": "Bleibe beim aktuellen Anbieter – Wechsel ist zu aufwändig.",
+        "score": 0,
+        "feedbackText": "Bequemlichkeit heute kann teuer werden, wenn der Anbieter Preise erhöht oder den Service einstellt."
+      },
+      {
+        "text": "Baue eine portable Prompt-Bibliothek auf und nutze API-Abstraktionsschichten für einfacheren Wechsel.",
+        "score": 100,
+        "feedbackText": "Weitsichtig! Portierbare Assets und Abstraktionsschichten reduzieren Abhängigkeit erheblich."
+      },
+      {
+        "text": "Nutze ausschließlich Open-Source-KI-Modelle, um jede Abhängigkeit zu vermeiden.",
+        "score": -20,
+        "feedbackText": "Open-Source ist wertvoll, aber oft nicht gleichwertig in Qualität und Wartbarkeit. Hybrid ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-001",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst wiederkehrende Berichte automatisieren, die täglich manuell erstellt werden.",
+    "mindsetTip": "Regelbasierte, repetitive Aufgaben mit klarer Input/Output-Struktur sind ideal für Automatisierung.",
+    "options": [
+      {
+        "text": "Behalte manuelle Erstellung – automatisierte Berichte sind fehleranfällig.",
+        "score": -20,
+        "feedbackText": "Manuelle Berichte sind fehleranfälliger als gut konfigurierte Automatisierung."
+      },
+      {
+        "text": "Analysiere den Report-Prozess, definiere Inputs/Outputs klar und automatisiere mit KI + Workflow-Tool.",
+        "score": 100,
+        "feedbackText": "Perfekt! Klare Strukturanalyse vor der Automatisierung ist der Schlüssel zu zuverlässigen Ergebnissen."
+      },
+      {
+        "text": "Kaufe eine teure BI-Software für automatisierte Berichte.",
+        "score": 0,
+        "feedbackText": "BI-Software ist wertvoll, aber für einfache Berichte ist KI + Automatisierungstool günstiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-002",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen KI-Agenten für Kundensupport einsetzen. Der Agent soll selbstständig auf Anfragen antworten.",
+    "mindsetTip": "KI-Agenten für Kundensupport brauchen klare Eskalationsregeln und Grenzen ihrer Autonomie.",
+    "options": [
+      {
+        "text": "Lass den Agenten alle Anfragen ohne menschliche Aufsicht beantworten.",
+        "score": -20,
+        "feedbackText": "Ohne Eskalationsregeln beantwortet der Agent kritische Anfragen falsch – Reputationsrisiko."
+      },
+      {
+        "text": "Definiere klare Kategorien: Agent beantwortet Routine, eskaliert komplexe und sensible Fälle an Menschen.",
+        "score": 100,
+        "feedbackText": "Richtig! Hybrides Modell mit klaren Eskalationsregeln ist der Industriestandard für KI-Support."
+      },
+      {
+        "text": "Setze den Agenten nur für FAQs ein, alle anderen Anfragen gehen direkt an Menschen.",
+        "score": 0,
+        "feedbackText": "Vorsichtiger Ansatz, aber du lässt Automatisierungspotenzial ungenutzt."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-003",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen Workflow mit mehreren KI-Agenten aufbauen, die zusammenarbeiten.",
+    "mindsetTip": "Multi-Agenten-Systeme brauchen klare Rollen, definierte Schnittstellen und einen Orchestrierer.",
+    "options": [
+      {
+        "text": "Lass alle Agenten gleichzeitig auf dieselbe Aufgabe arbeiten – mehr Agenten = bessere Ergebnisse.",
+        "score": -20,
+        "feedbackText": "Ohne klare Rollenteilung entstehen Konflikte, Redundanzen und inkonsistente Outputs."
+      },
+      {
+        "text": "Definiere für jeden Agenten eine klare Rolle, Inputs/Outputs und einen Orchestrierungs-Agenten.",
+        "score": 100,
+        "feedbackText": "Exzellent! Klare Architektur ist der Schlüssel zu zuverlässigen Multi-Agenten-Workflows."
+      },
+      {
+        "text": "Nutze einen einzigen, universellen Agenten für alle Aufgaben.",
+        "score": 0,
+        "feedbackText": "Einzelagenten sind einfacher zu managen, aber spezialisierte Agenten liefern bessere Ergebnisse."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-004",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst KI-Agenten für die Recherche einsetzen. Der Agent soll selbstständig im Internet recherchieren.",
+    "mindsetTip": "Autonome Web-Recherche-Agenten müssen auf verlässliche Quellen beschränkt und auf Halluzinationen geprüft werden.",
+    "options": [
+      {
+        "text": "Lass den Agenten frei im Internet recherchieren ohne Einschränkungen.",
+        "score": -20,
+        "feedbackText": "Unkontrollierte Web-Recherche kann zu Falschinformationen, Bias und unzuverlässigen Quellen führen."
+      },
+      {
+        "text": "Definiere eine Liste vertrauenswürdiger Quellen und prüfe alle Agenten-Outputs auf Halluzinationen.",
+        "score": 100,
+        "feedbackText": "Richtig! Quellenbeschränkung + Output-Verifikation sind Pflicht für verlässliche Recherche-Agenten."
+      },
+      {
+        "text": "Verzichte auf autonome Web-Recherche – zu unzuverlässig.",
+        "score": 0,
+        "feedbackText": "Mit den richtigen Leitplanken ist autonome Recherche sehr wertvoll. Vollständiger Verzicht ist übervorsichtig."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-005",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen KI-Agenten, der automatisch E-Mails beantwortet und dabei auf deine Kontaktdaten zugreift.",
+    "mindsetTip": "KI-Agenten mit Zugriff auf persönliche Daten brauchen explizite Datenschutzgrenzen.",
+    "options": [
+      {
+        "text": "Gib dem Agenten vollen Zugriff auf alle E-Mails und Kontaktdaten für beste Ergebnisse.",
+        "score": -20,
+        "feedbackText": "Voller Datenzugriff für autonome Agenten ist ein erhebliches Datenschutz- und Sicherheitsrisiko."
+      },
+      {
+        "text": "Definiere minimale Datenzugriffsrechte (Principle of Least Privilege) und prüfe alle Ausgaben vor dem Senden.",
+        "score": 100,
+        "feedbackText": "Korrekt! Minimale Rechte + menschliche Endkontrolle ist der Standard für sichere KI-Agenten."
+      },
+      {
+        "text": "Nutze den Agenten nur für das Erstellen von Entwürfen, nie für das automatische Senden.",
+        "score": 0,
+        "feedbackText": "Vorsichtiger Ansatz mit Wert – aber klare Datenschutzgrenzen sind wichtiger als vollständige Manualkontrolle."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-006",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen Agenten, der selbstständig Code schreibt und direkt in die Produktionsumgebung deployt.",
+    "mindsetTip": "Autonomes Deployment ohne menschliche Review ist ein kritisches Sicherheitsrisiko.",
+    "options": [
+      {
+        "text": "Lass den Agenten direkt in Produktion deployen – manuelle Steps verlangsamen die Entwicklung.",
+        "score": -20,
+        "feedbackText": "Autonomes Produktions-Deployment ohne Review ist unverantwortlich. Ein einziger Fehler kann alles stoppen."
+      },
+      {
+        "text": "Implementiere CI/CD-Pipeline mit menschlichem Code-Review als Pflichtschritt vor jedem Deployment.",
+        "score": 100,
+        "feedbackText": "Richtig! KI als Code-Generator + menschliches Review + automatisierte Tests = sicher und effizient."
+      },
+      {
+        "text": "Teste KI-Code ausgiebig in Staging-Umgebung, bevor es in Produktion geht.",
+        "score": 0,
+        "feedbackText": "Staging-Tests sind gut, aber ohne menschliches Code-Review werden logische Fehler übersehen."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-007",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du überlegst, welche Aufgaben in deinem Unternehmen durch KI-Agenten automatisiert werden sollten.",
+    "mindsetTip": "Automatisierungskandidat-Kriterien: hoch repetitiv, regelbasiert, gut dokumentiert, niedriges Fehlerrisiko.",
+    "options": [
+      {
+        "text": "Automatisiere alles, was KI theoretisch kann – mehr Automatisierung ist immer besser.",
+        "score": -20,
+        "feedbackText": "Falsch. Manche Aufgaben erfordern Urteilsvermögen, Empathie oder Kreativität, die KI nicht zuverlässig liefert."
+      },
+      {
+        "text": "Bewerte Aufgaben nach Repetitivität, Regelbasigkeit, Fehlertoleranz und Dokumentierbarkeit.",
+        "score": 100,
+        "feedbackText": "Strategisch! Diese vier Kriterien identifizieren die sichersten und wertvollsten Automatisierungskandidaten."
+      },
+      {
+        "text": "Automatisiere nur Aufgaben, die kein menschliches Urteil erfordern.",
+        "score": 0,
+        "feedbackText": "Sicherer Ansatz, aber zu restriktiv. Viele Aufgaben mit Urteilsanteil lassen sich trotzdem teilautomatisieren."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-008",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Dein KI-Agent ist im Einsatz und macht plötzlich unerwartete Fehler. Du verstehst nicht warum.",
+    "mindsetTip": "KI-Agenten brauchen Logging und Monitoring, um Fehlerquellen zu diagnostizieren.",
+    "options": [
+      {
+        "text": "Deaktiviere den Agenten sofort und kehre zu manuellen Prozessen zurück.",
+        "score": 0,
+        "feedbackText": "Deaktivierung ist sicher, aber ohne Diagnose verlierst du alle Automatisierungsvorteile dauerhaft."
+      },
+      {
+        "text": "Analysiere die Logs, identifiziere das Fehlermuster und passe den Agenten gezielt an.",
+        "score": 100,
+        "feedbackText": "Richtig! Systematische Fehlerdiagnose durch Logs ist die Grundlage für robuste KI-Agenten."
+      },
+      {
+        "text": "Ignoriere die Fehler, solange die Mehrheit der Outputs korrekt ist.",
+        "score": -20,
+        "feedbackText": "Fehler in automatisierten Prozessen können sich schnell akkumulieren. Frühzeitige Diagnose ist Pflicht."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-009",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen Agenten, der automatisch Social-Media-Posts erstellt und veröffentlicht.",
+    "mindsetTip": "Vollautonomes Social-Media-Posting ohne menschliche Freigabe ist ein Reputationsrisiko.",
+    "options": [
+      {
+        "text": "Lass den Agenten Posts direkt veröffentlichen – das spart Zeit.",
+        "score": -20,
+        "feedbackText": "Unkontrolliertes Posten kann PR-Krisen auslösen. Selbst ein einziger falscher Post kann viral gehen."
+      },
+      {
+        "text": "Agent erstellt Posts, Mensch genehmigt und veröffentlicht – Qualitätskontrolle bleibt beim Menschen.",
+        "score": 100,
+        "feedbackText": "Richtig! Kreativ-Automatisierung + menschliche Freigabe ist der Standard für professionelles Social Media."
+      },
+      {
+        "text": "Nutze KI nur für Post-Ideen, schreibe und veröffentliche selbst.",
+        "score": 0,
+        "feedbackText": "Sicher, aber du nutzt nur einen Teil des Automatisierungspotenzials."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-010",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du hast einen Automatisierungs-Workflow aufgebaut, der gut funktioniert. Jetzt willst du ihn skalieren.",
+    "mindsetTip": "Vor der Skalierung immer auf Robustheit testen: Was passiert bei Randfällen und unerwarteten Inputs?",
+    "options": [
+      {
+        "text": "Skaliere sofort auf alle Prozesse – der Workflow funktioniert ja gut.",
+        "score": -20,
+        "feedbackText": "Was bei kleinem Maßstab funktioniert, kann bei Skalierung unerwartete Fehler zeigen."
+      },
+      {
+        "text": "Stresse-teste den Workflow mit Randfällen und edge cases, bevor du skalierst.",
+        "score": 100,
+        "feedbackText": "Richtig! Robustheitstests vor der Skalierung verhindern teure Fehler im großen Maßstab."
+      },
+      {
+        "text": "Skaliere schrittweise und beobachte die Performance.",
+        "score": 0,
+        "feedbackText": "Schrittweise Skalierung ist gut, aber ohne explizite Randfallstests findest du Probleme erst zu spät."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-011",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst einen KI-Agenten zur Rechnungsverarbeitung einsetzen, der Rechnungen liest und Zahlungen auslöst.",
+    "mindsetTip": "Finanzielle Transaktionen durch KI-Agenten brauchen Approval-Workflows und Betragsschwellen.",
+    "options": [
+      {
+        "text": "Lass den Agenten Zahlungen bis zu 10.000€ vollautomatisch auslösen.",
+        "score": -20,
+        "feedbackText": "Autonome Zahlungen ohne menschliche Freigabe sind ein erhebliches Finanz- und Betrugsrisiko."
+      },
+      {
+        "text": "Definiere Schwellenwerte: Agent verarbeitet bis 500€ automatisch, darüber immer menschliche Freigabe.",
+        "score": 100,
+        "feedbackText": "Korrekt! Schwellenwert-basierte Autonomie balanciert Effizienz und Kontrolle optimal."
+      },
+      {
+        "text": "Nutze KI nur zum Lesen der Rechnungen, Zahlungen immer manuell auslösen.",
+        "score": 0,
+        "feedbackText": "Sicher, aber du nutzt nicht das volle Automatisierungspotenzial für klare Standardfälle."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-012",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du entwickelst einen KI-Agenten und willst sicherstellen, dass er ethisch handelt.",
+    "mindsetTip": "Ethische Leitplanken für KI-Agenten müssen explizit und messbar definiert werden, nicht implizit erwartet.",
+    "options": [
+      {
+        "text": "Vertraue darauf, dass das KI-Modell bereits ethisch trainiert ist.",
+        "score": -20,
+        "feedbackText": "KI-Modelle haben inhärente Bias und können in unerwarteten Situationen unethisch handeln."
+      },
+      {
+        "text": "Definiere explizite ethische Grenzen im System-Prompt und teste mit adversarialen Szenarien.",
+        "score": 100,
+        "feedbackText": "Richtig! Explizite Regeln + Adversarial Testing sind die Grundlage für ethisch robuste Agenten."
+      },
+      {
+        "text": "Füge einen allgemeinen Hinweis auf ethisches Handeln in den System-Prompt ein.",
+        "score": 0,
+        "feedbackText": "Vage Ethik-Hinweise sind besser als nichts, aber spezifische Regeln und Tests sind deutlich wirksamer."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-013",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst mit KI-Agenten Datenbankabfragen automatisieren. Der Agent hat Schreibzugriff auf die Datenbank.",
+    "mindsetTip": "Datenbankzugriff für KI-Agenten: Read-only für Analyse, Write-Zugriff nur mit expliziter Bestätigung.",
+    "options": [
+      {
+        "text": "Gib dem Agenten vollen Lese- und Schreibzugriff für maximale Flexibilität.",
+        "score": -20,
+        "feedbackText": "Unkontrollierter Schreibzugriff kann Daten korrumpieren oder löschen – irreversibles Risiko."
+      },
+      {
+        "text": "Trenne Lese- und Schreibzugriff: Analyse mit Read-only, Schreiboperationen nur mit expliziter Bestätigung.",
+        "score": 100,
+        "feedbackText": "Korrekt! Principle of Least Privilege und Bestätigungsschritte schützen kritische Datenbankdaten."
+      },
+      {
+        "text": "Nutze den Agenten nur für Read-only-Abfragen, Schreiben immer manuell.",
+        "score": 0,
+        "feedbackText": "Sicherer Ansatz, aber strukturierte Schreiboperationen mit Bestätigung können sicher automatisiert werden."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-014",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Dein KI-Automatisierungs-Workflow läuft stabil, aber die Kosten durch API-Aufrufe steigen schnell.",
+    "mindsetTip": "KI-Kostenoptimierung: Caching häufiger Anfragen, Modell-Downgrading für einfache Tasks, Batch-Processing.",
+    "options": [
+      {
+        "text": "Akzeptiere die steigenden Kosten – KI-Automatisierung ist eben teuer.",
+        "score": 0,
+        "feedbackText": "Kostenakzeptanz ohne Optimierungsversuch ist verschwendetes Budget."
+      },
+      {
+        "text": "Implementiere Caching, nutze kleinere Modelle für einfache Tasks und bündele Anfragen (Batching).",
+        "score": 100,
+        "feedbackText": "Exzellent! Drei-Punkte-Kostenstrategie kann KI-API-Kosten um 50–80% reduzieren."
+      },
+      {
+        "text": "Deaktiviere die Automatisierung wenn die Kosten zu hoch werden.",
+        "score": -20,
+        "feedbackText": "Deaktivierung ist die schlechteste Option. Kostenoptimierung erhält den Wert bei reduziertem Aufwand."
+      }
+    ]
+  },
+  {
+    "id": "DE-AA-015",
+    "category": "Automatisierung & Agenten",
+    "scenarioText": "Du willst wissen, ob deine KI-Automatisierungen wirklich einen positiven ROI liefern.",
+    "mindsetTip": "ROI-Berechnung für KI: (Zeitersparnis × Stundensatz + Fehlerreduktion) minus (Tool-Kosten + Wartungsaufwand).",
+    "options": [
+      {
+        "text": "Vertraue dem subjektiven Gefühl, dass die Automatisierung Zeit spart.",
+        "score": -20,
+        "feedbackText": "Subjektive Einschätzungen überschätzen ROI regelmäßig. Daten sind zuverlässiger."
+      },
+      {
+        "text": "Messe Zeitersparnis, Fehlerrate und Kosten vor und nach der Implementierung.",
+        "score": 100,
+        "feedbackText": "Professionell! Datenbasierte ROI-Messung ermöglicht fundierte Entscheidungen über weitere Investitionen."
+      },
+      {
+        "text": "Kalkuliere nur die direkte Zeitersparnis, da andere Faktoren schwer messbar sind.",
+        "score": 0,
+        "feedbackText": "Partielle Messung ist besser als keine, aber Fehlerreduktion und Qualitätsverbesserung sind ebenfalls relevant."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-001",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Dein Team hat umfangreiches internes Wissen, das aber nirgendwo strukturiert dokumentiert ist.",
+    "mindsetTip": "KI kann helfen, implizites Wissen zu explizieren und zu strukturieren – aber Menschen müssen es validieren.",
+    "options": [
+      {
+        "text": "Lasse das Wissen im Köpfen der Mitarbeiter – Dokumentation kostet zu viel Zeit.",
+        "score": -20,
+        "feedbackText": "Unstrukturiertes Wissen geht bei Mitarbeiterfluktuation verloren. KI senkt den Dokumentationsaufwand erheblich."
+      },
+      {
+        "text": "Nutze KI-gestützte Interviews und Strukturierungstools, um Wissen zu externalisieren und zu dokumentieren.",
+        "score": 100,
+        "feedbackText": "Exzellent! KI kann Experteninterviews zusammenfassen und strukturieren – Wissenstransfer wird skalierbar."
+      },
+      {
+        "text": "Kaufe ein teures Wissensmanagement-System und befülle es manuell.",
+        "score": 0,
+        "feedbackText": "Systeme ohne guten Content-Prozess bleiben leer. KI-gestützter Prozess ist wichtiger als das Tool."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-002",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du recherchierst ein komplexes Thema und bekommst von der KI eine umfangreiche Antwort. Du weißt nicht, welchen Quellen zu trauen ist.",
+    "mindsetTip": "KI als Rechercheassistent, nicht als Orakel – jede wichtige Aussage braucht eine verifizierbare Quelle.",
+    "options": [
+      {
+        "text": "Vertraue der KI-Antwort – sie wurde aus Millionen von Texten destilliert.",
+        "score": -20,
+        "feedbackText": "Destillierung bedeutet nicht Korrektheit. KI kann plausibel klingende Falschinformationen produzieren."
+      },
+      {
+        "text": "Nutze die KI-Antwort als Ausgangspunkt und verifiziere jede wichtige Aussage in Primärquellen.",
+        "score": 100,
+        "feedbackText": "Richtig! KI beschleunigt die Recherche, Quellen-Verifikation bleibt menschliche Verantwortung."
+      },
+      {
+        "text": "Nutze KI nur für Themen, bei denen du bereits Expertise hast und Fehler erkennst.",
+        "score": 0,
+        "feedbackText": "Sinnvoll, aber damit verzichtest du auf KI-Mehrwert bei neuen Themen. Verifikationsprozess ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-003",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst eine interne Wissensdatenbank aufbauen, auf die Mitarbeiter per KI-Chatbot zugreifen können.",
+    "mindsetTip": "RAG (Retrieval Augmented Generation) verbindet interne Dokumente mit KI-Sprachmodellen.",
+    "options": [
+      {
+        "text": "Lass die KI direkt auf alle internen Dokumente ohne Filterung zugreifen.",
+        "score": -20,
+        "feedbackText": "Ungefiltert kann die KI auch vertrauliche oder veraltete Informationen ausgeben – Datenschutzrisiko."
+      },
+      {
+        "text": "Implementiere RAG mit klar definierten Dokumentkategorien, Zugriffsrechten und Aktualitätsprüfung.",
+        "score": 100,
+        "feedbackText": "Professionell! RAG mit Governance-Layer ist der Standard für sichere interne KI-Wissenssysteme."
+      },
+      {
+        "text": "Nutze eine einfache Volltextsuche statt KI – sicherer und einfacher.",
+        "score": 0,
+        "feedbackText": "Volltextsuche ist sicherer, aber KI-gestützte Suche liefert kontextbezogene Antworten statt nur Treffer."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-004",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du möchtest, dass KI wissenschaftliche Paper für dich zusammenfasst und die relevanten Erkenntnisse extrahiert.",
+    "mindsetTip": "KI-Zusammenfassungen wissenschaftlicher Paper können Nuancen verlieren – Abstracts und Methodenteile immer selbst lesen.",
+    "options": [
+      {
+        "text": "Lass KI alle Paper vollständig zusammenfassen und vertraue den Zusammenfassungen.",
+        "score": -20,
+        "feedbackText": "KI-Zusammenfassungen wissenschaftlicher Texte können wichtige Nuancen, Einschränkungen und Methodenfehler übersehen."
+      },
+      {
+        "text": "Nutze KI für erste Übersichten, lese selbst Abstract, Methodik und Limitationen kritisch durch.",
+        "score": 100,
+        "feedbackText": "Richtig! KI beschleunigt das Paper-Screening, kritisches Lesen bleibt menschliche Pflicht."
+      },
+      {
+        "text": "Nutze nur Peer-Review-Zusammenfassungen aus Fachzeitschriften, keine KI.",
+        "score": 0,
+        "feedbackText": "Fachzusammenfassungen sind wertvoll, aber KI kann das erste Screening erheblich beschleunigen."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-005",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst Wissen aus vergangenen Projekten für zukünftige Projekte nutzbar machen.",
+    "mindsetTip": "Lessons-Learned-Dokumente als KI-indexierte Wissensbasis ermöglichen schnellen Transfer.",
+    "options": [
+      {
+        "text": "Vertraue auf das Gedächtnis erfahrener Mitarbeiter für Wissensweitergabe.",
+        "score": -20,
+        "feedbackText": "Erfahrungswissen in Köpfen ist fragil und nicht skalierbar. Wissenstransfer braucht Dokumentation."
+      },
+      {
+        "text": "Erstelle strukturierte Lessons-Learned-Dokumente nach jedem Projekt und mache sie KI-durchsuchbar.",
+        "score": 100,
+        "feedbackText": "Exzellent! Strukturiertes Projektwissen + KI-Suche = schneller, verlässlicher Wissenstransfer."
+      },
+      {
+        "text": "Nutze Wikis für Wissensdokumentation ohne KI-Integration.",
+        "score": 0,
+        "feedbackText": "Wikis sind gut, aber ohne KI-Suche bleibt Wissen oft ungenutzt, weil es schwer auffindbar ist."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-006",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du nutzt KI zur Marktrecherche und willst sicherstellen, dass die Informationen aktuell und zuverlässig sind.",
+    "mindsetTip": "KI-Marktrecherche immer mit aktuellen Primärquellen ergänzen – Trainings-Cutoff beachten.",
+    "options": [
+      {
+        "text": "Nutze ausschließlich KI für die Marktrecherche – spart Zeit und Geld.",
+        "score": -20,
+        "feedbackText": "KI-Wissen hat einen Cutoff. Für Marktdaten können Monate alte Infos zu falschen Entscheidungen führen."
+      },
+      {
+        "text": "Nutze KI für Rahmenanalyse und historische Trends, ergänze mit aktuellen Quellen für Gegenwartsdaten.",
+        "score": 100,
+        "feedbackText": "Korrekt! KI + aktuelle Primärquellen = vollständige, zuverlässige Marktrecherche."
+      },
+      {
+        "text": "Nutze KI nur für qualitative Analysen, für quantitative Daten immer offizielle Statistiken.",
+        "score": 0,
+        "feedbackText": "Gute Unterscheidung, aber auch qualitative KI-Aussagen brauchen Verifikation."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-007",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst Wettbewerberinformationen systematisch sammeln und analysieren. KI soll dabei helfen.",
+    "mindsetTip": "Competitive Intelligence mit KI: strukturierte Quellen definieren, regelmäßige Updates automatisieren.",
+    "options": [
+      {
+        "text": "Lass KI täglich automatisch alle verfügbaren Infos über Wettbewerber sammeln und analysieren.",
+        "score": 0,
+        "feedbackText": "Automatisierte Sammlung ohne Qualitätsfilter produziert Informationsrauschen statt Insights."
+      },
+      {
+        "text": "Definiere 3–5 zuverlässige Quellen pro Wettbewerber und automatisiere die regelmäßige Analyse.",
+        "score": 100,
+        "feedbackText": "Strukturiert und effizient! Wenige, gute Quellen liefern mehr Wert als viele unkontrollierte."
+      },
+      {
+        "text": "Gib vertrauliche interne Strategiepapiere in die KI-Analyse, damit sie Wettbewerbslücken besser erkennt.",
+        "score": -20,
+        "feedbackText": "Interne Strategiepapiere gehören nicht in externe KI-Systeme. Datenschutz- und Sicherheitsrisiko!"
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-008",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst eine KI-gestützte FAQ-Datenbank für Kundensupport aufbauen.",
+    "mindsetTip": "FAQ-Datenbanken für KI brauchen klare Antwortstrukturen, Aktualitätsprozesse und Fehler-Eskalationspfade.",
+    "options": [
+      {
+        "text": "Lass KI die FAQs selbst generieren basierend auf allgemeinem Wissen.",
+        "score": -20,
+        "feedbackText": "KI-generierte FAQs ohne unternehmensspezifisches Wissen enthalten Fehler und sind nicht konkret genug."
+      },
+      {
+        "text": "Erstelle FAQs aus echten Kundenanfragen, validiere mit Experten und pflege sie regelmäßig.",
+        "score": 100,
+        "feedbackText": "Richtig! Echte Anfragen + Expertenwissen + Aktualitätspflege = verlässliche FAQ-Basis."
+      },
+      {
+        "text": "Aktualisiere FAQs nur wenn Kunden Fehler melden.",
+        "score": 0,
+        "feedbackText": "Reaktive Aktualisierung führt zu langen Phasen falscher Informationen. Proaktive Pflege ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-009",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst Notizen aus Meetings, Calls und Dokumenten in ein strukturiertes Wissenssystem überführen.",
+    "mindsetTip": "KI kann unstrukturierte Notizen in strukturiertes Wissen umwandeln – Schlüssel ist ein konsistentes Schema.",
+    "options": [
+      {
+        "text": "Speichere alle Notizen unstrukturiert in einem Ordner – KI findet alles.",
+        "score": 0,
+        "feedbackText": "Unstrukturierte Ablage macht KI-Suche zwar möglich, aber qualitativ minderwertig."
+      },
+      {
+        "text": "Definiere ein Wissens-Schema (Thema, Datum, Kontext, Action Items) und nutze KI zur automatischen Strukturierung.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Konsistentes Schema + KI-Strukturierung = durchsuchbares, nutzbares Wissenssystem."
+      },
+      {
+        "text": "Schreibe alle Notizen manuell in strukturierter Form – KI ist für Strukturierung nicht nötig.",
+        "score": -20,
+        "feedbackText": "Manuelles Strukturieren ist zeitaufwändig und fehleranfällig. KI ist hier ein klarer Effizienzgewinn."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-010",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du möchtest KI nutzen, um dein persönliches Second-Brain-System zu verbessern.",
+    "mindsetTip": "KI-gestützte Personal Knowledge Management-Systeme verbinden Notizen, Quellen und Ideen kontextuell.",
+    "options": [
+      {
+        "text": "Nutze KI für alle Wissensmanagement-Aufgaben ohne eigenes System.",
+        "score": -20,
+        "feedbackText": "Ohne eigenes System bist du vollständig von KI-Verfügbarkeit abhängig und verlierst Kontext."
+      },
+      {
+        "text": "Baue ein strukturiertes PKM-System auf und nutze KI als Analyse- und Verknüpfungs-Layer.",
+        "score": 100,
+        "feedbackText": "Optimal! Eigenes System + KI als Assistenz = maximale Wissensnutzung bei minimaler Abhängigkeit."
+      },
+      {
+        "text": "Nutze Standard-Notiz-Apps ohne KI-Integration – einfacher und zuverlässiger.",
+        "score": 0,
+        "feedbackText": "Einfachheit hat Wert, aber KI-Integration multipliziert den Wert deines Wissenssystems erheblich."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-011",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst mit KI ein Inhaltsarchiv durchsuchen, das tausende von Dokumenten enthält.",
+    "mindsetTip": "Semantische Suche mit Embeddings findet relevante Dokumente auch ohne exakte Schlüsselwörter.",
+    "options": [
+      {
+        "text": "Nutze einfache Stichwortsuche – reicht für die meisten Suchanfragen.",
+        "score": 0,
+        "feedbackText": "Stichwortsuche findet nur exakte Treffer. Semantische Suche versteht den Kontext der Anfrage."
+      },
+      {
+        "text": "Implementiere Vektor-basierte semantische Suche für kontextbezogene Dokumentfindung.",
+        "score": 100,
+        "feedbackText": "Exzellent! Semantische Suche findet relevante Dokumente auch ohne exakte Schlüsselwörter."
+      },
+      {
+        "text": "Lasse KI alle Dokumente lesen und Zusammenfassungen erstellen, bevor du suchst.",
+        "score": -20,
+        "feedbackText": "Vor-Zusammenfassung aller Dokumente ist ineffizient und verliert Detailtiefe bei der Suche."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-012",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst sicherstellen, dass das Wissen in deiner KI-Wissensdatenbank immer aktuell bleibt.",
+    "mindsetTip": "Wissensdatenbanken veralten ohne aktiven Aktualisierungsprozess – Verantwortlichkeiten klar definieren.",
+    "options": [
+      {
+        "text": "Aktualisiere die Datenbank wenn jemand Zeit hat – Aktualität ist weniger wichtig als Vollständigkeit.",
+        "score": -20,
+        "feedbackText": "Veraltete Wissensdatenbanken liefern falsche Antworten. Regelmäßige Updates sind unverzichtbar."
+      },
+      {
+        "text": "Definiere klare Verantwortlichkeiten, Aktualisierungsintervalle und automatische Veraltungs-Flags.",
+        "score": 100,
+        "feedbackText": "Professionell! Governance-Prozess für Wissensaktualität ist genauso wichtig wie der Aufbau."
+      },
+      {
+        "text": "Nutze KI, um veraltete Inhalte automatisch zu aktualisieren.",
+        "score": 0,
+        "feedbackText": "KI kann helfen, Veraltung zu identifizieren, aber inhaltliche Aktualisierungen brauchen menschliches Urteil."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-013",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Neue Mitarbeiter haben Schwierigkeiten, in der Fülle interner Dokumente relevante Informationen zu finden.",
+    "mindsetTip": "KI-gestützte Onboarding-Wissenssysteme reduzieren Suchzeit und beschleunigen die Einarbeitung.",
+    "options": [
+      {
+        "text": "Übergib neuen Mitarbeitern eine Liste aller wichtigen Dokumente und hoffe, dass sie sich selbst zurechtfinden.",
+        "score": -20,
+        "feedbackText": "Selbstnavigation in komplexen Dokumentlandschaften ist zeitaufwändig und frustrierend."
+      },
+      {
+        "text": "Implementiere einen KI-Assistenten, der auf Fragen mit relevanten internen Dokumenten antwortet.",
+        "score": 100,
+        "feedbackText": "Ideal! Kontextbezogene Wissensnavigation beschleunigt Onboarding und reduziert Fragen an Kollegen."
+      },
+      {
+        "text": "Erstelle eine statische Onboarding-Checkliste mit Links zu wichtigen Dokumenten.",
+        "score": 0,
+        "feedbackText": "Checklisten helfen, aber sie sind statisch und beantworten keine individuellen Fragen."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-014",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst KI nutzen, um Erkenntnisse aus Kundengesprächen systematisch zu erfassen.",
+    "mindsetTip": "Strukturierte Gesprächsanalyse mit KI extrahiert Muster, die manuell nicht erkennbar wären.",
+    "options": [
+      {
+        "text": "Transkribiere Kundengespräche und speichere sie vollständig ohne Analyse.",
+        "score": 0,
+        "feedbackText": "Rohe Transkripte ohne Analyse sind schwer nutzbar. KI-Extraktion von Insights ist deutlich wertvoller."
+      },
+      {
+        "text": "Analysiere anonymisierte Transkripte mit KI auf wiederkehrende Themen, Einwände und Erfolgsmuster.",
+        "score": 100,
+        "feedbackText": "Exzellent! Systematische KI-Analyse von Kundengesprächen ist eine Goldmine für Produktentwicklung und Vertrieb."
+      },
+      {
+        "text": "Gib alle Kundengespräche mit Namen und Kontaktdaten in die KI für präzisere Analyse.",
+        "score": -20,
+        "feedbackText": "DSGVO-Verstoß! Kundengespräche mit PII dürfen nicht ohne Anonymisierung in externe KI-Systeme."
+      }
+    ]
+  },
+  {
+    "id": "DE-WM-015",
+    "category": "Wissensmanagement & Recherche",
+    "scenarioText": "Du willst Branchentrends früh erkennen und nutzt KI für das Monitoring von Quellen.",
+    "mindsetTip": "Signal-Noise-Ratio bei KI-Trendmonitoring: Qualität der Quellen vor Quantität.",
+    "options": [
+      {
+        "text": "Lass KI alle Online-Quellen ohne Filter nach Trends durchsuchen.",
+        "score": -20,
+        "feedbackText": "Unkontrolliertes Web-Monitoring produziert Informationsüberflutung statt klarer Signals."
+      },
+      {
+        "text": "Definiere 10–15 hochwertige Quellen, nutze KI für automatische Zusammenfassung und Alert-Funktion.",
+        "score": 100,
+        "feedbackText": "Richtig! Fokussiertes Monitoring weniger, guter Quellen liefert mehr Wert als breites Rauschen."
+      },
+      {
+        "text": "Lese täglich manuell Branchenmagazine – KI-Monitoring ist zu fehleranfällig.",
+        "score": 0,
+        "feedbackText": "Manuelles Lesen hat Wert, aber KI-Monitoring skaliert auf mehr Quellen ohne Zeitaufwand."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-001",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Team ist skeptisch gegenüber KI-Tools. Einige Mitarbeiter sehen darin eine Bedrohung für ihre Jobs.",
+    "mindsetTip": "Jobangst durch KI ist real und berechtigt – offen ansprechen, nicht ignorieren, durch Upskilling begegnen.",
+    "options": [
+      {
+        "text": "Ignoriere die Bedenken – wer sich nicht anpasst, bleibt zurück.",
+        "score": -20,
+        "feedbackText": "Ignorierte Bedenken führen zu verdecktem Widerstand und schlechter Adoption. Empathie ist wirksamer."
+      },
+      {
+        "text": "Führe offene Gespräche über Veränderungen, zeige Chancen durch KI und biete aktiv Upskilling an.",
+        "score": 100,
+        "feedbackText": "Richtig! Transparente Kommunikation + Kompetenzaufbau transformiert Angst in Chancenbewusstsein."
+      },
+      {
+        "text": "Versprich, dass durch KI keine Jobs verloren gehen – das beruhigt die Situation.",
+        "score": 0,
+        "feedbackText": "Falsche Versprechungen untergraben das Vertrauen langfristig. Ehrlichkeit ist nachhaltiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-002",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst KI-Tools in deiner Abteilung einführen, brauchst aber Führungsunterstützung.",
+    "mindsetTip": "Business Case mit konkretem ROI und Pilotprojekt-Plan überzeugt Führungskräfte mehr als Technologie-Begeisterung.",
+    "options": [
+      {
+        "text": "Präsentiere begeistert alle KI-Möglichkeiten und hoffe auf Zustimmung.",
+        "score": 0,
+        "feedbackText": "Begeisterung ohne konkreten Business Case überzeugt Führungskräfte selten."
+      },
+      {
+        "text": "Erstelle einen Business Case mit konkretem ROI, Pilotplan und Risikoanalyse.",
+        "score": 100,
+        "feedbackText": "Professionell! Zahlenbasierter Business Case + kleiner Pilot senkt das wahrgenommene Risiko erheblich."
+      },
+      {
+        "text": "Fange einfach mit KI-Tools an ohne Führungsunterstützung – es ist leichter um Verzeihung zu bitten als um Erlaubnis.",
+        "score": -20,
+        "feedbackText": "Unauthorized Tool-Einführung kann zu rechtlichen und sicherheitstechnischen Problemen führen."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-003",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Team hat unterschiedliche KI-Kenntnisse. Erfahrene Nutzer frustrieren sich mit Anfängern in gemeinsamen Projekten.",
+    "mindsetTip": "KI-Kompetenz-Unterschiede erfordern differenzierte Lernpfade und gegenseitiges Peer-Learning.",
+    "options": [
+      {
+        "text": "Setze alle auf denselben Lernpfad, unabhängig vom Kenntnisstand.",
+        "score": -20,
+        "feedbackText": "One-size-fits-all-Schulung ist ineffizient für Fortgeschrittene und überfordernd für Anfänger."
+      },
+      {
+        "text": "Erstelle differenzierte Lernpfade nach Kenntnisstand und etabliere Peer-Learning zwischen Erfahrenen und Anfängern.",
+        "score": 100,
+        "feedbackText": "Exzellent! Differenzierung + Peer-Learning nutzt vorhandenes Wissen und schafft Team-Kohäsion."
+      },
+      {
+        "text": "Lass jeden selbst lernen – KI-Tools sind intuitiv genug.",
+        "score": 0,
+        "feedbackText": "Selbststudium ohne Struktur führt zu inkonsistenten Kenntnissen und verpassten Best Practices."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-004",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst gemeinsam mit deinem Team KI-Workflows entwickeln. Bisher passiert das in Silos.",
+    "mindsetTip": "Kollaborative KI-Workflow-Entwicklung durch regelmäßige Show-and-Tell-Sessions und geteilte Prompt-Bibliotheken.",
+    "options": [
+      {
+        "text": "Lass jeden sein eigenes System entwickeln – Autonomie fördert Innovation.",
+        "score": 0,
+        "feedbackText": "Individuelle Innovation ist wertvoll, aber Wissenstransfer und Skaleneffekte entstehen durch Kollaboration."
+      },
+      {
+        "text": "Implementiere wöchentliche KI-Show-and-Tell-Sessions und eine gemeinsame Prompt-Bibliothek.",
+        "score": 100,
+        "feedbackText": "Hervorragend! Geteiltes Lernen + gemeinsame Ressourcen multiplizieren den KI-Nutzen im Team."
+      },
+      {
+        "text": "Beauftrage externe KI-Berater, gemeinsame Workflows zu entwickeln.",
+        "score": -20,
+        "feedbackText": "Externe Berater kennen euren Kontext nicht. Interne kollaborative Entwicklung ist nachhaltiger."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-005",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "KI-Tools verändern die Arbeitsweise deines Teams grundlegend. Einige Prozesse werden obsolet.",
+    "mindsetTip": "Proaktives Prozess-Redesign ist besser als das Beharren auf alten Strukturen mit neuen Tools.",
+    "options": [
+      {
+        "text": "Behalte alle bestehenden Prozesse und ergänze sie einfach mit KI-Tools.",
+        "score": -20,
+        "feedbackText": "KI auf alte Prozesse aufzusatteln verhindert die vollen Effizienzgewinne. Prozesse müssen neu gedacht werden."
+      },
+      {
+        "text": "Überarbeite Prozesse fundamental unter Berücksichtigung der neuen KI-Möglichkeiten.",
+        "score": 100,
+        "feedbackText": "Richtig! Prozess-Redesign ermöglicht maximale KI-Nutzung statt kosmetischer Verbesserungen."
+      },
+      {
+        "text": "Warte, bis alle KI-Tools stabil sind, bevor du Prozesse anpasst.",
+        "score": 0,
+        "feedbackText": "Warten auf Stabilität kostet wertvolle Zeit. Schrittweises Redesign parallel zur Tool-Einführung ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-006",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst KI-Kenntnisse in deiner Organisation systematisch aufbauen. Es gibt keine Schulungsinfrastruktur.",
+    "mindsetTip": "KI-Lernkultur beginnt mit sichtbaren Vorbildern und niedrigschwelligen Einstiegsangeboten.",
+    "options": [
+      {
+        "text": "Schicke alle Mitarbeiter zu teuren externen KI-Schulungen.",
+        "score": 0,
+        "feedbackText": "Externe Schulungen sind wertvoll, aber teure und nicht auf den eigenen Kontext zugeschnitten."
+      },
+      {
+        "text": "Identifiziere interne KI-Champions, baue mit ihnen Lernmaterial auf und etabliere Communities of Practice.",
+        "score": 100,
+        "feedbackText": "Exzellent! Interne Champions + CoPs sind nachhaltiger und kontextrelevanter als externe Schulungen."
+      },
+      {
+        "text": "Stelle allen Mitarbeitern KI-Tools zur Verfügung und erwarte Selbstlernrate.",
+        "score": -20,
+        "feedbackText": "Tool-Zugang ohne Lernunterstützung führt zu Frustration und oberflächlicher Nutzung."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-007",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Unternehmen hat eine KI-Transformation gestartet, aber die Mitarbeitermotivation sinkt nach 3 Monaten.",
+    "mindsetTip": "KI-Transformationen brauchen sichtbare Erfolgserlebnisse und regelmälige Fortschrittskommunikation.",
+    "options": [
+      {
+        "text": "Erhöhe den Druck auf das Team – Transformation braucht Konsequenz.",
+        "score": -20,
+        "feedbackText": "Erhöhter Druck bei sinkender Motivation führt zu Burnout und Widerstand, nicht zu besserer Adoption."
+      },
+      {
+        "text": "Feiere Quick Wins sichtbar, kommuniziere Fortschritte und passe den Transformationsplan an das Feedback an.",
+        "score": 100,
+        "feedbackText": "Richtig! Sichtbare Erfolge + Feedback-Loop halten die Transformationsenergie am Leben."
+      },
+      {
+        "text": "Führe mehr Schulungen durch – fehlende Kompetenz ist das Problem.",
+        "score": 0,
+        "feedbackText": "Kompetenz ist ein Teil, aber Motivation und Sinnhaftigkeit sind oft wichtiger für Adoption."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-008",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst KI in die Zusammenarbeit mit externen Partnern und Kunden einbringen, stoßt aber auf Vorbehalte.",
+    "mindsetTip": "Externe KI-Zusammenarbeit braucht klare Kommunikation über Einsatzgebiete, Grenzen und Datenschutz.",
+    "options": [
+      {
+        "text": "Setze KI in der externen Zusammenarbeit ein ohne die Partner zu informieren.",
+        "score": -20,
+        "feedbackText": "Heimliche KI-Nutzung in Kundenbeziehungen ist ein Vertrauensbruch und kann rechtliche Konsequenzen haben."
+      },
+      {
+        "text": "Erkläre deinen Partnern transparent, wie und wo KI eingesetzt wird, und kläre gemeinsam die Datenschutzfragen.",
+        "score": 100,
+        "feedbackText": "Korrekt! Transparenz schafft Vertrauen und macht externe KI-Kollaboration nachhaltig erfolgreich."
+      },
+      {
+        "text": "Nutze KI nur intern, bei allem Externen verzichte darauf.",
+        "score": 0,
+        "feedbackText": "Zu restriktiv. Mit der richtigen Kommunikation kann KI auch externe Zusammenarbeit verbessern."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-009",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Team hat Angst, durch KI-Automatisierung überflüssig zu werden. Die Stimmung ist gedrückt.",
+    "mindsetTip": "KI verschiebt Arbeit von Ausführung zu Steuerung, Kreativität und zwischenmenschlichen Fähigkeiten.",
+    "options": [
+      {
+        "text": "Sage dem Team, dass KI nur Routineaufgaben übernimmt und alle Jobs sicher sind.",
+        "score": 0,
+        "feedbackText": "Übervereinfachung, die später das Vertrauen untergräbt. Differenziertere Aussagen sind besser."
+      },
+      {
+        "text": "Erkläre konkret, welche Tätigkeiten sich verändern, welche neuen Rollen entstehen und was das Team tun kann.",
+        "score": 100,
+        "feedbackText": "Richtig! Konkrete, ehrliche Kommunikation über Veränderungen gibt dem Team Orientierung und Agency."
+      },
+      {
+        "text": "Ignoriere die Stimmung – Emotionen haben in professionellen Umgebungen keinen Platz.",
+        "score": -20,
+        "feedbackText": "Emotionen ignorieren ist kontraproduktiv. Psychologische Sicherheit ist Grundlage für erfolgreiche Transformation."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-010",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst eine Feedbackkultur für KI-Tools einführen, um kontinuierlich zu verbessern.",
+    "mindsetTip": "Strukturiertes Feedback-System für KI-Tools: was funktioniert, was nicht, welche neuen Bedarfe entstehen.",
+    "options": [
+      {
+        "text": "Sammle Feedback nur wenn Mitarbeiter sich aktiv beschweren.",
+        "score": -20,
+        "feedbackText": "Reaktives Feedback verpasst stille Frustrationen und Verbesserungspotenziale."
+      },
+      {
+        "text": "Etabliere monatliche KI-Feedback-Runden und eine einfache Meldeplattform für Alltagsprobleme.",
+        "score": 100,
+        "feedbackText": "Exzellent! Proaktive Feedback-Struktur identifiziert Probleme früh und zeigt Wertschätzung für Mitarbeiter-Input."
+      },
+      {
+        "text": "Führe jährliche KI-Zufriedenheitsbefragungen durch.",
+        "score": 0,
+        "feedbackText": "Jährliche Befragungen sind zu selten für schnell entwickelnde KI-Landschaften. Häufigeres Feedback ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-011",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Vorgesetzter ist skeptisch gegenüber KI und blockiert Investitionen. Du siehst klares Potenzial.",
+    "mindsetTip": "Überzeugende KI-Argumentation für Skeptiker: konkrete ROI-Beispiele, minimales Risiko, schrittweiser Ansatz.",
+    "options": [
+      {
+        "text": "Führe KI-Tools auf eigene Faust ein ohne Genehmigung.",
+        "score": -20,
+        "feedbackText": "Unautorisierte Tool-Einführung schadet deiner Karriere und schafft kein Vertrauen in zukünftige Projekte."
+      },
+      {
+        "text": "Präsentiere 3 konkrete Erfolgsbeispiele aus der Branche mit ROI-Daten und schlage einen kleinen Pilot vor.",
+        "score": 100,
+        "feedbackText": "Perfekt! Branchenbeispiele + klarer ROI + niedriges Risiko durch Pilot senkt die Hemmschwelle erheblich."
+      },
+      {
+        "text": "Warte, bis der Vorgesetzte selbst KI-Potenzial erkennt.",
+        "score": 0,
+        "feedbackText": "Passives Warten kostet Wettbewerbsvorteile. Proaktiver Dialog ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-012",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst KI in abteilungsübergreifende Projekte integrieren, aber die Abteilungen haben unterschiedliche Standards.",
+    "mindsetTip": "Interdisziplinäre KI-Standards brauchen einen gemeinsamen Rahmen mit Flexibilität für abteilungsspezifische Bedürfnisse.",
+    "options": [
+      {
+        "text": "Lass jede Abteilung ihre eigenen KI-Standards nutzen – Einheitlichkeit ist nicht nötig.",
+        "score": 0,
+        "feedbackText": "Fehlende Standards bei abteilungsübergreifender Zusammenarbeit führen zu Inkonsistenzen und Reibung."
+      },
+      {
+        "text": "Entwickle gemeinsame Grundstandards (Datenschutz, Qualitätsprüfung) mit Spielraum für abteilungsspezifische Anpassungen.",
+        "score": 100,
+        "feedbackText": "Klug! Gemeinsamer Rahmen + Flexibilität ist die richtige Balance für interdisziplinäre KI-Nutzung."
+      },
+      {
+        "text": "Standardisiere alles zentral ohne Ausnahmen für maximale Konsistenz.",
+        "score": -20,
+        "feedbackText": "Vollständige Zentralisierung ignoriert legitime abteilungsspezifische Bedürfnisse und reduziert Adoption."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-013",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Neue KI-Tools verändern die Rollen einiger Mitarbeiter grundlegend. Sie haben Angst, ihre Expertise zu verlieren.",
+    "mindsetTip": "KI-Transition von Ausführungsexpertise zu Steuerungs- und Urteilsexpertise kommunizieren.",
+    "options": [
+      {
+        "text": "Sage den Mitarbeitern, dass ihre bisherige Expertise durch KI obsolet wird.",
+        "score": -20,
+        "feedbackText": "Diese Kommunikation löst Panik aus und verliert wertvolle Mitarbeiter."
+      },
+      {
+        "text": "Zeige, wie ihre Expertise als KI-Prompting, Qualitätssicherung und Kontext-Urteil weiter wertvoll ist.",
+        "score": 100,
+        "feedbackText": "Richtig! Expertise verlagert sich, wird aber nicht obsolet. Diese Perspektive schafft Sicherheit."
+      },
+      {
+        "text": "Biete Mitarbeitern Umschulung auf völlig neue Aufgabengebiete an.",
+        "score": 0,
+        "feedbackText": "Umschulung ist eine Option, aber oft ist die vorhandene Expertise wertvoller als eine völlig neue Richtung."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-014",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Du willst KI-Erfolge im Unternehmen sichtbar machen, um die Adoption zu beschleunigen.",
+    "mindsetTip": "Interne KI-Erfolgsgeschichten wirken überzeugender als externe Studien – Peer-Beispiele senken die Hemmschwelle.",
+    "options": [
+      {
+        "text": "Teile externe KI-Studien und Berichte mit dem Team.",
+        "score": 0,
+        "feedbackText": "Externe Studien sind wertvoll, aber interne Erfolgsgeschichten haben mehr Überzeugungskraft."
+      },
+      {
+        "text": "Dokumentiere und teile interne KI-Erfolge: konkrete Zeitersparnis, Qualitätsgewinne, Problemlösungen.",
+        "score": 100,
+        "feedbackText": "Exzellent! Interne Erfolgsgeschichten zeigen Kolleginnen, was für sie möglich ist – stärkster Motivator."
+      },
+      {
+        "text": "Präsentiere nur die Erfolge ohne die Herausforderungen – negative Aspekte bremsen die Adoption.",
+        "score": -20,
+        "feedbackText": "Einseitige Kommunikation untergräbt langfristig das Vertrauen. Ehrlichkeit inklusive Herausforderungen ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-CK-015",
+    "category": "Change & Zusammenarbeit",
+    "scenarioText": "Dein Team nutzt KI sehr unterschiedlich intensiv. Einige übernehmen zu viel von der KI, andere zu wenig.",
+    "mindsetTip": "Balancierte KI-Nutzung braucht Richtlinien: was die KI übernehmen soll und wo menschliches Urteil Pflicht ist.",
+    "options": [
+      {
+        "text": "Lass jeden selbst entscheiden, wie viel KI er nutzt.",
+        "score": 0,
+        "feedbackText": "Vollständige Freiheit führt zu inkonsistenten Ergebnissen und fehlender Qualitätskontrolle."
+      },
+      {
+        "text": "Definiere für kritische Aufgaben explizit: KI-Anteil, Pflicht-Review-Schritte und menschliches Urteilsrecht.",
+        "score": 100,
+        "feedbackText": "Richtig! Klare Richtlinien für KI-Anteil und menschliche Kontrolle schaffen Qualitätskonsistenz."
+      },
+      {
+        "text": "Begrenze KI-Nutzung auf maximal 50% aller Aufgaben im Team.",
+        "score": -20,
+        "feedbackText": "Beliebige Prozentvorgaben ohne Aufgabenbezug sind nicht sinnvoll. Aufgabenspezifische Regeln sind besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-001",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst die Qualität von KI-generierten Texten objektiv bewerten, weißt aber nicht wie.",
+    "mindsetTip": "Qualitätskriterien für KI-Texte vor der Generierung definieren: Genauigkeit, Ton, Struktur, Zielgruppengerechtheit.",
+    "options": [
+      {
+        "text": "Bewerte KI-Texte rein subjektiv – Qualität ist eine Geschmacksfrage.",
+        "score": -20,
+        "feedbackText": "Subjektive Bewertung ohne Kriterien führt zu inkonsistenter Qualität und unkonstruktivem Feedback."
+      },
+      {
+        "text": "Definiere messbare Qualitätskriterien (Faktengenauigkeit, Ton, Länge, Struktur) und evaluiere systematisch.",
+        "score": 100,
+        "feedbackText": "Exzellent! Messbare Kriterien ermöglichen konsistente Qualitätssicherung und Verbesserung."
+      },
+      {
+        "text": "Lass Kollegen die KI-Texte bewerten – mehrere Meinungen ergeben eine bessere Einschätzung.",
+        "score": 0,
+        "feedbackText": "Peer-Review ist wertvoll, aber ohne klare Kriterien sind die Einschätzungen inkonsistent."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-002",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst messen, ob KI-Implementierungen wirklich Effizienzgewinne liefern, oder ob es sich nur so anfühlt.",
+    "mindsetTip": "Baseline vor der Implementierung messen ist Pflicht für valide ROI-Messung.",
+    "options": [
+      {
+        "text": "Starte die Implementierung und miss anschließend, ob es besser ist.",
+        "score": 0,
+        "feedbackText": "Ohne Baseline-Messung kannst du keine validen Vorher-Nachher-Vergleiche ziehen."
+      },
+      {
+        "text": "Miss Zeit, Fehlerrate und Qualität vor der Implementierung als Baseline, dann vergleiche nach 3 Monaten.",
+        "score": 100,
+        "feedbackText": "Methodisch korrekt! Baseline + Nachher-Messung ist die einzige Methode für valide ROI-Aussagen."
+      },
+      {
+        "text": "Vertraue dem Bauchgefühl des Teams – wenn es sich besser anfühlt, ist es besser.",
+        "score": -20,
+        "feedbackText": "Bauchgefühl überschätzt Verbesserungen und ist keine Grundlage für Investitionsentscheidungen."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-003",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Deine KI-generierten Inhalte haben unterschiedliche Qualität, obwohl du immer denselben Prompt verwendest.",
+    "mindsetTip": "KI-Output-Varianz ist normal – Temperatur, Kontext und Modellaktualisierungen beeinflussen Ergebnisse.",
+    "options": [
+      {
+        "text": "Akzeptiere die Varianz – KI ist nun mal unvorhersehbar.",
+        "score": 0,
+        "feedbackText": "Varianz ist manageable. Qualitätsprüf-Schritte und detailliertere Prompts reduzieren sie erheblich."
+      },
+      {
+        "text": "Analysiere, welche Faktoren die Qualitätsvarianz verursachen, und füge Qualitätsprüfschritte ein.",
+        "score": 100,
+        "feedbackText": "Richtig! Varianz-Ursachenanalyse + Qualitätsgatekeeping reduziert Inkonsistenz systematisch."
+      },
+      {
+        "text": "Wechsle täglich das KI-Modell, um die beste Qualität zu finden.",
+        "score": -20,
+        "feedbackText": "Modellwechsel ohne Systematik erhöht die Varianz, statt sie zu reduzieren."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-004",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst ein KI-Bewertungs-Dashboard für dein Team aufbauen, das zeigt, wie gut die KI-Nutzung ist.",
+    "mindsetTip": "KI-Dashboard-Metriken: Nutzungsrate, Qualitätsscore, Zeitersparnis, Fehlerrate und Nutzer-Satisfaction.",
+    "options": [
+      {
+        "text": "Tracke nur die Nutzungsrate – mehr Nutzung bedeutet mehr Nutzen.",
+        "score": -20,
+        "feedbackText": "Nutzungsrate ohne Qualitätsmetrik zeigt nur, wie oft, nicht wie gut KI eingesetzt wird."
+      },
+      {
+        "text": "Kombiniere Nutzungsrate, Qualitätsscore, Zeitersparnis und Nutzer-Satisfaction im Dashboard.",
+        "score": 100,
+        "feedbackText": "Umfassend! Mehrdimensionale Metriken geben ein vollständiges Bild der KI-Nutzungsqualität."
+      },
+      {
+        "text": "Verzichte auf Dashboards – zu viel Aufwand für kleine Teams.",
+        "score": 0,
+        "feedbackText": "Einfache Dashboards lassen sich schnell aufbauen und liefern wichtige Steuerungsinformationen."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-005",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst sicherstellen, dass KI-Outputs den Unternehmensstandards für externe Kommunikation entsprechen.",
+    "mindsetTip": "Quality Gate für KI-Outputs in der externen Kommunikation: Fakten, Ton, Marke, Recht.",
+    "options": [
+      {
+        "text": "Veröffentliche KI-Outputs für externe Kommunikation nach kurzer Durchsicht.",
+        "score": 0,
+        "feedbackText": "Kurze Durchsicht reicht nicht für externe Kommunikation. Strukturierte Qualitätsprüfung ist notwendig."
+      },
+      {
+        "text": "Implementiere eine 4-Punkte-Prüfliste: Faktengenauigkeit, Markenkonformität, rechtliche Konformität, Tonalität.",
+        "score": 100,
+        "feedbackText": "Professionell! Strukturierte Qualitätsprüfliste stellt konsistent hohe Standards für externe Kommunikation sicher."
+      },
+      {
+        "text": "Lass alle KI-generierten externen Texte vom Rechtsanwalt prüfen.",
+        "score": -20,
+        "feedbackText": "Anwaltliche Prüfung für jeden Text ist unpraktikabel und teuer. Systematische Eigenprüfung ist effizienter."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-006",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst den Impact deiner KI-Maßnahmen dem Management gegenüber kommunizieren.",
+    "mindsetTip": "Management-KPIs für KI: Kosteneinsparung, Zeitgewinn, Qualitätsverbesserung und strategische Optionen.",
+    "options": [
+      {
+        "text": "Berichte über technische Details der KI-Implementierung.",
+        "score": -20,
+        "feedbackText": "Management interessiert sich für Geschäftswert, nicht für technische Details. Business-KPIs sind entscheidend."
+      },
+      {
+        "text": "Übersetze KI-Outcomes in Geschäftswert: Euro-Einsparungen, Stunden-Gewinne, Qualitäts-KPIs.",
+        "score": 100,
+        "feedbackText": "Richtig! Geschäftswert-Übersetzung schafft Management-Verständnis und sichert weitere Investitionen."
+      },
+      {
+        "text": "Zeige nur die positiven Ergebnisse ohne Herausforderungen.",
+        "score": 0,
+        "feedbackText": "Einseitige Berichterstattung untergräbt das Vertrauen. Vollständige Transparenz ist langfristig besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-007",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du stellst fest, dass deine KI-gestützten Workflows immer größere Abweichungen in der Qualität zeigen.",
+    "mindsetTip": "Qualitätsverschlechterung in KI-Workflows hat meist vier Ursachen: Prompt-Drift, Datenqualität, Modellwechsel, Kontextverlust.",
+    "options": [
+      {
+        "text": "Ignoriere kleine Qualitätsschwankungen – das ist normal.",
+        "score": -20,
+        "feedbackText": "Schleichende Qualitätsverschlechterung eskaliert ohne Intervention. Frühzeitige Diagnose ist wichtig."
+      },
+      {
+        "text": "Analysiere systematisch: Hat sich der Prompt, die Daten, das Modell oder der Kontext verändert?",
+        "score": 100,
+        "feedbackText": "Richtig! Systematische Ursachenanalyse ist die Grundlage für nachhaltige Qualitätssicherung in KI-Workflows."
+      },
+      {
+        "text": "Erhöhe den manuellen Review-Aufwand als Reaktion auf schlechtere Qualität.",
+        "score": 0,
+        "feedbackText": "Mehr Review behandelt das Symptom, nicht die Ursache. Ursachenanalyse ist effizienter."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-008",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst KI-Outputs für verschiedene Zielgruppen testen, bevor du sie ausrollst.",
+    "mindsetTip": "A/B-Testing von KI-Outputs mit echten Nutzer-Zielgruppen liefert valide Qualitätsdaten.",
+    "options": [
+      {
+        "text": "Teste KI-Outputs intern mit Kollegen als stellvertretende Zielgruppe.",
+        "score": 0,
+        "feedbackText": "Kollegentest ist besser als gar kein Test, aber echte Zielgruppen reagieren anders als Insiderperspektiven."
+      },
+      {
+        "text": "Führe A/B-Tests mit kleinen Segmenten der echten Zielgruppe durch und messe konkrete Outcome-Metriken.",
+        "score": 100,
+        "feedbackText": "Exzellent! Echte Zielgruppen + messbare Outcomes = valide Qualitätsdaten für fundierte Entscheidungen."
+      },
+      {
+        "text": "Vertraue dem KI-Output ohne Test – die KI wurde für diese Zielgruppe optimiert.",
+        "score": -20,
+        "feedbackText": "KI-Modelle sind generisch optimiert, nicht für deine spezifische Zielgruppe. Testen ist Pflicht."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-009",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Dein Team nutzt unterschiedliche Qualitätsbewertungen für KI-Outputs. Einige sind sehr kritisch, andere sehr großzügig.",
+    "mindsetTip": "Kalibrierungssessions für Qualitätsbewertungen schaffen gemeinsames Qualitätsverständnis.",
+    "options": [
+      {
+        "text": "Akzeptiere unterschiedliche Bewertungsmaßstäbe – Subjektivität ist unvermeidlich.",
+        "score": 0,
+        "feedbackText": "Subjektivität ist reduzierbar. Gemeinsame Kalibrierung schafft konsistentere Qualitätsurteile."
+      },
+      {
+        "text": "Führe regelmäßige Team-Kalibrierungssessions mit konkreten Beispielen durch.",
+        "score": 100,
+        "feedbackText": "Richtig! Kalibrierungssessions schaffen geteiltes Qualitätsverständnis und reduzieren Beurteilungsvarianz."
+      },
+      {
+        "text": "Definiere einen einzigen Qualitätswächter, der alle KI-Outputs bewertet.",
+        "score": -20,
+        "feedbackText": "Single Point of Failure und Bottleneck. Gemeinsame Kalibrierung skaliert besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-010",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst kontinuierliche Qualitätsverbesserung in deinen KI-Workflows etablieren.",
+    "mindsetTip": "PDCA-Zyklus für KI-Qualität: Plan (Kriterien), Do (Generierung), Check (Messung), Act (Verbesserung).",
+    "options": [
+      {
+        "text": "Verbessere Workflows wenn konkrete Probleme auftreten.",
+        "score": 0,
+        "feedbackText": "Reaktive Verbesserung ist suboptimal. Proaktive kontinuierliche Verbesserung ist effizienter."
+      },
+      {
+        "text": "Implementiere regelmäßige Qualitätsreviews mit klaren Verbesserungszyklen (z.B. monatlich).",
+        "score": 100,
+        "feedbackText": "Perfekt! Strukturierte Verbesserungszyklen führen zu kontinuierlichen, messbaren Qualitätssteigerungen."
+      },
+      {
+        "text": "Warte auf externe KI-Verbesserungen des Modellanbieters für automatische Qualitätssteigerung.",
+        "score": -20,
+        "feedbackText": "Auf externe Verbesserungen zu warten ist passiv. Interne Prozessoptimierung ist immer möglich."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-011",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst verstehen, welche Prompt-Typen in deinem Team die besten Qualitätsergebnisse liefern.",
+    "mindsetTip": "Prompt-Qualitätsanalyse: Korreliere Prompt-Merkmale (Länge, Rolle, Format) mit Output-Qualitäts-Scores.",
+    "options": [
+      {
+        "text": "Frage das Team subjektiv nach den besten Prompts.",
+        "score": 0,
+        "feedbackText": "Subjektive Einschätzungen sind ein Startpunkt, aber objektive Qualitätsdaten sind zuverlässiger."
+      },
+      {
+        "text": "Sammle und analysiere erfolgreiche Prompts mit Qualitäts-Scores, identifiziere gemeinsame Muster.",
+        "score": 100,
+        "feedbackText": "Datengetrieben! Muster in erfolgreichen Prompts sind die Grundlage für eine evidenzbasierte Prompt-Bibliothek."
+      },
+      {
+        "text": "Verlasse dich auf die Intuition erfahrener Prompt-Engineer im Team.",
+        "score": -20,
+        "feedbackText": "Intuition ist wertvoll, aber ohne Daten fehlt die Grundlage für systematische Verbesserung."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-012",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst KI-Qualitätssicherung in deinen bestehenden QA-Prozess integrieren.",
+    "mindsetTip": "KI-spezifische QA-Checks ergänzen bestehende Prozesse: Halluzinations-Check, Bias-Screening, Formatprüfung.",
+    "options": [
+      {
+        "text": "Behandle KI-Outputs wie menschliche Outputs in der Qualitätssicherung.",
+        "score": 0,
+        "feedbackText": "KI hat spezifische Fehlertypen (Halluzination, Bias, Stilinkonsistenz), die eigene Prüfmethoden brauchen."
+      },
+      {
+        "text": "Ergänze bestehende QA um KI-spezifische Checks: Faktenverifikation, Bias-Screening und Konsistenzprüfung.",
+        "score": 100,
+        "feedbackText": "Richtig! Ergänzung statt Ersatz – KI-spezifische Checks kombiniert mit bestehenden Standards ist optimal."
+      },
+      {
+        "text": "Ersetze bestehende QA-Prozesse durch KI-spezifische Methoden.",
+        "score": -20,
+        "feedbackText": "Vollständiger Ersatz verliert bewährte Qualitätssicherungsmethoden. Ergänzung ist besser."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-013",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst die Qualitätsentwicklung deiner KI-Nutzung über Zeit verfolgen.",
+    "mindsetTip": "Longitudinale Qualitätsmessung zeigt Trends, Rückschritte und die Wirkung von Verbesserungsmaßnahmen.",
+    "options": [
+      {
+        "text": "Miss Qualität punktuell bei Bedarf ohne regelmäßige Vergleiche.",
+        "score": -20,
+        "feedbackText": "Punktuelle Messung ohne Längsschnitt verpasst Trends und macht Verbesserungsmaßnahmen unkontrollierbar."
+      },
+      {
+        "text": "Führe monatliche Qualitätsmessungen mit denselben Metriken durch und tracke die Entwicklung.",
+        "score": 100,
+        "feedbackText": "Exzellent! Konsistente Längsschnittmessung macht Qualitätstrends und Maßnahmenwirkungen sichtbar."
+      },
+      {
+        "text": "Miss täglich – mehr Datenpunkte ergeben bessere Trends.",
+        "score": 0,
+        "feedbackText": "Tägliche Messung ist bei kleinen Teams aufwändig und oft rauschartig. Monatlich ist meist ausreichend."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-014",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst sicherstellen, dass KI-Outputs den ethischen Standards deines Unternehmens entsprechen.",
+    "mindsetTip": "Ethische Qualitätsprüfung für KI: Bias-Check, Fairness-Screening und Transparenz-Verifikation.",
+    "options": [
+      {
+        "text": "Vertraue dem ethischen Training des KI-Modells.",
+        "score": -20,
+        "feedbackText": "KI-Modelle haben inhärente Bias. Ohne explizite Prüfung produzieren sie unethische Outputs."
+      },
+      {
+        "text": "Implementiere eine Ethics Review Checklist für alle externen KI-Outputs: Bias, Fairness, Transparenz.",
+        "score": 100,
+        "feedbackText": "Korrekt! Strukturierte Ethik-Prüfung ist Pflicht für verantwortungsvolle externe KI-Kommunikation."
+      },
+      {
+        "text": "Führe Ethik-Reviews nur für KI-Outputs in sensiblen Bereichen durch.",
+        "score": 0,
+        "feedbackText": "Selektive Prüfung ist besser als keine, aber Ethik-Issues können in unerwarteten Kontexten auftauchen."
+      }
+    ]
+  },
+  {
+    "id": "DE-MQ-015",
+    "category": "Messbarkeit & Qualität",
+    "scenarioText": "Du willst beweisen, dass KI-generierte Inhalte genauso gut oder besser sind als manuell erstellte.",
+    "mindsetTip": "Blinded Comparison Tests mit echten Nutzern liefern valide Qualitätsvergleiche zwischen KI und Mensch.",
+    "options": [
+      {
+        "text": "Argumentiere mit Effizienzgewinnen – Qualität ist bei KI bekanntermaßen gut.",
+        "score": 0,
+        "feedbackText": "Behauptungen ohne Daten überzeugen nicht. Empirische Vergleiche sind deutlich überzeugender."
+      },
+      {
+        "text": "Führe Blinded Tests durch: Reviewer bewerten Outputs ohne zu wissen, ob KI oder Mensch – dann vergleiche.",
+        "score": 100,
+        "feedbackText": "Methodisch einwandfrei! Blinded Comparison Tests sind der wissenschaftliche Standard für Qualitätsvergleiche."
+      },
+      {
+        "text": "Zeige dem Team die besten KI-Outputs als Beleg für hohe Qualität.",
+        "score": -20,
+        "feedbackText": "Cherry-Picking ist kein valider Qualitätsbeweis. Repräsentative, unblindete Vergleiche sind notwendig."
+      }
+    ]
+  }
+]

@@ -27,9 +27,16 @@ interface OldQuestion {
 }
 
 async function migrate() {
-  const filePath = process.env.QUESTIONS_FILE ?? '/tmp/questions-original.json'
-  const raw = readFileSync(filePath, 'utf-8')
-  const questions: OldQuestion[] = JSON.parse(raw)
+  // Support multiple files via comma-separated QUESTIONS_FILE, or default to local file
+  const filePaths = (process.env.QUESTIONS_FILE ?? 'scripts/questions-original.json')
+    .split(',').map(f => f.trim())
+
+  const questions: OldQuestion[] = []
+  for (const filePath of filePaths) {
+    const raw = readFileSync(filePath, 'utf-8')
+    const batch: OldQuestion[] = JSON.parse(raw)
+    questions.push(...batch)
+  }
   console.log(`Migrating ${questions.length} questions...`)
 
   let inserted = 0, skipped = 0
