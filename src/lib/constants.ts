@@ -90,6 +90,30 @@ export const BADGES = [
     title: { de: 'Allrounder', en: 'All-Rounder' },
     description: { de: 'Alle Kategorien gespielt', en: 'Played all categories' },
   },
+  {
+    type: 'weekly_champion',
+    emoji: '👑',
+    title: { de: 'Wochen-Champion', en: 'Weekly Champion' },
+    description: { de: 'Wochen-Sieger geworden', en: 'Won weekly championship' },
+  },
+  {
+    type: 'monthly_champion',
+    emoji: '🏆',
+    title: { de: 'Monats-Champion', en: 'Monthly Champion' },
+    description: { de: 'Monats-Sieger geworden', en: 'Won monthly championship' },
+  },
+  {
+    type: 'serial_winner',
+    emoji: '🔱',
+    title: { de: 'Seriensieg', en: 'Serial Winner' },
+    description: { de: '3x Wochen-Champion', en: '3x Weekly Champion' },
+  },
+  {
+    type: 'duelist',
+    emoji: '⚔️',
+    title: { de: 'Duellant', en: 'Duelist' },
+    description: { de: 'Erste Challenge gewonnen', en: 'Won first challenge' },
+  },
 ] as const
 
 export type BadgeType = (typeof BADGES)[number]['type']
