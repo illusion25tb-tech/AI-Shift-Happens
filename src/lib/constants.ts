@@ -114,6 +114,72 @@ export const BADGES = [
     title: { de: 'Duellant', en: 'Duelist' },
     description: { de: 'Erste Challenge gewonnen', en: 'Won first challenge' },
   },
+  {
+    type: 'speed_demon',
+    emoji: '💨',
+    title: { de: 'Blitzschnell', en: 'Speed Demon' },
+    description: { de: '3 richtige Antworten unter je 5 Sekunden', en: '3 correct answers under 5 seconds each' },
+  },
+  {
+    type: 'night_owl',
+    emoji: '🦉',
+    title: { de: 'Nachteule', en: 'Night Owl' },
+    description: { de: 'Quiz nach 22 Uhr gespielt', en: 'Played quiz after 10 PM' },
+  },
+  {
+    type: 'early_bird',
+    emoji: '🐦',
+    title: { de: 'Frühaufsteher', en: 'Early Bird' },
+    description: { de: 'Quiz vor 7 Uhr gespielt', en: 'Played quiz before 7 AM' },
+  },
+  {
+    type: 'marathon',
+    emoji: '🏃',
+    title: { de: 'Marathon', en: 'Marathon' },
+    description: { de: '10 Quizzes an einem Tag', en: '10 quizzes in one day' },
+  },
+  {
+    type: 'team_player',
+    emoji: '🤝',
+    title: { de: 'Teamplayer', en: 'Team Player' },
+    description: { de: 'Einem Team beigetreten', en: 'Joined a team' },
+  },
+  {
+    type: 'recruiter',
+    emoji: '📣',
+    title: { de: 'Recruiter', en: 'Recruiter' },
+    description: { de: '3 Spieler eingeladen', en: 'Invited 3 players' },
+  },
+  {
+    type: 'perfectionist',
+    emoji: '💎',
+    title: { de: 'Perfektionist', en: 'Perfectionist' },
+    description: { de: '3x perfektes Quiz', en: '3x perfect quiz' },
+  },
+  {
+    type: 'comeback',
+    emoji: '🔄',
+    title: { de: 'Comeback', en: 'Comeback' },
+    description: { de: 'Nach 7+ Tagen Pause zurückgekehrt', en: 'Returned after 7+ days break' },
+  },
+  {
+    type: 'century',
+    emoji: '💯',
+    title: { de: 'Centurion', en: 'Centurion' },
+    description: { de: '100 Quizzes gespielt', en: 'Played 100 quizzes' },
+  },
+  {
+    type: 'xp_50000',
+    emoji: '🌟',
+    title: { de: '50.000 XP', en: '50,000 XP' },
+    description: { de: '50.000 XP gesammelt', en: 'Collected 50,000 XP' },
+  },
+  {
+    type: 'specialist',
+    emoji: '🎓',
+    title: { de: 'Spezialist', en: 'Specialist' },
+    description: { de: '80%+ Trefferquote in einer Kategorie', en: '80%+ accuracy in one category' },
+  },
 ] as const
 
 export type BadgeType = (typeof BADGES)[number]['type']

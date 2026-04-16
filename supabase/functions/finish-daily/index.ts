@@ -184,6 +184,7 @@ Deno.serve(async (req: Request) => {
     const newBadges: string[] = []
     const award = (type: string) => { if (!earnedTypes.includes(type) && !newBadges.includes(type)) newBadges.push(type) }
 
+    // --- Core badges ---
     award('first_quiz')
     const correctCount = verifiedAnswers.filter(a => a.is_correct).length
     if (correctCount === verifiedAnswers.length && verifiedAnswers.length >= 3) award('perfect_score')
@@ -193,6 +194,77 @@ Deno.serve(async (req: Request) => {
     if (newLevel >= 3) award('level_3')
     if (newLevel >= 5) award('level_5')
     if (newTotalXp >= 10000) award('xp_10000')
+    if (newTotalXp >= 50000) award('xp_50000')
+
+    // --- Speed demon: 3 correct under 5s each ---
+    const fastCorrect = verifiedAnswers.filter(a => a.is_correct && a.time_ms < 5000)
+    if (fastCorrect.length >= 3) award('speed_demon')
+
+    // --- Night owl / Early bird ---
+    const hour = today.getUTCHours()
+    if (hour >= 22 || hour < 4) award('night_owl')
+    if (hour >= 5 && hour < 7) award('early_bird')
+
+    // --- Marathon: 10 quizzes today ---
+    const { count: todayCount } = await db.from('quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', todayStr + 'T00:00:00Z')
+    if ((todayCount ?? 0) >= 10) award('marathon')
+
+    // --- Team player ---
+    if (profile.team_id) award('team_player')
+
+    // --- Recruiter: 3+ referrals ---
+    const { count: referralCount } = await db.from('profiles')
+      .select('*', { count: 'exact', head: true })
+      .eq('invited_by', user.id)
+    if ((referralCount ?? 0) >= 3) award('recruiter')
+
+    // --- Perfectionist: 3+ perfect quizzes ---
+    const { data: allAttempts } = await db.from('quiz_attempts')
+      .select('answers')
+      .eq('user_id', user.id)
+      .not('finished_at', 'is', null)
+    const perfectCount = (allAttempts ?? []).filter(a => {
+      const ans = (a.answers ?? []) as any[]
+      return ans.length >= 3 && ans.every((x: any) => x.is_correct)
+    }).length
+    if (perfectCount >= 3) award('perfectionist')
+
+    // --- Comeback: returned after 7+ days ---
+    if (profile.last_played_at) {
+      const lastDate = new Date(profile.last_played_at + 'T00:00:00Z')
+      const gapDays = Math.round((today.getTime() - lastDate.getTime()) / 86400000)
+      if (gapDays >= 7) award('comeback')
+    }
+
+    // --- Century: 100 total quizzes ---
+    const { count: totalQuizzes } = await db.from('quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+    if ((totalQuizzes ?? 0) >= 100) award('century')
+
+    // --- Categories all (use current quiz + existing data) ---
+    const currentCats = new Set(verifiedAnswers.map(a => {
+      const opts = questionMap.get(a.question_id)
+      return opts ? 'counted' : null
+    }).filter(Boolean))
+    // Quick check: count distinct categories from questions table for this user
+    const { data: userQuestionIds } = await db.from('quiz_attempts')
+      .select('answers').eq('user_id', user.id).limit(50)
+    const allQIds = new Set<string>()
+    for (const att of (userQuestionIds ?? [])) {
+      for (const a of ((att.answers ?? []) as any[])) {
+        if (a.question_id) allQIds.add(a.question_id)
+      }
+    }
+    if (allQIds.size > 0) {
+      const { data: catQuestions } = await db.from('questions')
+        .select('category').in('id', [...allQIds].slice(0, 100))
+      const playedCats = new Set((catQuestions ?? []).map(q => q.category))
+      if (playedCats.size >= 10) award('categories_all')
+    }
 
     if (newBadges.length > 0) {
       await db.from('user_badges').insert(newBadges.map(type => ({ user_id: user.id, badge_type: type })))
