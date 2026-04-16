@@ -49,6 +49,15 @@ Deno.serve(async (req: Request) => {
     }
 
     const isChallenger = challenge.challenger_id === user.id
+    // Allow challenger and the opponent (or anyone for open challenges where challenged_id == challenger_id)
+    const isOpenChallenge = challenge.challenger_id === challenge.challenged_id
+    const isParticipant = isChallenger || challenge.challenged_id === user.id || isOpenChallenge
+
+    // If not participant of open challenge, register as challenged
+    if (isOpenChallenge && !isChallenger) {
+      await db.from('challenges').update({ challenged_id: user.id }).eq('id', challenge_id)
+    }
+
     const alreadyPlayed = isChallenger
       ? challenge.challenger_score !== null
       : challenge.challenged_score !== null

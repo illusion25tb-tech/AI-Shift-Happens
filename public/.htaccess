@@ -4,3 +4,10 @@ RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /mindset-shift/index.html [L]
+
+# Security Headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "DENY"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+Header set X-XSS-Protection "1; mode=block"
+Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"

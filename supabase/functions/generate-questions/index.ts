@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
+import { verifyAdmin, verifyCronOrServiceRole } from '../_shared/auth.ts'
 
 const CATEGORIES = [
   'prompt-architecture', 'creativity-ideation', 'critical-thinking',
@@ -17,6 +18,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // SECURITY: Only admin users or cron jobs can generate questions
+    const isAdmin = await verifyAdmin(req)
+    const isCron = verifyCronOrServiceRole(req)
+    if (!isAdmin && !isCron) {
+      return new Response(JSON.stringify({ error: 'Unauthorized — admin or cron access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')

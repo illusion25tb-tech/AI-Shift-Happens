@@ -102,9 +102,15 @@ Deno.serve(async (req: Request) => {
 
     if (action === 'update_question') {
       const { question_id, updates } = body as { question_id: string; updates: Record<string, unknown> }
+      // SECURITY: Only allow specific fields to be updated
+      const ALLOWED_FIELDS = ['scenario_text', 'mindset_tip', 'options', 'difficulty', 'category', 'is_active', 'locale']
+      const safeUpdates: Record<string, unknown> = {}
+      for (const key of ALLOWED_FIELDS) {
+        if (key in updates) safeUpdates[key] = updates[key]
+      }
       const { error } = await db
         .from('questions')
-        .update(updates)
+        .update(safeUpdates)
         .eq('id', question_id)
       if (error) return jsonResponse({ error: error.message }, 500)
       return jsonResponse({ ok: true })

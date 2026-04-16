@@ -28,35 +28,130 @@ Deno.serve(async (req: Request) => {
 
     const db = createClient(supabaseUrl, serviceKey)
     const body = await req.json()
-    const { daily_quiz_id, answers, total_score, max_streak } = body
+    const { daily_quiz_id, answers: clientAnswers } = body
 
-    // 1. Save quiz attempt
-    const { error: attemptErr } = await db.from('quiz_attempts').insert({
+    if (!daily_quiz_id) {
+      return new Response(JSON.stringify({ error: 'Missing daily_quiz_id' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+    // SECURITY: Check for duplicate submission
+    const { data: existingAttempt } = await db.from('quiz_attempts')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('daily_quiz_id', daily_quiz_id)
+      .not('finished_at', 'is', null)
+      .maybeSingle()
+
+    if (existingAttempt) {
+      return new Response(JSON.stringify({ error: 'Already submitted for this quiz' }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+    // SECURITY: Verify answers server-side by re-fetching questions and recalculating scores
+    const { data: dailyQuiz } = await db.from('daily_quizzes')
+      .select('question_ids, bonus_question_id')
+      .eq('id', daily_quiz_id)
+      .single()
+
+    if (!dailyQuiz) {
+      return new Response(JSON.stringify({ error: 'Quiz not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
+    const allQuestionIds = [...(dailyQuiz.question_ids ?? []), dailyQuiz.bonus_question_id].filter(Boolean)
+    const { data: questions } = await db.from('questions').select('id, options').in('id', allQuestionIds)
+
+    const questionMap = new Map<string, any[]>()
+    for (const q of (questions ?? [])) {
+      questionMap.set(q.id, q.options as any[])
+    }
+
+    // Recalculate scores from client answers using server-side question data
+    const STREAK_MULTIPLIERS = [1.0, 1.5, 2.0, 2.5, 3.0]
+    const SPEED_BONUS_MAX = 50
+    const SPEED_BONUS_DECAY = 1.67
+    const BONUS_MULTIPLIER = 1.5
+
+    const verifiedAnswers: any[] = []
+    let totalScore = 0
+    let streak = 0
+    let maxStreak = 0
+
+    for (const clientAns of (clientAnswers ?? [])) {
+      const opts = questionMap.get(clientAns.question_id)
+      if (!opts) continue
+
+      const selectedOpt = opts[clientAns.selected_index]
+      if (!selectedOpt) continue
+
+      const baseScore = selectedOpt.score ?? 0
+      const isCorrect = baseScore === 100
+      const isDangerous = baseScore < 0
+      const isBonusQ = clientAns.question_id === dailyQuiz.bonus_question_id
+
+      if (isDangerous) streak = 0
+      else if (isCorrect) streak++
+
+      maxStreak = Math.max(maxStreak, streak)
+
+      const streakIdx = Math.min(streak, isBonusQ ? 4 : 3)
+      const streakMulti = isCorrect ? STREAK_MULTIPLIERS[streakIdx] : 1.0
+      const bonusMulti = isBonusQ ? BONUS_MULTIPLIER : 1.0
+      const timeMs = Math.max(0, clientAns.time_ms ?? 30000)
+      const speedBonus = isCorrect ? Math.max(0, Math.round(SPEED_BONUS_MAX - (timeMs / 1000) * SPEED_BONUS_DECAY)) : 0
+
+      const answerScore = isCorrect
+        ? Math.round(baseScore * streakMulti * bonusMulti + speedBonus * bonusMulti)
+        : baseScore
+
+      totalScore += answerScore
+
+      verifiedAnswers.push({
+        question_id: clientAns.question_id,
+        selected_index: clientAns.selected_index,
+        base_score: baseScore,
+        total_score: answerScore,
+        is_correct: isCorrect,
+        is_dangerous: isDangerous,
+        streak_multi: streakMulti,
+        speed_bonus: speedBonus,
+        bonus_multi: bonusMulti,
+        feedback_text: selectedOpt.feedbackText ?? '',
+        time_ms: timeMs,
+      })
+    }
+
+    // Save verified attempt
+    await db.from('quiz_attempts').insert({
       user_id: user.id,
       quiz_type: 'daily',
       daily_quiz_id,
-      total_score,
-      max_streak,
-      answers,
+      total_score: totalScore,
+      max_streak: maxStreak,
+      answers: verifiedAnswers,
       finished_at: new Date().toISOString(),
     })
-    if (attemptErr) {
-      return new Response(JSON.stringify({ error: 'Failed to save attempt', details: attemptErr.message }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-    }
 
-    // 2. Get current profile
+    // Get profile
     const { data: profile } = await db.from('profiles').select('*').eq('id', user.id).single()
     if (!profile) {
       return new Response(JSON.stringify({ error: 'Profile not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    // 3. Calculate XP gain
-    const xpGain = Math.max(0, total_score)
+    // XP + Level
+    const xpGain = Math.max(0, totalScore)
     const newTotalXp = (profile.total_xp ?? 0) + xpGain
 
-    // 4. Update streak (weekday logic)
+    const LEVELS = [
+      { level: 1, xp: 0 }, { level: 2, xp: 1000 }, { level: 3, xp: 5000 },
+      { level: 4, xp: 15000 }, { level: 5, xp: 40000 }, { level: 6, xp: 100000 },
+    ]
+    let newLevel = 1
+    for (const l of LEVELS) { if (newTotalXp >= l.xp) newLevel = l.level }
+
+    // Streak
     const today = new Date()
     const todayStr = today.toISOString().split('T')[0]
     const lastPlayed = profile.last_played_at
@@ -65,73 +160,45 @@ Deno.serve(async (req: Request) => {
     if (lastPlayed !== todayStr) {
       const lastDate = lastPlayed ? new Date(lastPlayed + 'T00:00:00Z') : null
       let streakContinues = false
-
       if (lastDate) {
-        const diffMs = today.getTime() - lastDate.getTime()
-        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
-        const lastDow = lastDate.getUTCDay() // 0=Sun..6=Sat
-
-        if (diffDays === 1) {
-          streakContinues = true
-        } else if (lastDow === 5 && diffDays <= 3) {
-          // Friday -> Saturday/Sunday/Monday = weekend skip
-          streakContinues = true
-        } else if (lastDow === 5 && today.getUTCDay() === 1) {
-          streakContinues = true
-        }
+        const diffDays = Math.round((today.getTime() - lastDate.getTime()) / 86400000)
+        const lastDow = lastDate.getUTCDay()
+        if (diffDays === 1) streakContinues = true
+        else if (lastDow === 5 && diffDays <= 3) streakContinues = true
       }
-
       newStreak = streakContinues ? newStreak + 1 : 1
     }
 
     const newLongestStreak = Math.max(profile.longest_streak ?? 0, newStreak)
 
-    // 5. Calculate level
-    const LEVELS = [
-      { level: 1, xp: 0 }, { level: 2, xp: 1000 }, { level: 3, xp: 5000 },
-      { level: 4, xp: 15000 }, { level: 5, xp: 40000 }, { level: 6, xp: 100000 },
-    ]
-    let newLevel = 1
-    for (const l of LEVELS) { if (newTotalXp >= l.xp) newLevel = l.level }
-
-    // 6. Update profile
+    // Update profile
     await db.from('profiles').update({
-      total_xp: newTotalXp,
-      level: newLevel,
-      current_streak: newStreak,
-      longest_streak: newLongestStreak,
+      total_xp: newTotalXp, level: newLevel,
+      current_streak: newStreak, longest_streak: newLongestStreak,
       last_played_at: todayStr,
     }).eq('id', user.id)
 
-    // 7. Check badges
+    // Badges (using verified data)
     const { data: existingBadges } = await db.from('user_badges').select('badge_type').eq('user_id', user.id)
     const earnedTypes = (existingBadges ?? []).map((b: any) => b.badge_type)
     const newBadges: string[] = []
     const award = (type: string) => { if (!earnedTypes.includes(type) && !newBadges.includes(type)) newBadges.push(type) }
 
-    const correctCount = answers.filter((a: any) => a.is_correct).length
-    if (correctCount === answers.length && answers.length >= 4) award('perfect_round')
-
-    const correctAnswers = answers.filter((a: any) => a.is_correct)
-    if (correctAnswers.length >= 3) {
-      const fastest = [...correctAnswers].sort((a: any, b: any) => a.time_ms - b.time_ms).slice(0, 3)
-      if (fastest.reduce((s: number, a: any) => s + a.time_ms, 0) < 15000) award('speed_demon')
-    }
-
-    if (today.getUTCHours() < 8) {
-      const { count } = await db.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('quiz_type', 'daily')
-      if ((count ?? 0) >= 5) award('early_bird')
-    }
-
+    award('first_quiz')
+    const correctCount = verifiedAnswers.filter(a => a.is_correct).length
+    if (correctCount === verifiedAnswers.length && verifiedAnswers.length >= 3) award('perfect_score')
+    if (newStreak >= 3) award('streak_3')
     if (newStreak >= 7) award('streak_7')
     if (newStreak >= 30) award('streak_30')
-    if (newStreak >= 100) award('streak_100')
+    if (newLevel >= 3) award('level_3')
+    if (newLevel >= 5) award('level_5')
+    if (newTotalXp >= 10000) award('xp_10000')
 
     if (newBadges.length > 0) {
       await db.from('user_badges').insert(newBadges.map(type => ({ user_id: user.id, badge_type: type })))
     }
 
-    // 8. Update weekly score
+    // Weekly score
     const mondayOfWeek = new Date(today)
     const dow = mondayOfWeek.getUTCDay()
     const diff = dow === 0 ? 6 : dow - 1
@@ -140,17 +207,18 @@ Deno.serve(async (req: Request) => {
     const dayNames = ['so', 'mo', 'di', 'mi', 'do', 'fr', 'sa']
     const todayName = dayNames[today.getUTCDay()]
 
-    const { data: existingWeekly } = await db.from('weekly_scores').select('*').eq('user_id', user.id).eq('week_start', weekStart).maybeSingle()
+    const { data: existingWeekly } = await db.from('weekly_scores')
+      .select('*').eq('user_id', user.id).eq('week_start', weekStart).maybeSingle()
 
     if (existingWeekly) {
       const scores = (existingWeekly.daily_scores ?? {}) as Record<string, number>
-      scores[todayName] = total_score
+      scores[todayName] = totalScore
       const weekTotal = Object.values(scores).reduce((s, v) => s + v, 0)
       await db.from('weekly_scores').update({ daily_scores: scores, total_score: weekTotal }).eq('id', existingWeekly.id)
     } else {
       await db.from('weekly_scores').insert({
         user_id: user.id, week_start: weekStart,
-        daily_scores: { [todayName]: total_score }, total_score,
+        daily_scores: { [todayName]: totalScore }, total_score: totalScore,
       })
     }
 
