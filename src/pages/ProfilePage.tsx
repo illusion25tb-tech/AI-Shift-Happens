@@ -47,6 +47,9 @@ export function ProfilePage() {
   const [passwordSaving, setPasswordSaving] = useState(false)
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
+  // Recent activity
+  const [recentQuizzes, setRecentQuizzes] = useState<Array<{ quiz_type: string; total_score: number; created_at: string }>>([])
+
   // Account deletion
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -63,6 +66,17 @@ export function ProfilePage() {
       .eq('user_id', profile.id)
       .then(({ data }) => {
         setEarnedBadges((data ?? []).map(b => b.badge_type))
+      })
+
+    // Load recent quizzes
+    supabase
+      .from('quiz_attempts')
+      .select('quiz_type, total_score, created_at')
+      .eq('user_id', profile.id)
+      .order('created_at', { ascending: false })
+      .limit(5)
+      .then(({ data }) => {
+        if (data) setRecentQuizzes(data)
       })
 
     // Load quiz stats
@@ -467,6 +481,34 @@ export function ProfilePage() {
           <h2 className="text-sm font-bold mb-3">🎖️ {t('profile.badgesEarned')}</h2>
           <BadgeGrid earnedBadges={earnedBadges} locale={locale} />
         </div>
+
+        {/* Recent Activity */}
+        {recentQuizzes.length > 0 && (
+          <div>
+            <h2 className="text-sm font-bold mb-3">
+              {locale === 'de' ? 'Letzte Aktivität' : 'Recent Activity'}
+            </h2>
+            <div className="space-y-2">
+              {recentQuizzes.map((q, i) => {
+                const typeEmoji = q.quiz_type === 'daily' ? '🧠' : q.quiz_type === 'freeplay' ? '🎮' : '⚔️'
+                const typeLabel = q.quiz_type === 'daily' ? 'Daily' : q.quiz_type === 'freeplay' ? 'Free Play' : 'Challenge'
+                const date = new Date(q.created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', {
+                  day: 'numeric', month: 'short',
+                })
+                return (
+                  <div key={i} className="flex items-center gap-3 bg-white/4 border border-white/6 rounded-xl px-4 py-2">
+                    <span className="text-lg">{typeEmoji}</span>
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold">{typeLabel}</span>
+                      <span className="text-[10px] text-text-muted ml-2">{date}</span>
+                    </div>
+                    <span className="font-mono text-sm font-bold text-primary">{q.total_score}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Notifications */}
         {canNotify() && (

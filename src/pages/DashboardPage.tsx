@@ -31,6 +31,7 @@ export function DashboardPage() {
   const [showChampion, setShowChampion] = useState(true)
   const [freezeStatus, setFreezeStatus] = useState<FreezeStatus | null>(null)
   const [freezing, setFreezing] = useState(false)
+  const [pendingChallenges, setPendingChallenges] = useState(0)
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem('shift-happens-onboarded')
   )
@@ -79,7 +80,22 @@ export function DashboardPage() {
       } catch { /* ignore */ }
     }
     checkFreeze()
-  }, [])
+
+    // Check pending challenges
+    async function checkChallenges() {
+      try {
+        const { data, error } = await supabase
+          .from('challenges')
+          .select('id', { count: 'exact', head: true })
+          .or(`challenger_id.eq.${profile?.id},challenged_id.eq.${profile?.id}`)
+          .is('completed_at', null)
+        if (!error && data !== null) {
+          setPendingChallenges(typeof data === 'number' ? data : 0)
+        }
+      } catch { /* ignore */ }
+    }
+    if (profile?.id) checkChallenges()
+  }, [profile?.id])
 
   const useStreakFreeze = async () => {
     setFreezing(true)
@@ -97,7 +113,7 @@ export function DashboardPage() {
   const quickNav = [
     { emoji: '🎮', label: t('dashboard.freePlay'), to: '/app/freeplay' },
     { emoji: '🏆', label: t('dashboard.leaderboard'), to: '/app/leaderboard' },
-    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app/challenge' },
+    { emoji: '⚔️', label: t('dashboard.challenge'), to: '/app/challenge', badge: pendingChallenges > 0 ? pendingChallenges : undefined },
     { emoji: '👥', label: 'Team', to: '/app/team' },
     { emoji: '🎖️', label: t('dashboard.badges'), to: '/app/profile' },
     { emoji: '📊', label: locale === 'de' ? 'Statistiken' : 'Stats', to: '/app/stats' },
@@ -223,8 +239,13 @@ export function DashboardPage() {
             <Link
               key={item.label}
               to={item.to}
-              className="bg-white/4 border border-white/6 rounded-2xl p-4 text-center hover:border-primary/30 transition-colors"
+              className="bg-white/4 border border-white/6 rounded-2xl p-4 text-center hover:border-primary/30 transition-colors relative"
             >
+              {'badge' in item && item.badge && (
+                <span className="absolute top-2 right-2 w-5 h-5 bg-fire text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {item.badge}
+                </span>
+              )}
               <div className="text-2xl mb-1">{item.emoji}</div>
               <div className="text-xs font-semibold text-text-secondary">{item.label}</div>
             </Link>
