@@ -8,7 +8,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // SECURITY: Only cron/service role can trigger champion calculation
-  if (!verifyCronOrServiceRole(req)) {
+  if (!(await verifyCronOrServiceRole(req))) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }),
       { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }

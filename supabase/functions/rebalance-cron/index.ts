@@ -9,7 +9,7 @@ Deno.serve(async (req: Request) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  if (!verifyCronOrServiceRole(req)) {
+  if (!(await verifyCronOrServiceRole(req))) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }),
       { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { supabase } from '../lib/supabase'
@@ -6,9 +7,19 @@ import { supabase } from '../lib/supabase'
 export default function AuthScreen() {
   const { signInWithGoogle, signInWithLinkedIn, signInWithEmail, signUpWithEmail } = useAuth()
   const { locale, t } = useLocale()
+  const [searchParams] = useSearchParams()
 
   const [isSignUp, setIsSignUp] = useState(false)
   const [showForgotPw, setShowForgotPw] = useState(false)
+
+  // Auto-detect referral code from URL
+  const refCode = searchParams.get('ref')
+  useEffect(() => {
+    if (refCode) {
+      localStorage.setItem('shift-happens-referral', refCode)
+      setIsSignUp(true)
+    }
+  }, [refCode])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)

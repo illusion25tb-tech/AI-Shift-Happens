@@ -68,6 +68,7 @@ export interface Profile {
   is_admin: boolean
   team_id: string | null
   team_role: 'captain' | 'admin' | 'member'
+  invited_by: string | null
 }
 
 export interface LeaderboardEntry {

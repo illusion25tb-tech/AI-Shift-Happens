@@ -50,12 +50,27 @@ export function useAuth(): UseAuthReturn {
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
           const p = await fetchProfile(session.user.id)
           setProfile(p)
+
+          // Auto-claim referral after signup
+          if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+            const refCode = localStorage.getItem('shift-happens-referral')
+            if (refCode && p && !p.invited_by) {
+              supabase.functions.invoke('claim-referral', {
+                body: { invite_code: refCode },
+                headers: session.access_token
+                  ? { Authorization: `Bearer ${session.access_token}` }
+                  : undefined,
+              }).then(() => {
+                localStorage.removeItem('shift-happens-referral')
+              }).catch(() => {})
+            }
+          }
         } else {
           setProfile(null)
         }

@@ -31,18 +31,30 @@ export async function verifyAdmin(req: Request) {
 
 /**
  * Verify request is from an internal cron job or admin.
- * Checks for a secret header matching SUPABASE_SERVICE_ROLE_KEY.
+ * Uses CRON_SECRET env variable checked against Authorization header.
+ * pg_cron calls use this secret in the Authorization header.
  */
-export function verifyCronOrServiceRole(req: Request): boolean {
+export async function verifyCronOrServiceRole(req: Request): Promise<boolean> {
+  const cronSecret = Deno.env.get('CRON_SECRET')
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
   const authHeader = req.headers.get('Authorization')
 
-  // Accept service role key as Bearer token (used by pg_cron via net.http_post)
+  // Check CRON_SECRET in Bearer token
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) return true
+
+  // Check service role key in Bearer token
   if (authHeader === `Bearer ${serviceKey}`) return true
 
-  // Accept service role key in custom header
-  const cronSecret = req.headers.get('x-cron-secret')
-  if (cronSecret === serviceKey) return true
+  // Fallback: check if the Supabase JWT payload has service_role
+  // (Supabase Gateway rewrites apikey to Authorization for edge functions)
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.slice(7)
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      if (payload.role === 'service_role') return true
+    } catch { /* not a valid JWT */ }
+  }
 
   return false
 }
