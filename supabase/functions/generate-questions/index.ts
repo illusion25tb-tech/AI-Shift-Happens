@@ -18,9 +18,9 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // SECURITY: Only admin users or cron jobs can generate questions
-    const isAdmin = await verifyAdmin(req)
+    // SECURITY: Only cron/service-role or admin users can generate questions
     const isCron = verifyCronOrServiceRole(req)
+    const isAdmin = isCron ? true : await verifyAdmin(req)
     if (!isAdmin && !isCron) {
       return new Response(JSON.stringify({ error: 'Unauthorized — admin or cron access required' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })

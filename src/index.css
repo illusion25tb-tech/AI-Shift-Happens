@@ -14,9 +14,9 @@
   --color-rose: #DB2777;
   --color-danger: #DC2626;
   --color-success: #059669;
-  --color-text-primary: #E8E6F0;
-  --color-text-secondary: #D4D2E0;
-  --color-text-muted: #A8A4BA;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E8E6F0;
+  --color-text-muted: #C5C1D6;
   --font-sans: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
