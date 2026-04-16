@@ -2,6 +2,8 @@ import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { registerServiceWorker, scheduleLocalReminder, isReminderEnabled } from './lib/notifications'
+import { useLocale } from './hooks/useLocale'
+import CookieConsent from './components/CookieConsent'
 
 // Eager: landing + dashboard (first paint)
 import { LandingPage } from './pages/LandingPage'
@@ -18,6 +20,7 @@ const ChallengePage = lazy(() => import('./pages/ChallengePage').then(m => ({ de
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
 const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })))
 const StatsPage = lazy(() => import('./pages/StatsPage').then(m => ({ default: m.StatsPage })))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
 
 function Loading() {
   return (
@@ -41,6 +44,8 @@ function LoginPage() {
 }
 
 export default function App() {
+  const { locale } = useLocale()
+
   useEffect(() => {
     registerServiceWorker()
     if (isReminderEnabled()) scheduleLocalReminder()
@@ -49,6 +54,7 @@ export default function App() {
   return (
     <BrowserRouter basename="/mindset-shift">
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
+        <CookieConsent locale={locale} />
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -63,6 +69,7 @@ export default function App() {
             <Route path="/app/team" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
             <Route path="/app/stats" element={<ProtectedRoute><StatsPage /></ProtectedRoute>} />
             <Route path="/app/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+            <Route path="/app/privacy" element={<PrivacyPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

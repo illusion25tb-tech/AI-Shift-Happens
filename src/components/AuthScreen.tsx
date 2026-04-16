@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
+import { supabase } from '../lib/supabase'
 
 export default function AuthScreen() {
   const { signInWithGoogle, signInWithLinkedIn, signInWithEmail, signUpWithEmail } = useAuth()
-  const { t } = useLocale()
+  const { locale, t } = useLocale()
 
   const [isSignUp, setIsSignUp] = useState(false)
+  const [showForgotPw, setShowForgotPw] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -121,11 +123,50 @@ export default function AuthScreen() {
             </button>
           </form>
 
+          {/* Forgot password */}
+          {!isSignUp && !showForgotPw && (
+            <button
+              onClick={() => setShowForgotPw(true)}
+              className="text-xs text-text-muted hover:text-primary transition-colors w-full text-center"
+            >
+              {locale === 'de' ? 'Passwort vergessen?' : 'Forgot password?'}
+            </button>
+          )}
+
+          {showForgotPw && (
+            <div className="bg-bg-mid border border-bg-card-border rounded-xl p-4 space-y-2">
+              <p className="text-xs text-text-secondary">
+                {locale === 'de'
+                  ? 'E-Mail eingeben — du bekommst einen Link zum Zurücksetzen.'
+                  : 'Enter your email — you will receive a reset link.'}
+              </p>
+              <button
+                onClick={async () => {
+                  if (!email) { setError(locale === 'de' ? 'Bitte E-Mail eingeben' : 'Please enter email'); return }
+                  setSubmitting(true)
+                  const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/mindset-shift/app/profile',
+                  })
+                  setSubmitting(false)
+                  if (resetErr) { setError(resetErr.message) }
+                  else {
+                    setSuccessMessage(locale === 'de' ? 'Reset-Link gesendet!' : 'Reset link sent!')
+                    setShowForgotPw(false)
+                  }
+                }}
+                disabled={submitting}
+                className="w-full bg-primary/20 text-primary font-semibold py-2 rounded-lg text-sm hover:bg-primary/30 transition-colors disabled:opacity-50"
+              >
+                {submitting ? '...' : (locale === 'de' ? 'Reset-Link senden' : 'Send reset link')}
+              </button>
+            </div>
+          )}
+
           {/* Toggle */}
           <p className="text-center text-text-secondary text-sm">
             {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.noAccount')}{' '}
             <button
-              onClick={() => { setIsSignUp(!isSignUp); setError(null); setSuccessMessage(null) }}
+              onClick={() => { setIsSignUp(!isSignUp); setError(null); setSuccessMessage(null); setShowForgotPw(false) }}
               className="text-primary hover:text-primary-hover underline transition-colors"
             >
               {isSignUp ? t('auth.signIn') : t('auth.signUp')}
