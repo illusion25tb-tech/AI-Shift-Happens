@@ -23,6 +23,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m
 const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })))
 const StatsPage = lazy(() => import('./pages/StatsPage').then(m => ({ default: m.StatsPage })))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
+const SponsorsPage = lazy(() => import('./pages/SponsorsPage').then(m => ({ default: m.SponsorsPage })))
 
 function Loading() {
   return (
@@ -74,6 +75,7 @@ export default function App() {
             <Route path="/app/stats" element={<ProtectedRoute><StatsPage /></ProtectedRoute>} />
             <Route path="/app/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
             <Route path="/app/privacy" element={<PrivacyPage />} />
+            <Route path="/app/sponsors" element={<SponsorsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

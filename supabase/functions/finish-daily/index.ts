@@ -245,25 +245,41 @@ Deno.serve(async (req: Request) => {
       .eq('user_id', user.id)
     if ((totalQuizzes ?? 0) >= 100) award('century')
 
-    // --- Categories all (use current quiz + existing data) ---
-    const currentCats = new Set(verifiedAnswers.map(a => {
-      const opts = questionMap.get(a.question_id)
-      return opts ? 'counted' : null
-    }).filter(Boolean))
-    // Quick check: count distinct categories from questions table for this user
-    const { data: userQuestionIds } = await db.from('quiz_attempts')
-      .select('answers').eq('user_id', user.id).limit(50)
+    // --- Categories all + Specialist (80%+ in one category) ---
+    const { data: userAttempts } = await db.from('quiz_attempts')
+      .select('answers').eq('user_id', user.id).limit(100)
     const allQIds = new Set<string>()
-    for (const att of (userQuestionIds ?? [])) {
+    const catCorrect: Record<string, { correct: number; total: number }> = {}
+    for (const att of (userAttempts ?? [])) {
       for (const a of ((att.answers ?? []) as any[])) {
         if (a.question_id) allQIds.add(a.question_id)
       }
     }
     if (allQIds.size > 0) {
       const { data: catQuestions } = await db.from('questions')
-        .select('category').in('id', [...allQIds].slice(0, 100))
-      const playedCats = new Set((catQuestions ?? []).map(q => q.category))
+        .select('id, category').in('id', [...allQIds].slice(0, 200))
+      const qCatMap = new Map((catQuestions ?? []).map(q => [q.id, q.category]))
+
+      for (const att of (userAttempts ?? [])) {
+        for (const a of ((att.answers ?? []) as any[])) {
+          const cat = qCatMap.get(a.question_id)
+          if (!cat) continue
+          if (!catCorrect[cat]) catCorrect[cat] = { correct: 0, total: 0 }
+          catCorrect[cat].total++
+          if (a.is_correct) catCorrect[cat].correct++
+        }
+      }
+
+      const playedCats = new Set(Object.keys(catCorrect))
       if (playedCats.size >= 10) award('categories_all')
+
+      // Specialist: 80%+ in any category with 5+ questions
+      for (const [, stats] of Object.entries(catCorrect)) {
+        if (stats.total >= 5 && (stats.correct / stats.total) >= 0.8) {
+          award('specialist')
+          break
+        }
+      }
     }
 
     if (newBadges.length > 0) {

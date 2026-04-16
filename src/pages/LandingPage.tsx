@@ -41,6 +41,9 @@ export function LandingPage() {
             <a href="/mindset-shift/app/faq" className="text-white/30 hover:text-white/60 transition-colors">
               FAQ
             </a>
+            <a href="/mindset-shift/app/sponsors" className="text-white/30 hover:text-white/60 transition-colors">
+              {locale === 'de' ? 'Sponsoren' : 'Sponsors'}
+            </a>
           </div>
           <p className="text-white/15 text-xs">
             © {new Date().getFullYear()} AI-Shift Happens by tbai · contact@tbai.cloud

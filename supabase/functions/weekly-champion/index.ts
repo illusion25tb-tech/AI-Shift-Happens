@@ -75,11 +75,24 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Auto-assign weekly prize to champion
+    const { data: weeklyPrize } = await db.from('prizes')
+      .select('id')
+      .eq('prize_type', 'weekly')
+      .eq('week_start', weekStart)
+      .is('winner_id', null)
+      .maybeSingle()
+
+    if (weeklyPrize) {
+      await db.from('prizes').update({ winner_id: champion.user_id }).eq('id', weeklyPrize.id)
+    }
+
     return new Response(JSON.stringify({
       week_start: weekStart,
       champion_user_id: champion.user_id,
       champion_score: champion.total_score,
       total_participants: scores.length,
+      prize_assigned: !!weeklyPrize,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (err) {
