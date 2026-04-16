@@ -258,6 +258,40 @@ export function StatsPage() {
               </div>
             </div>
 
+            {/* Category Mastery */}
+            {Object.keys(stats.category_scores).length > 0 && (
+              <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
+                <h3 className="text-sm font-bold">
+                  {locale === 'de' ? 'Kategorie-Mastery' : 'Category Mastery'}
+                </h3>
+                {Object.entries(stats.category_scores)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([cat, score]) => {
+                    const label = CATEGORY_LABELS[cat as CategoryId]?.[locale] ?? cat
+                    const mastery = score >= 80 ? 'master' : score >= 50 ? 'good' : 'learning'
+                    const masteryLabel = mastery === 'master'
+                      ? (locale === 'de' ? 'Meister' : 'Master')
+                      : mastery === 'good'
+                      ? (locale === 'de' ? 'Gut' : 'Good')
+                      : (locale === 'de' ? 'Lernend' : 'Learning')
+                    const barColor = mastery === 'master' ? 'bg-teal' : mastery === 'good' ? 'bg-primary' : 'bg-gold'
+                    return (
+                      <div key={cat} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-text-secondary truncate max-w-[60%]">{label}</span>
+                          <span className={`text-[10px] font-semibold ${mastery === 'master' ? 'text-teal' : mastery === 'good' ? 'text-primary' : 'text-gold'}`}>
+                            {masteryLabel} ({score}%)
+                          </span>
+                        </div>
+                        <div className="w-full bg-white/6 rounded-full h-1.5">
+                          <div className={`h-1.5 rounded-full ${barColor} transition-all`} style={{ width: `${score}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
+            )}
+
             {/* Score History */}
             <div className="bg-white/4 border border-white/6 rounded-xl p-4">
               <h3 className="text-sm font-bold mb-2">

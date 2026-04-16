@@ -339,10 +339,27 @@ export function ProfilePage() {
             </div>
           )}
           {profile.invite_code && (
-            <div className="text-xs text-text-muted">
-              Code: <span className="font-mono text-primary">{profile.invite_code}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-text-muted">
+                {locale === 'de' ? 'Dein Invite-Code:' : 'Your invite code:'}
+              </span>
+              <span className="font-mono text-primary font-bold text-xs">{profile.invite_code}</span>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/mindset-shift/login?ref=${profile.invite_code}`
+                  navigator.clipboard.writeText(url)
+                }}
+                className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary"
+              >
+                {locale === 'de' ? 'Link kopieren' : 'Copy link'}
+              </button>
             </div>
           )}
+          <p className="text-[10px] text-text-muted">
+            {locale === 'de'
+              ? 'Freunde einladen = 200 XP für dich pro Anmeldung'
+              : 'Invite friends = 200 XP per signup'}
+          </p>
         </div>
 
         {/* Level */}

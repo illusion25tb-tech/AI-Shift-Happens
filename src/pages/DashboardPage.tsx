@@ -25,6 +25,46 @@ interface FreezeStatus {
   can_afford: boolean
 }
 
+const DAILY_TIPS = {
+  de: [
+    'KI ersetzt nicht dein Urteil — sie erweitert es.',
+    'Iterieren statt akzeptieren: Der erste Output ist ein Entwurf.',
+    'Je mehr Kontext du gibst, desto besser das Ergebnis.',
+    'Denken auslagern, Entscheidung behalten.',
+    'KI-Tools sind Werkzeuge, keine Autopiloten.',
+    'Die beste Antwort kommt durch die richtige Frage.',
+    'Streaks belohnen Konsistenz — nicht Perfektion.',
+    'Wer KI als Partner nutzt, gewinnt den Vorsprung.',
+    'Kleine tägliche Verbesserungen = exponentielles Wachstum.',
+    'Dein KI-Mindset ist dein wertvollstes Skill-Update.',
+  ],
+  en: [
+    'AI doesn\'t replace your judgment — it expands it.',
+    'Iterate, don\'t accept: First output is a draft.',
+    'The more context you provide, the better the result.',
+    'Outsource thinking, keep the decision.',
+    'AI tools are instruments, not autopilots.',
+    'The best answer comes from the right question.',
+    'Streaks reward consistency — not perfection.',
+    'Those who use AI as a partner gain the edge.',
+    'Small daily improvements = exponential growth.',
+    'Your AI mindset is your most valuable skill upgrade.',
+  ],
+}
+
+function DailyTip({ locale }: { locale: 'de' | 'en' }) {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
+  const tips = DAILY_TIPS[locale]
+  const tip = tips[dayOfYear % tips.length]
+
+  return (
+    <div className="flex-1 bg-primary/5 border border-primary/10 rounded-xl p-3 flex items-start gap-2">
+      <span className="text-lg">💡</span>
+      <p className="text-xs text-text-secondary leading-relaxed">{tip}</p>
+    </div>
+  )
+}
+
 export function DashboardPage() {
   const { profile, signOut } = useAuth()
   const { locale, setLocale, t } = useLocale()
@@ -33,6 +73,7 @@ export function DashboardPage() {
   const [freezeStatus, setFreezeStatus] = useState<FreezeStatus | null>(null)
   const [freezing, setFreezing] = useState(false)
   const [pendingChallenges, setPendingChallenges] = useState(0)
+  const [myRank, setMyRank] = useState<number | null>(null)
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem('shift-happens-onboarded')
   )
@@ -96,6 +137,20 @@ export function DashboardPage() {
       } catch { /* ignore */ }
     }
     if (profile?.id) checkChallenges()
+
+    // Load my leaderboard rank
+    async function loadRank() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/get-leaderboard?tab=alltime`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+        })
+        const data = await res.json()
+        const me = (data.entries ?? []).find((e: any) => e.user_id === profile?.id)
+        if (me) setMyRank(me.rank)
+      } catch { /* ignore */ }
+    }
+    if (profile?.id) loadRank()
   }, [profile?.id])
 
   const useStreakFreeze = async () => {
@@ -234,6 +289,20 @@ export function DashboardPage() {
 
         {/* Level */}
         <LevelBar totalXp={profile?.total_xp ?? 0} locale={locale} />
+
+        {/* Rank + Daily Tip */}
+        <div className="flex gap-3">
+          {myRank && (
+            <div className="flex-1 bg-white/4 border border-white/6 rounded-xl p-3 flex items-center gap-2">
+              <span className="text-lg">🏅</span>
+              <div>
+                <div className="text-xs text-text-muted">{locale === 'de' ? 'Dein Rang' : 'Your Rank'}</div>
+                <div className="text-sm font-bold font-mono text-primary">#{myRank}</div>
+              </div>
+            </div>
+          )}
+          <DailyTip locale={locale} />
+        </div>
 
         {/* Quick Nav */}
         <div className="grid grid-cols-2 gap-3">
