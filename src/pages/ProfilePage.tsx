@@ -7,6 +7,7 @@ import LevelBar from '../components/LevelBar'
 import BadgeGrid from '../components/BadgeGrid'
 import { CATEGORY_LABELS } from '../lib/constants'
 import ShareStatsCard from '../components/ShareStatsCard'
+import StreakCalendar from '../components/StreakCalendar'
 import { canNotify, notificationPermission, requestNotificationPermission, isReminderEnabled, setReminderEnabled, scheduleLocalReminder } from '../lib/notifications'
 import type { CategoryId } from '../lib/constants'
 
@@ -404,6 +405,9 @@ export function ProfilePage() {
             )}
           </div>
         )}
+
+        {/* Streak Calendar */}
+        <StreakCalendar userId={profile.id} locale={locale} />
 
         {/* Share Stats Card */}
         <ShareStatsCard

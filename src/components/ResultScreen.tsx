@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import type { AnswerResult, Locale } from '../types'
 import { LEVELS, BADGES } from '../lib/constants'
 import Confetti from './Confetti'
+import AnimatedCounter from './AnimatedCounter'
 
 interface ResultScreenProps {
   score: number
@@ -71,7 +72,7 @@ export default function ResultScreen({
           }}
         >
           <div className="w-28 h-28 rounded-full bg-bg-base flex flex-col items-center justify-center">
-            <span className="text-3xl font-mono font-bold text-text-primary">{score}</span>
+            <AnimatedCounter value={score} className="text-3xl font-mono font-bold text-text-primary" />
             <span className="text-xs text-text-muted uppercase tracking-wider">
               {t('result.points')}
             </span>

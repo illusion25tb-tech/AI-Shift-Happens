@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import StreakBar from '../components/StreakBar'
 import LevelBar from '../components/LevelBar'
 import Onboarding from '../components/Onboarding'
+import PageTransition from '../components/PageTransition'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -122,6 +123,7 @@ export function DashboardPage() {
   ]
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-bg-base text-text-primary font-sans flex flex-col">
       {showOnboarding && <Onboarding locale={locale} onComplete={() => setShowOnboarding(false)} />}
 
@@ -259,5 +261,6 @@ export function DashboardPage() {
         </button>
       </footer>
     </div>
+    </PageTransition>
   )
 }
