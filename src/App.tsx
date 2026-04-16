@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth'
 import { registerServiceWorker, scheduleLocalReminder, isReminderEnabled } from './lib/notifications'
 import { useLocale } from './hooks/useLocale'
 import CookieConsent from './components/CookieConsent'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Eager: landing + dashboard (first paint)
 import { LandingPage } from './pages/LandingPage'
@@ -52,6 +53,7 @@ export default function App() {
   }, [])
 
   return (
+    <ErrorBoundary>
     <BrowserRouter basename="/mindset-shift">
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
         <CookieConsent locale={locale} />
@@ -75,5 +77,6 @@ export default function App() {
         </Suspense>
       </div>
     </BrowserRouter>
+    </ErrorBoundary>
   )
 }

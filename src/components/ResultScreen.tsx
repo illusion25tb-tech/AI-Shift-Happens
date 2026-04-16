@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { AnswerResult, Locale } from '../types'
 import { LEVELS, BADGES } from '../lib/constants'
+import Confetti from './Confetti'
 
 interface ResultScreenProps {
   score: number
@@ -44,6 +45,8 @@ export default function ResultScreen({
   const maxEstimated = answers.length * 500
   const ringPercent = maxEstimated > 0 ? Math.min((score / maxEstimated) * 100, 100) : 0
 
+  const isPerfect = correctCount === answers.length && answers.length > 0
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,6 +54,8 @@ export default function ResultScreen({
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className="space-y-6 text-center"
     >
+      {isPerfect && <Confetti />}
+
       {/* Trophy + level */}
       <div className="space-y-2">
         <div className="text-6xl">{levelEmoji}</div>

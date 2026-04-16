@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import type { QuestionForClient, Locale } from '../types'
 import { CATEGORY_LABELS } from '../lib/constants'
@@ -18,6 +18,21 @@ export default function QuizCard({ question, locale, disabled, onSelect }: QuizC
   const shuffledOptions = useMemo(() => {
     return [...question.options].sort(() => Math.random() - 0.5)
   }, [question.id])
+
+  // Keyboard shortcuts: A, B, C or 1, 2, 3
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    if (disabled) return
+    const key = e.key.toLowerCase()
+    const map: Record<string, number> = { a: 0, b: 1, c: 2, '1': 0, '2': 1, '3': 2 }
+    if (key in map && shuffledOptions[map[key]]) {
+      onSelect(shuffledOptions[map[key]].index)
+    }
+  }, [disabled, shuffledOptions, onSelect])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [handleKeyPress])
 
   const categoryLabel =
     CATEGORY_LABELS[question.category as keyof typeof CATEGORY_LABELS]?.[locale] ??

@@ -29,8 +29,23 @@ export function LandingPage() {
       <LevelTimeline locale={locale} />
       <BottomCTA onStart={handleStart} locale={locale} />
 
-      <footer className="text-center py-6 text-xs text-white/15 border-t border-white/4">
-        © {new Date().getFullYear()} AI-Shift Happens by tbai
+      <footer className="py-8 border-t border-white/4">
+        <div className="max-w-md mx-auto px-5 flex flex-col items-center gap-3">
+          <div className="flex gap-4 text-xs">
+            <a href="/mindset-shift/app/privacy" className="text-white/30 hover:text-white/60 transition-colors">
+              {locale === 'de' ? 'Datenschutz' : 'Privacy'}
+            </a>
+            <a href="/mindset-shift/app/privacy" className="text-white/30 hover:text-white/60 transition-colors">
+              {locale === 'de' ? 'Impressum' : 'Legal'}
+            </a>
+            <a href="/mindset-shift/app/faq" className="text-white/30 hover:text-white/60 transition-colors">
+              FAQ
+            </a>
+          </div>
+          <p className="text-white/15 text-xs">
+            © {new Date().getFullYear()} AI-Shift Happens by tbai · contact@tbai.cloud
+          </p>
+        </div>
       </footer>
     </div>
   )
