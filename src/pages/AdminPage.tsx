@@ -7,7 +7,7 @@ import { useLocale } from '../hooks/useLocale'
 import { CATEGORIES, CATEGORY_LABELS } from '../lib/constants'
 import type { CategoryId } from '../lib/constants'
 
-type AdminTab = 'dashboard' | 'questions' | 'users' | 'daily'
+type AdminTab = 'dashboard' | 'questions' | 'users' | 'sponsors'
 
 async function adminCall(action: string, body: Record<string, unknown> = {}) {
   const { data: { session } } = await supabase.auth.getSession()
@@ -378,10 +378,147 @@ function UsersTab() {
 }
 
 // ─── Main Admin Page ───
+// ─── Sponsors Tab ───
+function SponsorsTab() {
+  const [sponsors, setSponsors] = useState<any[]>([])
+  const [prizes, setPrizes] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+  const [showPrize, setShowPrize] = useState(false)
+  const [form, setForm] = useState({ name: '', logo_url: '', website_url: '', description: '', tier: 'standard' })
+  const [prizeForm, setPrizeForm] = useState({ sponsor_id: '', title: '', description: '', prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    const [s, p] = await Promise.all([
+      adminCall('list_sponsors'),
+      adminCall('list_prizes'),
+    ])
+    setSponsors(s.sponsors ?? [])
+    setPrizes(p.prizes ?? [])
+    setLoading(false)
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  const createSponsor = async () => {
+    await adminCall('create_sponsor', form)
+    setForm({ name: '', logo_url: '', website_url: '', description: '', tier: 'standard' })
+    setShowCreate(false)
+    load()
+  }
+
+  const createPrize = async () => {
+    await adminCall('create_prize', {
+      ...prizeForm,
+      value_eur: prizeForm.value_eur ? Number(prizeForm.value_eur) : null,
+    })
+    setPrizeForm({ sponsor_id: '', title: '', description: '', prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
+    setShowPrize(false)
+    load()
+  }
+
+  if (loading) return <Loader2 className="w-6 h-6 text-primary animate-spin mx-auto my-8" />
+
+  return (
+    <div className="space-y-4">
+      {/* Sponsors */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold">Sponsoren ({sponsors.length})</h3>
+        <button onClick={() => setShowCreate(!showCreate)} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/20 text-primary">
+          + Sponsor
+        </button>
+      </div>
+
+      {showCreate && (
+        <div className="bg-white/4 border border-primary/20 rounded-xl p-4 space-y-2">
+          <input value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} placeholder="Name..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary" />
+          <input value={form.logo_url} onChange={e => setForm(f => ({...f, logo_url: e.target.value}))} placeholder="Logo URL..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
+          <input value={form.website_url} onChange={e => setForm(f => ({...f, website_url: e.target.value}))} placeholder="Website URL..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
+          <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} placeholder="Beschreibung..." rows={2} className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none" />
+          <select value={form.tier} onChange={e => setForm(f => ({...f, tier: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
+            <option value="gold">Gold</option>
+            <option value="silver">Silber</option>
+            <option value="standard">Standard</option>
+          </select>
+          <button onClick={createSponsor} disabled={!form.name.trim()} className="w-full bg-primary text-white font-semibold py-2 rounded-lg text-sm disabled:opacity-50">Sponsor erstellen</button>
+        </div>
+      )}
+
+      {sponsors.map(s => (
+        <div key={s.id} className={`bg-white/4 border rounded-xl p-3 flex items-center gap-3 ${s.is_active ? 'border-white/6' : 'border-danger/20 opacity-60'}`}>
+          {s.logo_url ? <img src={s.logo_url} alt={s.name} className="w-8 h-8 object-contain rounded" /> : <div className="w-8 h-8 bg-primary/20 rounded flex items-center justify-center text-xs font-bold text-primary">{s.name[0]}</div>}
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold truncate">{s.name}</div>
+            <div className="text-[10px] text-text-muted">{s.tier} · {s.is_active ? 'aktiv' : 'inaktiv'}</div>
+          </div>
+          <div className="flex gap-1">
+            <button onClick={async () => { await adminCall('update_sponsor', { sponsor_id: s.id, updates: { is_active: !s.is_active } }); load() }}
+              className={`text-[10px] px-2 py-1 rounded ${s.is_active ? 'bg-teal/10 text-teal' : 'bg-danger/10 text-danger'}`}>
+              {s.is_active ? 'aktiv' : 'inaktiv'}
+            </button>
+            <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_sponsor', { sponsor_id: s.id }); load() } }}
+              className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
+          </div>
+        </div>
+      ))}
+
+      {/* Prizes */}
+      <div className="flex items-center justify-between pt-4 border-t border-white/6">
+        <h3 className="text-sm font-bold">Preise ({prizes.length})</h3>
+        <button onClick={() => setShowPrize(!showPrize)} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-gold/20 text-gold">
+          + Preis
+        </button>
+      </div>
+
+      {showPrize && (
+        <div className="bg-white/4 border border-gold/20 rounded-xl p-4 space-y-2">
+          <select value={prizeForm.sponsor_id} onChange={e => setPrizeForm(f => ({...f, sponsor_id: e.target.value}))} className="w-full bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
+            <option value="">Sponsor wählen...</option>
+            {sponsors.filter(s => s.is_active).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <input value={prizeForm.title} onChange={e => setPrizeForm(f => ({...f, title: e.target.value}))} placeholder="Preis-Titel..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary" />
+          <input value={prizeForm.description} onChange={e => setPrizeForm(f => ({...f, description: e.target.value}))} placeholder="Beschreibung..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
+          <div className="grid grid-cols-2 gap-2">
+            <select value={prizeForm.prize_type} onChange={e => setPrizeForm(f => ({...f, prize_type: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
+              <option value="weekly">Wöchentlich</option>
+              <option value="monthly">Monatlich</option>
+              <option value="special">Special</option>
+            </select>
+            <input value={prizeForm.value_eur} onChange={e => setPrizeForm(f => ({...f, value_eur: e.target.value}))} placeholder="Wert €" type="number" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-primary" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <input value={prizeForm.week_start} onChange={e => setPrizeForm(f => ({...f, week_start: e.target.value}))} placeholder="KW-Start (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+            <input value={prizeForm.month_start} onChange={e => setPrizeForm(f => ({...f, month_start: e.target.value}))} placeholder="Monat (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+          </div>
+          <button onClick={createPrize} disabled={!prizeForm.title.trim()} className="w-full bg-gold/20 text-gold font-semibold py-2 rounded-lg text-sm disabled:opacity-50">Preis erstellen</button>
+        </div>
+      )}
+
+      {prizes.map(p => (
+        <div key={p.id} className="bg-white/4 border border-white/6 rounded-xl p-3 flex items-center gap-3">
+          <span className="text-xl">{p.prize_type === 'weekly' ? '🏆' : p.prize_type === 'monthly' ? '🎁' : '⭐'}</span>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold truncate">{p.title}</div>
+            <div className="text-[10px] text-text-muted">
+              {p.prize_type} · {p.sponsors?.name ?? 'kein Sponsor'}
+              {p.value_eur && ` · ${p.value_eur}€`}
+              {p.winner_id && ` · Gewinner: ${p.profiles?.display_name ?? '?'}`}
+            </div>
+          </div>
+          <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_prize', { prize_id: p.id }); load() } }}
+            className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const TABS: { key: AdminTab; label: string }[] = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'questions', label: 'Fragen' },
   { key: 'users', label: 'User' },
+  { key: 'sponsors', label: 'Sponsoren' },
 ]
 
 export function AdminPage() {
@@ -433,6 +570,7 @@ export function AdminPage() {
         {tab === 'dashboard' && <DashboardTab />}
         {tab === 'questions' && <QuestionsTab />}
         {tab === 'users' && <UsersTab />}
+        {tab === 'sponsors' && <SponsorsTab />}
       </main>
     </div>
   )

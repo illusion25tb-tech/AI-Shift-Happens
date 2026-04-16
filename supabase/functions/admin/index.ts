@@ -184,6 +184,81 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ id: data.id })
     }
 
+    // ─── SPONSORS ───
+
+    if (action === 'list_sponsors') {
+      const { data, error } = await db.from('sponsors').select('*').order('created_at', { ascending: false })
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ sponsors: data })
+    }
+
+    if (action === 'create_sponsor') {
+      const { name, logo_url, website_url, description, tier, start_date, end_date } = body as any
+      const { data, error } = await db.from('sponsors').insert({
+        name, logo_url, website_url, description,
+        tier: tier ?? 'standard',
+        start_date: start_date ?? null,
+        end_date: end_date ?? null,
+      }).select('id').single()
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ id: data.id })
+    }
+
+    if (action === 'update_sponsor') {
+      const { sponsor_id, updates } = body as { sponsor_id: string; updates: Record<string, unknown> }
+      const ALLOWED = ['name', 'logo_url', 'website_url', 'description', 'tier', 'is_active', 'start_date', 'end_date']
+      const safe: Record<string, unknown> = {}
+      for (const k of ALLOWED) { if (k in updates) safe[k] = updates[k] }
+      const { error } = await db.from('sponsors').update(safe).eq('id', sponsor_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
+    if (action === 'delete_sponsor') {
+      const { sponsor_id } = body as { sponsor_id: string }
+      const { error } = await db.from('sponsors').delete().eq('id', sponsor_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
+    // ─── PRIZES ───
+
+    if (action === 'list_prizes') {
+      const { data, error } = await db.from('prizes')
+        .select('*, sponsors(name, logo_url), profiles:winner_id(display_name)')
+        .order('created_at', { ascending: false })
+        .limit(50)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ prizes: data })
+    }
+
+    if (action === 'create_prize') {
+      const { sponsor_id, title, description, image_url, prize_type, value_eur, week_start, month_start } = body as any
+      const { data, error } = await db.from('prizes').insert({
+        sponsor_id, title, description, image_url,
+        prize_type: prize_type ?? 'weekly',
+        value_eur: value_eur ?? null,
+        week_start: week_start ?? null,
+        month_start: month_start ?? null,
+      }).select('id').single()
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ id: data.id })
+    }
+
+    if (action === 'assign_prize_winner') {
+      const { prize_id, winner_id } = body as { prize_id: string; winner_id: string }
+      const { error } = await db.from('prizes').update({ winner_id }).eq('id', prize_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
+    if (action === 'delete_prize') {
+      const { prize_id } = body as { prize_id: string }
+      const { error } = await db.from('prizes').delete().eq('id', prize_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
     // ─── REBALANCE OPTIONS ───
 
     if (action === 'rebalance_options') {
