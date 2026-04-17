@@ -71,6 +71,53 @@ export function PrivacyPage() {
             : 'Data is deleted when you delete your account. Anonymized leaderboard data may persist.'}</p>
         </section>
 
+        {/* Spielregeln */}
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-2">{de ? 'Spielregeln' : 'Game Rules'}</h2>
+
+          <h3 className="font-semibold text-text-primary mt-4 mb-1">{de ? 'Daily Quiz' : 'Daily Quiz'}</h3>
+          <p>{de
+            ? 'Jeden Werktag (Mo-Fr) gibt es ein Quiz mit 3 Fragen + 1 Bonus-Frage. Das Wochenende unterbricht den Streak nicht. Jede Frage hat 3 Antwortmöglichkeiten mit unterschiedlicher Punktzahl (+100, 0, -100). Die Antwortzeit beträgt 30 Sekunden.'
+            : 'Every weekday (Mon-Fri) there is a quiz with 3 questions + 1 bonus question. Weekends do not break the streak. Each question has 3 answer options with different scores (+100, 0, -100). Answer time is 30 seconds.'}</p>
+
+          <h3 className="font-semibold text-text-primary mt-4 mb-1">{de ? 'Scoring' : 'Scoring'}</h3>
+          <p>{de
+            ? 'Basis-Punkte werden mit dem Streak-Multiplikator (1.0x-3.0x) multipliziert. Schnelle richtige Antworten erhalten bis zu 50 Speed-Bonus-Punkte. Bei Bonus-Fragen wird alles nochmal x1.5 multipliziert. Gefährliche Antworten (-100) brechen den Streak.'
+            : 'Base points are multiplied by the streak multiplier (1.0x-3.0x). Fast correct answers earn up to 50 speed bonus points. Bonus questions get an additional x1.5 multiplier. Dangerous answers (-100) break the streak.'}</p>
+
+          <h3 className="font-semibold text-text-primary mt-4 mb-1">{de ? 'XP & Level' : 'XP & Levels'}</h3>
+          <p>{de
+            ? '6 Level von AI Rookie (0 XP) bis AI Dirigent (100.000 XP). XP werden durch Quiz-Punkte verdient. Negative Punkte geben kein XP. Streak Freeze kostet 500 XP.'
+            : '6 levels from AI Rookie (0 XP) to AI Dirigent (100,000 XP). XP is earned through quiz points. Negative points give no XP. Streak Freeze costs 500 XP.'}</p>
+
+          <h3 className="font-semibold text-text-primary mt-4 mb-1">{de ? 'Wochen-/Monats-Champion' : 'Weekly/Monthly Champion'}</h3>
+          <p>{de
+            ? 'Der Wochen-Champion wird montags automatisch ermittelt (Summe aller Daily-Scores Mo-Fr). Der Monats-Champion wird am 1. jedes Monats berechnet. Champions erhalten Badges und ggf. Sponsoren-Preise.'
+            : 'The weekly champion is determined automatically on Mondays (sum of all daily scores Mon-Fri). The monthly champion is calculated on the 1st of each month. Champions receive badges and potentially sponsor prizes.'}</p>
+
+          <h3 className="font-semibold text-text-primary mt-4 mb-1">{de ? 'Challenges & Teams' : 'Challenges & Teams'}</h3>
+          <p>{de
+            ? '1v1 Challenges: 5 gleiche Fragen für beide Spieler. Teams: Captain und Admins können einladen und verwalten. Team-Score = Summe aller Daily-Scores der Mitglieder.'
+            : '1v1 Challenges: 5 identical questions for both players. Teams: Captains and admins can invite and manage. Team score = sum of all daily scores of members.'}</p>
+        </section>
+
+        {/* Haftungsausschluss */}
+        <section>
+          <h2 className="text-lg font-bold text-text-primary mb-2">{de ? 'Haftungsausschluss' : 'Disclaimer'}</h2>
+          <p>{de
+            ? 'AI-Shift Happens ist ein Lern- und Unterhaltungsangebot. Die Quizfragen und Szenarien dienen der Wissensvermittlung zum Thema Künstliche Intelligenz im Arbeitsumfeld. Sie stellen keine Rechts-, Datenschutz- oder IT-Sicherheitsberatung dar.'
+            : 'AI-Shift Happens is an educational and entertainment service. The quiz questions and scenarios serve to convey knowledge about artificial intelligence in the workplace. They do not constitute legal, data protection, or IT security advice.'}</p>
+          <p className="mt-2">{de
+            ? 'Die Bewertung der Antworten basiert auf allgemein anerkannten Best Practices im Umgang mit KI-Tools. Für individuelle Entscheidungen in Ihrem Unternehmen konsultieren Sie bitte Ihre IT-Abteilung, Ihren Datenschutzbeauftragten oder einen Fachberater.'
+            : 'The evaluation of answers is based on generally recognized best practices for using AI tools. For individual decisions in your organization, please consult your IT department, data protection officer, or a specialist advisor.'}</p>
+          <p className="mt-2">{de
+            ? 'Preise und Sponsoren-Leistungen werden ohne Gewähr angeboten. Ein Rechtsanspruch auf Gewinne besteht nicht. Der Veranstalter behält sich vor, Preise zu ändern oder die Aktion jederzeit zu beenden.'
+            : 'Prizes and sponsor services are offered without warranty. There is no legal claim to winnings. The organizer reserves the right to change prizes or end the campaign at any time.'}</p>
+          <p className="mt-2">{de
+            ? 'Für die Inhalte externer verlinkter Seiten sind ausschließlich deren Betreiber verantwortlich.'
+            : 'The operators of externally linked pages are solely responsible for their content.'}</p>
+        </section>
+
         <p className="text-text-muted text-xs pt-4 border-t border-white/6">
           {de ? 'Stand: April 2026' : 'Last updated: April 2026'}
         </p>
