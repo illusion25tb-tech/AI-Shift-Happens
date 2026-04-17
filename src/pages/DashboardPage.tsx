@@ -75,6 +75,7 @@ export function DashboardPage() {
   const [freezing, setFreezing] = useState(false)
   const [pendingChallenges, setPendingChallenges] = useState(0)
   const [myRank, setMyRank] = useState<number | null>(null)
+  const [activeToday, setActiveToday] = useState(0)
   const [showOnboarding, setShowOnboarding] = useState(
     () => !localStorage.getItem('shift-happens-onboarded')
   )
@@ -151,6 +152,14 @@ export function DashboardPage() {
       } catch { /* ignore */ }
     }
     if (profile?.id) loadRank()
+
+    // Active today
+    fetch(`${SUPABASE_URL}/functions/v1/get-public-stats`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    }).then(r => r.json()).then(d => {
+      if (d.players) setActiveToday(d.quizzes_played ?? 0)
+    }).catch(() => {})
   }, [profile?.id])
 
   const useStreakFreeze = async () => {
@@ -281,9 +290,31 @@ export function DashboardPage() {
               <div className="text-3xl">🧠</div>
             </div>
             <p className="text-white/80 text-sm">3+1 Bonus · ~3 Min</p>
-            <span className="inline-block bg-white text-primary font-bold text-sm px-5 py-2 rounded-xl">
-              {t('dashboard.playNow')}
-            </span>
+            <div className="flex gap-2">
+              <span className="inline-block bg-white text-primary font-bold text-sm px-5 py-2 rounded-xl">
+                {t('dashboard.playNow')}
+              </span>
+              {activeToday > 0 && (
+                <span className="inline-block bg-white/20 text-white/80 text-xs px-3 py-2 rounded-xl">
+                  {activeToday} {locale === 'de' ? 'gespielt' : 'played'}
+                </span>
+              )}
+            </div>
+          </div>
+        </Link>
+
+        {/* Quick Free Play */}
+        <Link
+          to="/app/freeplay"
+          className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform bg-white/4 border border-white/6"
+        >
+          <div className="p-4 flex items-center gap-3">
+            <div className="text-2xl">🎮</div>
+            <div className="flex-1">
+              <p className="font-semibold text-sm">{locale === 'de' ? 'Free Play starten' : 'Start Free Play'}</p>
+              <p className="text-xs text-text-muted">{locale === 'de' ? '10 Fragen, wähle deine Kategorie' : '10 questions, choose your category'}</p>
+            </div>
+            <span className="text-text-muted">&rarr;</span>
           </div>
         </Link>
 

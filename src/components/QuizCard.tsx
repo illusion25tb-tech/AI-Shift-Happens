@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import type { QuestionForClient, Locale } from '../types'
-import { CATEGORY_LABELS } from '../lib/constants'
+import { CATEGORY_LABELS, CATEGORY_COLORS } from '../lib/constants'
+import type { CategoryId } from '../lib/constants'
 
 interface QuizCardProps {
   question: QuestionForClient
@@ -47,7 +48,15 @@ export default function QuizCard({ question, locale, disabled, onSelect }: QuizC
     >
       {/* Category pill */}
       <div className="flex">
-        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted bg-white/4 border border-bg-card-border px-3 py-1 rounded-full">
+        <span
+          className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full"
+          style={{
+            color: CATEGORY_COLORS[question.category as CategoryId] ?? '#A8A4BA',
+            backgroundColor: (CATEGORY_COLORS[question.category as CategoryId] ?? '#A8A4BA') + '15',
+            borderWidth: 1,
+            borderColor: (CATEGORY_COLORS[question.category as CategoryId] ?? '#A8A4BA') + '30',
+          }}
+        >
           {categoryLabel}
         </span>
       </div>

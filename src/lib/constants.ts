@@ -193,6 +193,19 @@ export const STREAK_XP_MULTIPLIERS = [
   { minDays: 20, multi: 2.0 },
 ] as const
 
+export const CATEGORY_COLORS: Record<CategoryId, string> = {
+  'prompt-architecture': '#5B4FC7',
+  'creativity-ideation': '#DB2777',
+  'critical-thinking': '#DC2626',
+  'efficiency-analysis': '#2DD4BF',
+  'privacy-ethics': '#F97316',
+  'workflow-integration': '#3B82F6',
+  'automation-agents': '#8B5CF6',
+  'knowledge-research': '#059669',
+  'change-collaboration': '#FBBF24',
+  'quality-measurement': '#06B6D4',
+}
+
 export const DAILY_QUESTION_COUNT = 3
 export const BONUS_QUESTION_COUNT = 1
 export const FREEPLAY_QUESTION_COUNT = 10
