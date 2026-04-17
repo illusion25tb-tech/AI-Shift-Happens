@@ -45,8 +45,11 @@ export function LandingPage() {
               {locale === 'de' ? 'Sponsoren' : 'Sponsors'}
             </a>
           </div>
+          <a href="https://tbai.cloud" target="_blank" rel="noopener noreferrer" className="opacity-30 hover:opacity-60 transition-opacity">
+            <img src="/mindset-shift/tbai-cloud-logo.png" alt="tbai" className="h-6 mx-auto" />
+          </a>
           <p className="text-white/15 text-xs">
-            © {new Date().getFullYear()} AI-Shift Happens by tbai · contact@tbai.cloud
+            © {new Date().getFullYear()} AI-Shift Happens by tbai
           </p>
         </div>
       </footer>

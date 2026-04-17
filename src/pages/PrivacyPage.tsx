@@ -18,12 +18,15 @@ export function PrivacyPage() {
         {/* Impressum */}
         <section>
           <h2 className="text-lg font-bold text-text-primary mb-2">{de ? 'Impressum' : 'Legal Notice'}</h2>
-          <p>
-            tbai — Thorsten Behder AI Consulting<br />
-            Thorsten Behder<br />
-            E-Mail: contact@tbai.cloud<br />
-            Web: tbai.cloud
-          </p>
+          <div className="flex items-start gap-4">
+            <img src="/mindset-shift/tbai-cloud-logo.png" alt="tbai" className="w-16 rounded-lg mt-1" />
+            <div>
+              <p className="font-semibold">tbai — Thorsten Behder AI Consulting</p>
+              <p>Thorsten Behder</p>
+              <p>E-Mail: contact@tbai.cloud</p>
+              <p>Web: <a href="https://tbai.cloud" className="text-primary hover:underline">tbai.cloud</a></p>
+            </div>
+          </div>
         </section>
 
         {/* Datenschutz */}
