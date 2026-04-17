@@ -42,9 +42,9 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-bg-base/60 via-transparent to-bg-base/90" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
-        {/* Logo */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-center mb-8">
-          <img src="/mindset-shift/shift-logo.png" alt="AI Shift Happens" className="w-48 md:w-64 drop-shadow-2xl" />
+        {/* Title text only — no logo on landing */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
+          <span className="text-sm font-bold tracking-[0.2em] uppercase text-white/50">AI-Shift Happens</span>
         </motion.div>
 
         {/* Headline */}
