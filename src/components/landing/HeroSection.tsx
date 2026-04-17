@@ -24,18 +24,27 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-5 py-16 overflow-hidden"
-      style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(59,40,150,0.4), transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(14,116,144,0.25), transparent 50%), linear-gradient(180deg, #080B1A 0%, #0D1330 40%, #111B45 70%, #0D1330 100%)' }}>
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-5 py-16 overflow-hidden">
 
-      {/* Subtle grid overlay */}
-      <div className="absolute inset-0 opacity-10"
-        style={{ backgroundImage: 'linear-gradient(rgba(99,102,241,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.3) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)' }} />
+      {/* Video background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'brightness(0.3) saturate(1.2)' }}
+      >
+        <source src="/mindset-shift/hero-loop.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-base/60 via-transparent to-bg-base/90" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
         {/* Logo */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-center gap-2 mb-10">
-          <span className="text-2xl">🧠</span>
-          <span className="text-sm font-bold tracking-[0.2em] uppercase text-white/50">AI-Shift Happens</span>
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-center mb-8">
+          <img src="/mindset-shift/shift-logo.png" alt="AI Shift Happens" className="w-48 md:w-64 drop-shadow-2xl" />
         </motion.div>
 
         {/* Headline */}

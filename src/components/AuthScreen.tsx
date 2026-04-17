@@ -50,7 +50,7 @@ export default function AuthScreen() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🧠</div>
+          <img src="/mindset-shift/shift-logo.png" alt="AI-Shift Happens" className="w-40 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-text-primary mb-2">AI-Shift Happens</h1>
           <p className="text-text-secondary">{t('auth.tagline')}</p>
         </div>
