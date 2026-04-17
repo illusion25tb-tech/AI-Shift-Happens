@@ -40,7 +40,7 @@ export default function Onboarding({ locale, onComplete }: OnboardingProps) {
   const isLast = step === STEPS.length - 1
 
   return (
-    <div className="fixed inset-0 z-50 bg-bg-base/95 backdrop-blur-sm flex items-center justify-center px-5">
+    <div className="fixed inset-0 z-50 bg-bg-base/95 backdrop-blur-sm flex items-center justify-center px-5" onClick={e => e.stopPropagation()}>
       <AnimatePresence mode="wait">
         <motion.div
           key={step}

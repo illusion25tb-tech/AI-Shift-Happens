@@ -146,7 +146,12 @@ export function useQuiz(): UseQuizReturn {
         return
       }
 
-      const result: AnswerResult = data
+      const result: AnswerResult = {
+        ...data,
+        // Ensure time_ms and selected_index are preserved for finish-daily
+        time_ms: timeMs,
+        selected_index: selectedIndex,
+      }
 
       setStateAndRef(prev => {
         const newAnswers = [...prev.answers, result]

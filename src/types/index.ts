@@ -36,6 +36,7 @@ export interface AnswerResult {
   mindset_tip: string
   is_correct: boolean
   is_dangerous: boolean
+  time_ms?: number
 }
 
 export interface QuizAttempt {

@@ -124,18 +124,17 @@ export function DashboardPage() {
     }
     checkFreeze()
 
-    // Check pending challenges
+    // Check pending challenges via RPC-safe count
     async function checkChallenges() {
       try {
-        const { data, error } = await supabase
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) return
+        const { count } = await supabase
           .from('challenges')
-          .select('id', { count: 'exact', head: true })
-          .or(`challenger_id.eq.${profile?.id},challenged_id.eq.${profile?.id}`)
+          .select('*', { count: 'exact', head: true })
           .is('completed_at', null)
-        if (!error && data !== null) {
-          setPendingChallenges(typeof data === 'number' ? data : 0)
-        }
-      } catch { /* ignore */ }
+        setPendingChallenges(count ?? 0)
+      } catch { /* RLS may block — silently ignore */ }
     }
     if (profile?.id) checkChallenges()
 
