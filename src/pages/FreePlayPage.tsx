@@ -6,7 +6,7 @@ import { useLocale } from '../hooks/useLocale'
 import { CATEGORIES, CATEGORY_LABELS, FREEPLAY_QUESTION_COUNT } from '../lib/constants'
 import ProgressBar from '../components/ProgressBar'
 import ScoreDisplay from '../components/ScoreDisplay'
-import TimerBar from '../components/TimerBar'
+// TimerBar removed — Free Play has no time pressure
 import QuizCard from '../components/QuizCard'
 import FeedbackCard from '../components/FeedbackCard'
 import ResultScreen from '../components/ResultScreen'
@@ -29,11 +29,6 @@ export function FreePlayPage() {
   const [error, setError] = useState<string | null>(null)
 
   const streakRef = useRef(0)
-  const elapsedMsRef = useRef(0)
-
-  const onTimeUpdate = useCallback((ms: number) => {
-    elapsedMsRef.current = ms
-  }, [])
 
   const startGame = useCallback(async (category: CategoryId | 'all') => {
     setSelectedCategory(category)
@@ -84,7 +79,7 @@ export function FreePlayPage() {
         body: {
           question_id: question.id,
           selected_index: selectedIndex,
-          time_ms: elapsedMsRef.current,
+          time_ms: 30000, // Free Play: no timer, no speed bonus
           streak_count: streakRef.current + 1,
           is_bonus: false,
         },
@@ -151,8 +146,8 @@ export function FreePlayPage() {
         <main className="flex-1 flex flex-col px-5 py-6 gap-4 max-w-md mx-auto w-full">
           <p className="text-text-secondary text-sm">
             {locale === 'de'
-              ? `Wähle eine Kategorie oder spiele alle. ${FREEPLAY_QUESTION_COUNT} zufällige Fragen pro Runde.`
-              : `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} random questions per round.`}
+              ? `Wähle eine Kategorie oder spiele alle. ${FREEPLAY_QUESTION_COUNT} Fragen pro Runde — ohne Zeitdruck, zum Lernen.`
+              : `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} questions per round — no time pressure, for learning.`}
           </p>
 
           <button
@@ -238,7 +233,7 @@ export function FreePlayPage() {
 
       <div className="px-5 pt-4 pb-2 max-w-md mx-auto w-full space-y-2">
         <ProgressBar current={currentIndex} total={questions.length} bonusIndex={-1} />
-        <TimerBar maxSeconds={30} onTimeUpdate={onTimeUpdate} running={isPlaying} />
+        {/* Free Play: kein Timer — ohne Zeitdruck lernen */}
       </div>
 
       <div className="flex-1 px-5 py-4 max-w-md mx-auto w-full space-y-4 overflow-y-auto">

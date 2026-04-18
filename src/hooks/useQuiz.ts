@@ -80,6 +80,14 @@ export function useQuiz(): UseQuizReturn {
         return
       }
 
+      if (data?.weekend) {
+        setStateAndRef(prev => ({
+          ...prev,
+          gameState: 'weekend' as any,
+        }))
+        return
+      }
+
       if (data?.already_played) {
         const attempt = data.attempt
         setStateAndRef(prev => ({

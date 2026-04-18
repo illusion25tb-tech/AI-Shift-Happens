@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
@@ -52,6 +52,38 @@ export function DailyQuizPage() {
     return (
       <div className="min-h-screen bg-bg-base flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    )
+  }
+
+  // Weekend state
+  if (quiz.gameState === 'weekend') {
+    return (
+      <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center gap-6 px-5">
+        <div className="text-6xl">☀️</div>
+        <h2 className="text-xl font-bold text-center">
+          {locale === 'de' ? 'Wochenende!' : 'Weekend!'}
+        </h2>
+        <p className="text-text-secondary text-center text-sm max-w-xs">
+          {locale === 'de'
+            ? 'Das Daily Quiz findet Mo\u2013Fr statt. Dein Streak bleibt über das Wochenende erhalten!'
+            : 'The daily quiz runs Mon\u2013Fri. Your streak is preserved over the weekend!'}
+        </p>
+        <Link
+          to="/app/freeplay"
+          className="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl transition-colors"
+        >
+          {locale === 'de' ? '🎮 Free Play starten' : '🎮 Start Free Play'}
+        </Link>
+        <Link
+          to="/app/challenge"
+          className="border border-white/10 text-text-secondary font-semibold py-3 px-8 rounded-xl hover:bg-white/4 transition-colors"
+        >
+          {locale === 'de' ? '⚔️ Challenge starten' : '⚔️ Start Challenge'}
+        </Link>
+        <button onClick={handleBack} className="text-text-muted text-sm hover:text-text-secondary">
+          &larr; {locale === 'de' ? 'Zurück' : 'Back'}
+        </button>
       </div>
     )
   }

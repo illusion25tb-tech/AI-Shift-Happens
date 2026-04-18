@@ -64,7 +64,16 @@ Deno.serve(async (req: Request) => {
       .eq('locale', locale)
       .single()
 
-    // Auto-create quiz if none exists (weekends, missed cron, etc.)
+    // Weekend check — no daily quiz on Sat/Sun
+    const dayOfWeek = new Date().getUTCDay() // 0=Sun, 6=Sat
+    if ((quizError || !dailyQuiz) && (dayOfWeek === 0 || dayOfWeek === 6)) {
+      return new Response(
+        JSON.stringify({ weekend: true, date: today, locale }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Auto-create quiz if none exists (missed cron, etc.)
     let quiz = dailyQuiz
     if (quizError || !quiz) {
       const { data: randomQs } = await serviceClient
@@ -72,7 +81,7 @@ Deno.serve(async (req: Request) => {
         .select('id')
         .eq('locale', locale)
         .eq('is_active', true)
-        .order('id')  // deterministic for same-day
+        .order('id')
         .limit(100)
 
       if (!randomQs || randomQs.length < 4) {
@@ -82,7 +91,6 @@ Deno.serve(async (req: Request) => {
         )
       }
 
-      // Shuffle deterministically based on date
       const seed = today.replace(/-/g, '')
       const shuffled = randomQs.sort((a, b) => {
         const ha = (parseInt(seed) * 31 + a.id.charCodeAt(0)) % 1000
@@ -95,29 +103,15 @@ Deno.serve(async (req: Request) => {
 
       const { data: newQuiz, error: insertError } = await serviceClient
         .from('daily_quizzes')
-        .insert({
-          quiz_date: today,
-          locale,
-          question_ids: qIds,
-          bonus_question_id: bonusId,
-        })
-        .select('*')
-        .single()
+        .insert({ quiz_date: today, locale, question_ids: qIds, bonus_question_id: bonusId })
+        .select('*').single()
 
       if (insertError || !newQuiz) {
-        // Maybe another request just created it — try fetching again
         const { data: retryQuiz } = await serviceClient
-          .from('daily_quizzes')
-          .select('*')
-          .eq('quiz_date', today)
-          .eq('locale', locale)
-          .single()
-
+          .from('daily_quizzes').select('*').eq('quiz_date', today).eq('locale', locale).single()
         if (!retryQuiz) {
-          return new Response(
-            JSON.stringify({ error: 'Could not create quiz for today' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          )
+          return new Response(JSON.stringify({ error: 'Could not create quiz' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
         }
         quiz = retryQuiz
       } else {

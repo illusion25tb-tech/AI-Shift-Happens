@@ -90,3 +90,4 @@ export type GameState =
   | 'feedback'
   | 'finished'
   | 'error'
+  | 'weekend'
