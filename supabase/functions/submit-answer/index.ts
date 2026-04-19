@@ -156,27 +156,30 @@ Deno.serve(async (req: Request) => {
       is_bonus: boolean
     } = body
 
-    if (question_id === undefined || selected_index === undefined || confidence === undefined) {
+    if (question_id === undefined || selected_index === undefined) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: question_id, selected_index, confidence' }),
+        JSON.stringify({ error: 'Missing required fields: question_id, selected_index' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Validate confidence level
-    if (![1, 2, 3].includes(confidence)) {
-      return new Response(
-        JSON.stringify({ error: 'confidence must be 1, 2, or 3' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
+    // Confidence defaults to 2 (medium) for backward compatibility with old frontend
+    const validConfidence = [1, 2, 3].includes(confidence) ? confidence : 2
 
     const serviceClient = createClient(supabaseUrl, supabaseServiceRoleKey)
 
     // Fetch question + user profile (for shift_mode)
+    // Note: shift_mode and is_bullshit_trap may not exist yet if migration hasn't run
     const [questionResult, profileResult] = await Promise.all([
       serviceClient.from('questions').select('*').eq('id', question_id).single(),
-      serviceClient.from('profiles').select('shift_mode, locale').eq('id', user.id).single(),
+      serviceClient.from('profiles').select('locale').eq('id', user.id).single()
+        .then(async (r) => {
+          // Try to fetch shift_mode separately (graceful if column doesn't exist)
+          try {
+            const { data } = await serviceClient.from('profiles').select('shift_mode').eq('id', user.id).single()
+            return { ...r, data: { ...r.data, shift_mode: data?.shift_mode ?? 'cheeky' } }
+          } catch { return { ...r, data: { ...r.data, shift_mode: 'cheeky' } } }
+        }),
     ])
 
     if (questionResult.error || !questionResult.data) {
@@ -204,7 +207,7 @@ Deno.serve(async (req: Request) => {
     const is_correct = selectedOption.score === 100
     const is_dangerous = selectedOption.score < 0
     const is_bullshit_trap = question.is_bullshit_trap ?? false
-    const scores = CONFIDENCE_SCORES[confidence]
+    const scores = CONFIDENCE_SCORES[validConfidence]
 
     let base_score: number
     if (is_correct) {
@@ -228,11 +231,11 @@ Deno.serve(async (req: Request) => {
     // Pick SHIFT quote based on situation
     let situation: string
     if (is_correct) {
-      situation = confidence === 3 ? 'confident_correct' : confidence === 1 ? 'cautious_correct' : 'medium_correct'
-    } else if (is_bullshit_trap && confidence === 3) {
+      situation = validConfidence === 3 ? 'confident_correct' : validConfidence === 1 ? 'cautious_correct' : 'medium_correct'
+    } else if (is_bullshit_trap && validConfidence === 3) {
       situation = 'confident_bullshit'
     } else {
-      situation = confidence === 3 ? 'confident_wrong' : confidence === 1 ? 'cautious_wrong' : 'medium_wrong'
+      situation = validConfidence === 3 ? 'confident_wrong' : validConfidence === 1 ? 'cautious_wrong' : 'medium_wrong'
     }
 
     const shift_quote = pickQuote(situation, shiftMode, userLocale, question_id, user.id)
@@ -241,10 +244,10 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         question_id,
         selected_index,
-        confidence,
+        confidence: validConfidence,
         base_score,
         streak_multi,
-        confidence_multi: confidence,
+        confidence_multi: validConfidence,
         bonus_multi,
         total_score,
         feedback_text: selectedOption.feedbackText ?? '',
