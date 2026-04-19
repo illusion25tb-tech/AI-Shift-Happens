@@ -80,9 +80,7 @@
   </style>
 </head>
 <body>
-  <video class="bg" autoplay muted loop playsinline preload="auto" poster="">
-    <source src="assets/hero.mp4" type="video/mp4" />
-  </video>
+  <video class="bg" autoplay muted loop playsinline poster=""></video>
   <div class="veil"></div>
 
   <div class="stage">
@@ -175,6 +173,12 @@
       document.querySelectorAll('.lang-switch button').forEach(btn => {
         btn.addEventListener('click', () => applyLang(btn.dataset.lang));
       });
+
+      const video = document.querySelector('video.bg');
+      const isMobile = window.matchMedia('(max-width: 768px)').matches
+        || /Mobi|Android|iPhone/i.test(navigator.userAgent);
+      video.src = isMobile ? 'assets/hero-mobile.mp4' : 'assets/hero.mp4';
+      video.load();
     })();
   </script>
 </body>
