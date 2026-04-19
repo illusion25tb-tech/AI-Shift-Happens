@@ -10,6 +10,9 @@ interface UseAuthReturn {
   loading: boolean
   signInWithGoogle: () => Promise<void>
   signInWithLinkedIn: () => Promise<void>
+  signInWithApple: () => Promise<void>
+  signInWithMicrosoft: () => Promise<void>
+  signInWithMagicLink: (email: string) => Promise<void>
   signInWithEmail: (email: string, password: string) => Promise<void>
   signUpWithEmail: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -95,6 +98,31 @@ export function useAuth(): UseAuthReturn {
     })
   }
 
+  const signInWithApple = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: { redirectTo: REDIRECT_URL },
+    })
+  }
+
+  const signInWithMicrosoft = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        redirectTo: REDIRECT_URL,
+        scopes: 'openid email profile',
+      },
+    })
+  }
+
+  const signInWithMagicLink = async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: REDIRECT_URL },
+    })
+    if (error) throw error
+  }
+
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
@@ -120,6 +148,9 @@ export function useAuth(): UseAuthReturn {
     loading,
     signInWithGoogle,
     signInWithLinkedIn,
+    signInWithApple,
+    signInWithMicrosoft,
+    signInWithMagicLink,
     signInWithEmail,
     signUpWithEmail,
     signOut,
