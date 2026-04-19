@@ -382,7 +382,7 @@ export function ChallengePage() {
 
       <div className="px-5 pt-4 pb-2 max-w-md mx-auto w-full space-y-2">
         <ProgressBar current={currentIndex} total={questions.length} bonusIndex={-1} />
-        <TimerBar maxSeconds={30} onTimeUpdate={onTimeUpdate} running={isPlaying} />
+        <TimerBar maxSeconds={60} onTimeUpdate={onTimeUpdate} running={isPlaying} />
       </div>
 
       <div className="flex-1 px-5 py-4 max-w-md mx-auto w-full space-y-4 overflow-y-auto">

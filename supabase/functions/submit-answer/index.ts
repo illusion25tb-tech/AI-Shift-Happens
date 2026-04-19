@@ -141,28 +141,17 @@ Deno.serve(async (req: Request) => {
     const is_dangerous = selectedOption.score < 0
     const is_bullshit_trap = (question as any).is_bullshit_trap ?? false
 
-    // Confidence: use if provided, otherwise fall back to speed-bonus scoring
-    const hasConfidence = confidence !== undefined && [1, 2, 3].includes(confidence)
+    // Confidence betting + Speed bonus (60s timer)
+    const validConfidence = [1, 2, 3].includes(confidence) ? confidence : 2
+    const scores = CONFIDENCE_SCORES[validConfidence]
 
     let base_score: number
-    let speed_bonus = 0
-    let confidence_multi = hasConfidence ? confidence : 0
-
-    if (hasConfidence) {
-      // New: Confidence betting
-      const scores = CONFIDENCE_SCORES[confidence]
-      if (is_correct) {
-        base_score = scores.correct
-      } else if (is_bullshit_trap) {
-        base_score = scores.bullshit
-      } else {
-        base_score = scores.wrong
-      }
+    if (is_correct) {
+      base_score = scores.correct
+    } else if (is_bullshit_trap) {
+      base_score = scores.bullshit
     } else {
-      // Legacy: Speed bonus scoring
-      base_score = selectedOption.score
-      const timeMs = time_ms ?? 30000
-      speed_bonus = is_correct ? Math.max(0, Math.round(SPEED_BONUS_MAX - (timeMs / 1000) * SPEED_BONUS_DECAY)) : 0
+      base_score = scores.wrong
     }
 
     const streak_multi = is_correct
@@ -170,39 +159,43 @@ Deno.serve(async (req: Request) => {
       : 1.0
     const bonus_multi = (is_bonus ?? false) ? BONUS_MULTIPLIER : 1.0
 
+    // Speed bonus: 0-50 for fast correct answers (60s timer, decay 0.83/s)
+    const timeMs = Math.max(0, time_ms ?? 60000)
+    const speed_bonus = is_correct
+      ? Math.max(0, Math.round(SPEED_BONUS_MAX - (timeMs / 1000) * SPEED_BONUS_DECAY))
+      : 0
+
     const total_score = is_correct
-      ? hasConfidence
-        ? Math.round(base_score * streak_multi * bonus_multi)
-        : Math.round(base_score * streak_multi * bonus_multi + speed_bonus * bonus_multi)
+      ? Math.round(base_score * streak_multi * bonus_multi + speed_bonus * bonus_multi)
       : base_score
 
     // SHIFT quote
     let situation = ''
     if (is_correct) {
-      situation = (confidence === 3) ? 'confident_correct' : (confidence === 1) ? 'cautious_correct' : 'medium_correct'
-    } else if (is_bullshit_trap && confidence === 3) {
+      situation = (validConfidence === 3) ? 'confident_correct' : (validConfidence === 1) ? 'cautious_correct' : 'medium_correct'
+    } else if (is_bullshit_trap && validConfidence === 3) {
       situation = 'bullshit'
     } else {
-      situation = (confidence === 3) ? 'confident_wrong' : (confidence === 1) ? 'cautious_wrong' : 'medium_wrong'
+      situation = (validConfidence === 3) ? 'confident_wrong' : (validConfidence === 1) ? 'cautious_wrong' : 'medium_wrong'
     }
-    const shift_quote = hasConfidence ? pickQuote(situation, shiftMode, userLocale, question_id, user.id) : ''
+    const shift_quote = pickQuote(situation, shiftMode, userLocale, question_id, user.id)
 
     return new Response(
       JSON.stringify({
         question_id,
         selected_index,
-        confidence: hasConfidence ? confidence : undefined,
+        confidence: validConfidence,
         base_score,
         streak_multi,
         speed_bonus,
-        confidence_multi,
+        confidence_multi: validConfidence,
         bonus_multi,
         total_score,
         feedback_text: selectedOption.feedbackText ?? '',
         mindset_tip: question.mindset_tip ?? '',
         is_correct,
         is_dangerous,
-        is_bullshit_trap: hasConfidence ? is_bullshit_trap : undefined,
+        is_bullshit_trap,
         shift_quote: shift_quote || undefined,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

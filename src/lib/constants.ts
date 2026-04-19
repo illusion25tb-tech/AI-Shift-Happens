@@ -246,6 +246,9 @@ export const DAILY_QUESTION_COUNT = 3
 export const BONUS_QUESTION_COUNT = 1
 export const FREEPLAY_QUESTION_COUNT = 10
 export const BONUS_MULTIPLIER = 1.5
+export const SPEED_BONUS_MAX = 50
+export const SPEED_BONUS_DECAY = 0.83  // 50 / 60s = ~0.83 per second
+export const TIMER_SECONDS = 60
 
 // ── Confidence Betting ──
 export type ConfidenceLevel = 1 | 2 | 3

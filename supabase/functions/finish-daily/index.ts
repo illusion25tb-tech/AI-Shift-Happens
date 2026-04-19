@@ -66,6 +66,8 @@ Deno.serve(async (req: Request) => {
     // Recalculate scores from client answers using server-side question data
     const STREAK_MULTIPLIERS = [1.0, 1.5, 2.0, 2.5, 3.0]
     const BONUS_MULTIPLIER = 1.5
+    const SPEED_BONUS_MAX = 50
+    const SPEED_BONUS_DECAY = 0.83 // 50 / 60s
     const CONFIDENCE_SCORES: Record<number, { correct: number; wrong: number; bullshit: number }> = {
       1: { correct:  50, wrong:    0, bullshit:    0 },
       2: { correct: 150, wrong:  -50, bullshit:  -75 },
@@ -122,8 +124,14 @@ Deno.serve(async (req: Request) => {
       const streakMulti = isCorrect ? STREAK_MULTIPLIERS[streakIdx] : 1.0
       const bonusMulti = isBonusQ ? BONUS_MULTIPLIER : 1.0
 
+      // Speed bonus: 0-50 for fast correct answers (60s timer)
+      const timeMs = Math.max(0, clientAns.time_ms ?? 60000)
+      const speedBonus = isCorrect
+        ? Math.max(0, Math.round(SPEED_BONUS_MAX - (timeMs / 1000) * SPEED_BONUS_DECAY))
+        : 0
+
       const answerScore = isCorrect
-        ? Math.round(baseScore * streakMulti * bonusMulti)
+        ? Math.round(baseScore * streakMulti * bonusMulti + speedBonus * bonusMulti)
         : baseScore
 
       totalScore += answerScore
@@ -138,6 +146,7 @@ Deno.serve(async (req: Request) => {
         is_dangerous: isDangerous,
         is_bullshit_trap: isBullshitTrap,
         streak_multi: streakMulti,
+        speed_bonus: speedBonus,
         confidence_multi: confidence,
         bonus_multi: bonusMulti,
         feedback_text: selectedOpt.feedbackText ?? '',

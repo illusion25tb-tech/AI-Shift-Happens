@@ -22,7 +22,7 @@ function getShiftEmoji(isCorrect: boolean, confidence: ConfidenceLevel, isBullsh
 }
 
 export default function FeedbackCard({ result, streak, isLast, onNext, t }: FeedbackCardProps) {
-  const { is_correct, is_dangerous, is_bullshit_trap, total_score, feedback_text, mindset_tip, shift_quote, confidence } = result
+  const { is_correct, is_dangerous, is_bullshit_trap, total_score, speed_bonus, feedback_text, mindset_tip, shift_quote, confidence } = result
 
   const emoji = is_correct ? '✅' : is_dangerous ? '⚠️' : '💡'
   const confidenceLabel = CONFIDENCE_LABELS[confidence as ConfidenceLevel]
@@ -51,12 +51,19 @@ export default function FeedbackCard({ result, streak, isLast, onNext, t }: Feed
           {total_score >= 0 ? '+' : ''}{total_score}
         </div>
 
-        {/* Confidence indicator */}
-        {confidenceLabel && (
-          <span className="inline-flex items-center gap-1 text-text-muted text-xs px-3 py-1 rounded-full bg-white/4 border border-white/6">
-            {confidenceLabel.emoji} {confidenceLabel.de}
-          </span>
-        )}
+        {/* Confidence + Speed indicator */}
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          {confidenceLabel && (
+            <span className="inline-flex items-center gap-1 text-text-muted text-xs px-3 py-1 rounded-full bg-white/4 border border-white/6">
+              {confidenceLabel.emoji} {confidenceLabel.de}
+            </span>
+          )}
+          {is_correct && speed_bonus > 0 && (
+            <span className="inline-flex items-center gap-1 text-teal text-xs font-semibold px-3 py-1 rounded-full bg-teal/10 border border-teal/20">
+              +{speed_bonus} Speed
+            </span>
+          )}
+        </div>
 
         {is_correct && streak > 1 && (
           <span className="inline-flex items-center gap-1 text-fire font-semibold text-sm px-3 py-1 rounded-full bg-fire/10 border border-fire/20">

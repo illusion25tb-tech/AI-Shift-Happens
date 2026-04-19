@@ -31,6 +31,7 @@ export interface AnswerResult {
   base_score: number
   streak_multi: number
   confidence_multi: number
+  speed_bonus: number
   bonus_multi: number
   total_score: number
   feedback_text: string

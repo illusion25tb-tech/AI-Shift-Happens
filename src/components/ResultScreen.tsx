@@ -31,6 +31,7 @@ export default function ResultScreen({
 }: ResultScreenProps) {
   const correctCount = answers.filter(a => a.is_correct).length
   const confidentCorrectCount = answers.filter(a => a.is_correct && a.confidence === 3).length
+  const totalSpeedBonus = answers.reduce((sum, a) => sum + (a.speed_bonus ?? 0), 0)
 
   // Find matching level based on score
   const level = [...LEVELS]
@@ -89,8 +90,8 @@ export default function ResultScreen({
           <div className="text-xs text-text-muted mt-1">{t('result.maxStreak')}</div>
         </div>
         <div className="bg-white/4 border border-bg-card-border rounded-xl p-3">
-          <div className="text-2xl font-bold text-gold font-mono">{confidentCorrectCount}🔥</div>
-          <div className="text-xs text-text-muted mt-1">{locale === 'de' ? 'Sicher + Richtig' : 'Sure + Correct'}</div>
+          <div className="text-2xl font-bold text-gold font-mono">+{totalSpeedBonus}</div>
+          <div className="text-xs text-text-muted mt-1">{locale === 'de' ? 'Speed Bonus' : 'Speed Bonus'}</div>
         </div>
       </div>
 
