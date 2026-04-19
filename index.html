@@ -74,7 +74,34 @@
     footer { font-size: 12px; opacity: 0.6; }
     footer a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.25); }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      html, body { height: auto; overflow-x: hidden; overflow-y: auto; }
+      body { display: flex; flex-direction: column; min-height: 100vh; }
+
+      .bg {
+        position: static; inset: auto;
+        width: 100%; height: auto;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        order: 1;
+      }
+      .veil { display: none; }
+
+      .stage {
+        position: static;
+        order: 2; flex: 1;
+        min-height: auto;
+        justify-content: flex-start;
+        padding: 24px 22px 28px;
+        gap: 26px;
+      }
+
+      header { font-size: 12px; }
+      main { flex: 0 1 auto; }
+      h1 { font-size: clamp(40px, 11vw, 64px); margin-bottom: 16px; }
+      p.lead { font-size: 16px; }
+      .kicker { margin-bottom: 12px; }
+      .cta { margin-top: 24px; }
       footer .legal-spacer { display: none; }
     }
   </style>
