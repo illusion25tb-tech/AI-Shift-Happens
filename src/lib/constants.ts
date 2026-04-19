@@ -180,6 +180,42 @@ export const BADGES = [
     title: { de: 'Spezialist', en: 'Specialist' },
     description: { de: '80%+ Trefferquote in einer Kategorie', en: '80%+ accuracy in one category' },
   },
+  {
+    type: 'bullshit_radar',
+    emoji: '🎭',
+    title: { de: 'Bullshit-Radar', en: 'BS Radar' },
+    description: { de: '10 Bullshit-Fallen erkannt', en: '10 BS traps detected' },
+  },
+  {
+    type: 'berater_killer',
+    emoji: '💀',
+    title: { de: 'Berater-Killer', en: 'Consultant Killer' },
+    description: { de: '20 Bullshit-Fallen erkannt', en: '20 BS traps detected' },
+  },
+  {
+    type: 'realist',
+    emoji: '🧭',
+    title: { de: 'Realist', en: 'Realist' },
+    description: { de: '10 Quizzes mit >80% Kalibrierung', en: '10 quizzes with >80% calibration' },
+  },
+  {
+    type: 'all_in',
+    emoji: '🃏',
+    title: { de: 'All-In', en: 'All-In' },
+    description: { de: '5x Sicher gewählt und richtig', en: '5x confident and correct in a row' },
+  },
+  {
+    type: 'pokerface',
+    emoji: '🎰',
+    title: { de: 'Pokerface', en: 'Poker Face' },
+    description: { de: 'Jede Confidence-Stufe in einem Quiz genutzt', en: 'Used every confidence level in one quiz' },
+  },
+  {
+    type: 'overconfident',
+    emoji: '🤡',
+    title: { de: 'Overconfident', en: 'Overconfident' },
+    description: { de: '3x Sicher + falsch in einer Woche', en: '3x confident + wrong in one week' },
+  },
 ] as const
 
 export type BadgeType = (typeof BADGES)[number]['type']
@@ -209,6 +245,23 @@ export const CATEGORY_COLORS: Record<CategoryId, string> = {
 export const DAILY_QUESTION_COUNT = 3
 export const BONUS_QUESTION_COUNT = 1
 export const FREEPLAY_QUESTION_COUNT = 10
-export const SPEED_BONUS_MAX = 50
-export const SPEED_BONUS_DECAY = 1.67  // 50 / 30s = ~1.67 per second
 export const BONUS_MULTIPLIER = 1.5
+
+// ── Confidence Betting ──
+export type ConfidenceLevel = 1 | 2 | 3
+
+export const CONFIDENCE_SCORES = {
+  1: { correct:  50, wrong:    0, bullshit:    0 },  // Vorsichtig
+  2: { correct: 150, wrong:  -50, bullshit:  -75 },  // Mittel
+  3: { correct: 300, wrong: -150, bullshit: -200 },  // Sicher
+} as const
+
+export const CALIBRATION_BONUS = 100
+export const CALIBRATION_MALUS = -100
+export const BULLSHIT_DETECT_BONUS = 50
+
+export const CONFIDENCE_LABELS = {
+  1: { de: 'Hmm...', en: 'Hmm...', emoji: '🤔' },
+  2: { de: 'Ziemlich sicher', en: 'Pretty sure', emoji: '🎯' },
+  3: { de: 'Absolut sicher!', en: 'Absolutely sure!', emoji: '🔥' },
+} as const

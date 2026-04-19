@@ -39,7 +39,7 @@
   "result.points": "Points",
   "result.correct": "Correct",
   "result.maxStreak": "Max Streak",
-  "result.avgSpeed": "Avg Speed",
+  "result.confidentCorrect": "Sure + Correct",
   "result.betterThan": "Better than {percent}% of all players",
   "result.shareLinkedin": "Share on LinkedIn",
   "result.challenge": "Challenge someone",
@@ -58,5 +58,13 @@
   "profile.title": "Profile",
   "profile.totalXp": "Total XP",
   "profile.longestStreak": "Longest Streak",
-  "profile.badgesEarned": "Badges"
+  "profile.badgesEarned": "Badges",
+  "confidence.title": "How confident are you?",
+  "confidence.cautious": "Hmm...",
+  "confidence.medium": "Pretty sure",
+  "confidence.sure": "Absolutely sure!",
+  "confidence.confirm": "Confirm",
+  "shift.label": "SHIFT Style",
+  "shift.serious": "Serious",
+  "shift.cheeky": "Cheeky"
 }

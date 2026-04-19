@@ -118,7 +118,7 @@ export function ChallengePage() {
     }
   }, [locale, loadChallenge])
 
-  const handleSelect = useCallback(async (selectedIndex: number) => {
+  const handleSelect = useCallback(async (selectedIndex: number, confidence: 1 | 2 | 3) => {
     const question = questions[currentIndex]
     if (!question) return
 
@@ -129,6 +129,7 @@ export function ChallengePage() {
         body: {
           question_id: question.id,
           selected_index: selectedIndex,
+          confidence,
           time_ms: elapsedMsRef.current,
           streak_count: streakRef.current + 1,
           is_bonus: false,
@@ -389,7 +390,7 @@ export function ChallengePage() {
           question={currentQuestion}
           locale={locale}
           disabled={!isPlaying}
-          onSelect={handleSelect}
+          onSubmit={handleSelect}
         />
 
         {isFeedback && lastAnswer && (

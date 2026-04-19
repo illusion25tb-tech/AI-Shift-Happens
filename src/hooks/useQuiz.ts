@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import type { GameState, QuestionForClient, AnswerResult } from '../types'
+import type { ConfidenceLevel } from '../lib/constants'
 
 interface QuizState {
   gameState: GameState
@@ -40,7 +41,7 @@ interface UseQuizReturn extends QuizState {
   lastAnswer: AnswerResult | null
   isLastQuestion: boolean
   startDaily: () => Promise<void>
-  submitAnswer: (selectedIndex: number, timeMs: number) => Promise<void>
+  submitAnswer: (selectedIndex: number, confidence: ConfidenceLevel, timeMs: number) => Promise<void>
   nextQuestion: () => void
   reset: () => void
   gamificationResult: QuizState['gamificationResult']
@@ -121,7 +122,7 @@ export function useQuiz(): UseQuizReturn {
     }
   }, [setStateAndRef])
 
-  const submitAnswer = useCallback(async (selectedIndex: number, timeMs: number) => {
+  const submitAnswer = useCallback(async (selectedIndex: number, confidence: ConfidenceLevel, timeMs: number) => {
     // Read current state from ref to avoid stale closures
     const current = stateRef.current
     const question = current.questions[current.currentIndex]
@@ -136,6 +137,7 @@ export function useQuiz(): UseQuizReturn {
         body: {
           question_id: question.id,
           selected_index: selectedIndex,
+          confidence,
           time_ms: timeMs,
           streak_count: current.currentStreak + 1,
           is_bonus: question.is_bonus,
@@ -156,9 +158,9 @@ export function useQuiz(): UseQuizReturn {
 
       const result: AnswerResult = {
         ...data,
-        // Ensure time_ms and selected_index are preserved for finish-daily
         time_ms: timeMs,
         selected_index: selectedIndex,
+        confidence,
       }
 
       setStateAndRef(prev => {

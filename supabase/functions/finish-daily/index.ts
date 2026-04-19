@@ -60,18 +60,29 @@ Deno.serve(async (req: Request) => {
     }
 
     const allQuestionIds = [...(dailyQuiz.question_ids ?? []), dailyQuiz.bonus_question_id].filter(Boolean)
-    const { data: questions } = await db.from('questions').select('id, options').in('id', allQuestionIds)
 
     const questionMap = new Map<string, any[]>()
-    for (const q of (questions ?? [])) {
-      questionMap.set(q.id, q.options as any[])
-    }
 
     // Recalculate scores from client answers using server-side question data
     const STREAK_MULTIPLIERS = [1.0, 1.5, 2.0, 2.5, 3.0]
-    const SPEED_BONUS_MAX = 50
-    const SPEED_BONUS_DECAY = 1.67
     const BONUS_MULTIPLIER = 1.5
+    const CONFIDENCE_SCORES: Record<number, { correct: number; wrong: number; bullshit: number }> = {
+      1: { correct:  50, wrong:    0, bullshit:    0 },
+      2: { correct: 150, wrong:  -50, bullshit:  -75 },
+      3: { correct: 300, wrong: -150, bullshit: -200 },
+    }
+    const CALIBRATION_BONUS = 100
+    const CALIBRATION_MALUS = -100
+    const BULLSHIT_DETECT_BONUS = 50
+
+    // Also fetch is_bullshit_trap for each question
+    const { data: questionsWithTraps } = await db.from('questions')
+      .select('id, options, is_bullshit_trap').in('id', allQuestionIds)
+    const trapMap = new Map<string, boolean>()
+    for (const q of (questionsWithTraps ?? [])) {
+      questionMap.set(q.id, q.options as any[])
+      trapMap.set(q.id, q.is_bullshit_trap ?? false)
+    }
 
     const verifiedAnswers: any[] = []
     let totalScore = 0
@@ -85,24 +96,34 @@ Deno.serve(async (req: Request) => {
       const selectedOpt = opts[clientAns.selected_index]
       if (!selectedOpt) continue
 
-      const baseScore = selectedOpt.score ?? 0
-      const isCorrect = baseScore === 100
-      const isDangerous = baseScore < 0
+      const optScore = selectedOpt.score ?? 0
+      const isCorrect = optScore === 100
+      const isDangerous = optScore < 0
       const isBonusQ = clientAns.question_id === dailyQuiz.bonus_question_id
+      const isBullshitTrap = trapMap.get(clientAns.question_id) ?? false
+      const confidence = Math.min(3, Math.max(1, clientAns.confidence ?? 2)) as 1 | 2 | 3
 
       if (isDangerous) streak = 0
       else if (isCorrect) streak++
 
       maxStreak = Math.max(maxStreak, streak)
 
+      const scores = CONFIDENCE_SCORES[confidence]
+      let baseScore: number
+      if (isCorrect) {
+        baseScore = scores.correct
+      } else if (isBullshitTrap) {
+        baseScore = scores.bullshit
+      } else {
+        baseScore = scores.wrong
+      }
+
       const streakIdx = Math.min(streak, isBonusQ ? 4 : 3)
       const streakMulti = isCorrect ? STREAK_MULTIPLIERS[streakIdx] : 1.0
       const bonusMulti = isBonusQ ? BONUS_MULTIPLIER : 1.0
-      const timeMs = Math.max(0, clientAns.time_ms ?? 30000)
-      const speedBonus = isCorrect ? Math.max(0, Math.round(SPEED_BONUS_MAX - (timeMs / 1000) * SPEED_BONUS_DECAY)) : 0
 
       const answerScore = isCorrect
-        ? Math.round(baseScore * streakMulti * bonusMulti + speedBonus * bonusMulti)
+        ? Math.round(baseScore * streakMulti * bonusMulti)
         : baseScore
 
       totalScore += answerScore
@@ -110,17 +131,31 @@ Deno.serve(async (req: Request) => {
       verifiedAnswers.push({
         question_id: clientAns.question_id,
         selected_index: clientAns.selected_index,
+        confidence,
         base_score: baseScore,
         total_score: answerScore,
         is_correct: isCorrect,
         is_dangerous: isDangerous,
+        is_bullshit_trap: isBullshitTrap,
         streak_multi: streakMulti,
-        speed_bonus: speedBonus,
+        confidence_multi: confidence,
         bonus_multi: bonusMulti,
         feedback_text: selectedOpt.feedbackText ?? '',
-        time_ms: timeMs,
+        time_ms: clientAns.time_ms ?? 30000,
       })
     }
+
+    // Calibration bonus: check if confident answers are mostly correct
+    const confidentAnswers = verifiedAnswers.filter((a: any) => a.confidence === 3)
+    if (confidentAnswers.length > 0) {
+      const confCorrectRate = confidentAnswers.filter((a: any) => a.is_correct).length / confidentAnswers.length
+      if (confCorrectRate >= 0.8) totalScore += CALIBRATION_BONUS
+      else if (confCorrectRate < 0.5) totalScore += CALIBRATION_MALUS
+    }
+
+    // Bullshit detector bonus: reward not being confident on traps
+    const bsBonus = verifiedAnswers.filter((a: any) => a.is_bullshit_trap && a.confidence < 3).length * BULLSHIT_DETECT_BONUS
+    totalScore += bsBonus
 
     // Save verified attempt
     await db.from('quiz_attempts').insert({
@@ -196,9 +231,58 @@ Deno.serve(async (req: Request) => {
     if (newTotalXp >= 10000) award('xp_10000')
     if (newTotalXp >= 50000) award('xp_50000')
 
-    // --- Speed demon: 3 correct under 5s each ---
-    const fastCorrect = verifiedAnswers.filter(a => a.is_correct && a.time_ms < 5000)
-    if (fastCorrect.length >= 3) award('speed_demon')
+    // --- Confidence badges ---
+    // All-In: 5x confident + correct in a row (across all quizzes — check this quiz first)
+    const confidentCorrectInRow = verifiedAnswers.filter((a: any) => a.confidence === 3 && a.is_correct)
+    if (confidentCorrectInRow.length >= 4) award('all_in') // 4 of 4 in daily = impressive enough
+
+    // Pokerface: used all 3 confidence levels in one quiz
+    const usedLevels = new Set(verifiedAnswers.map((a: any) => a.confidence))
+    if (usedLevels.size >= 3) award('pokerface')
+
+    // Overconfident: 3x confident + wrong in one week
+    const confidentWrongThisQuiz = verifiedAnswers.filter((a: any) => a.confidence === 3 && !a.is_correct).length
+    if (confidentWrongThisQuiz >= 3) award('overconfident')
+
+    // Bullshit Radar: detected 10+ traps (across all quizzes)
+    const { count: allBsDetected } = await db.rpc('count_bullshit_detected', { p_user_id: user.id }).single()
+      .then(r => r)
+      .catch(() => ({ count: 0 }))
+    // Fallback: count from current quiz only if RPC not available
+    const bsDetectedThisQuiz = verifiedAnswers.filter((a: any) => a.is_bullshit_trap && a.confidence < 3).length
+    if (bsDetectedThisQuiz > 0 || (allBsDetected ?? 0) >= 10) {
+      // Simple check: if they detected any in this quiz, check historical count
+      const { data: historicalAttempts } = await db.from('quiz_attempts')
+        .select('answers').eq('user_id', user.id).limit(200)
+      let totalBsDetected = bsDetectedThisQuiz
+      for (const att of (historicalAttempts ?? [])) {
+        for (const a of ((att.answers ?? []) as any[])) {
+          if (a.is_bullshit_trap && a.confidence && a.confidence < 3) totalBsDetected++
+        }
+      }
+      if (totalBsDetected >= 10) award('bullshit_radar')
+      if (totalBsDetected >= 20) award('berater_killer')
+    }
+
+    // Realist: 10+ quizzes with good calibration (>80% of confident answers correct)
+    // Simplified: check if this quiz had good calibration and count historically
+    if (confidentAnswers.length > 0) {
+      const thisQuizCalibrated = confidentAnswers.filter((a: any) => a.is_correct).length / confidentAnswers.length >= 0.8
+      if (thisQuizCalibrated) {
+        const { data: recentAttempts } = await db.from('quiz_attempts')
+          .select('answers').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50)
+        let calibratedQuizCount = thisQuizCalibrated ? 1 : 0
+        for (const att of (recentAttempts ?? [])) {
+          const ans = (att.answers ?? []) as any[]
+          const confAns = ans.filter((a: any) => a.confidence === 3)
+          if (confAns.length > 0) {
+            const rate = confAns.filter((a: any) => a.is_correct).length / confAns.length
+            if (rate >= 0.8) calibratedQuizCount++
+          }
+        }
+        if (calibratedQuizCount >= 10) award('realist')
+      }
+    }
 
     // --- Night owl / Early bird ---
     const hour = today.getUTCHours()

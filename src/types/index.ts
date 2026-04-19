@@ -27,15 +27,18 @@ export interface QuestionForClient {
 export interface AnswerResult {
   question_id: string
   selected_index: number
+  confidence: 1 | 2 | 3
   base_score: number
   streak_multi: number
-  speed_bonus: number
+  confidence_multi: number
   bonus_multi: number
   total_score: number
   feedback_text: string
   mindset_tip: string
   is_correct: boolean
   is_dangerous: boolean
+  is_bullshit_trap?: boolean
+  shift_quote?: string
   time_ms?: number
 }
 
@@ -70,6 +73,7 @@ export interface Profile {
   team_id: string | null
   team_role: 'captain' | 'admin' | 'member'
   invited_by: string | null
+  shift_mode: 'serious' | 'cheeky'
 }
 
 export interface LeaderboardEntry {

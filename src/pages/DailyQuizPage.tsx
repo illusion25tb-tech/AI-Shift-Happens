@@ -32,8 +32,8 @@ export function DailyQuizPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleSelect = (index: number) => {
-    quiz.submitAnswer(index, elapsedMsRef.current)
+  const handleSelect = (index: number, confidence: 1 | 2 | 3) => {
+    quiz.submitAnswer(index, confidence, elapsedMsRef.current)
   }
 
   const handleNext = () => {
@@ -181,7 +181,7 @@ export function DailyQuizPage() {
           question={currentQuestion}
           locale={locale}
           disabled={!isPlaying}
-          onSelect={handleSelect}
+          onSubmit={handleSelect}
         />
 
         {isFeedback && quiz.lastAnswer && (

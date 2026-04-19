@@ -531,6 +531,43 @@ export function ProfilePage() {
           </div>
         )}
 
+        {/* SHIFT Mode Toggle */}
+        <div className="bg-white/4 border border-white/6 rounded-xl p-4">
+          <span className="text-sm font-semibold">{locale === 'de' ? 'SHIFT-Style' : 'SHIFT Style'}</span>
+          <p className="text-[10px] text-text-muted mt-0.5 mb-3">
+            {locale === 'de' ? 'Dein KI-Buddy kommentiert jede Antwort' : 'Your AI buddy comments on every answer'}
+          </p>
+          <div className="flex gap-2">
+            {(['serious', 'cheeky'] as const).map(mode => {
+              const isActive = (profile?.shift_mode ?? 'cheeky') === mode
+              return (
+                <button
+                  key={mode}
+                  onClick={async () => {
+                    const { data: { session } } = await supabase.auth.getSession()
+                    if (session) {
+                      await supabase.from('profiles').update({ shift_mode: mode }).eq('id', session.user.id)
+                      // Trigger profile refresh
+                      setCompanySaved(true)
+                      setTimeout(() => setCompanySaved(false), 1500)
+                    }
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl border text-center transition-all duration-200"
+                  style={{
+                    borderColor: isActive ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
+                    backgroundColor: isActive ? 'rgba(91,79,199,0.12)' : 'rgba(255,255,255,0.03)',
+                  }}
+                >
+                  <span className="text-lg">{mode === 'serious' ? '🎩' : '😎'}</span>
+                  <div className="text-xs font-semibold text-text-primary mt-1">
+                    {mode === 'serious' ? (locale === 'de' ? 'Seriös' : 'Serious') : (locale === 'de' ? 'Frech' : 'Cheeky')}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         {/* Notifications */}
         {canNotify() && (
           <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">

@@ -68,7 +68,7 @@ export function FreePlayPage() {
     }
   }, [locale])
 
-  const handleSelect = useCallback(async (selectedIndex: number) => {
+  const handleSelect = useCallback(async (selectedIndex: number, confidence: 1 | 2 | 3) => {
     const question = questions[currentIndex]
     if (!question) return
 
@@ -79,7 +79,8 @@ export function FreePlayPage() {
         body: {
           question_id: question.id,
           selected_index: selectedIndex,
-          time_ms: 30000, // Free Play: no timer, no speed bonus
+          confidence,
+          time_ms: 30000, // Free Play: no timer
           streak_count: streakRef.current + 1,
           is_bonus: false,
         },
@@ -241,7 +242,7 @@ export function FreePlayPage() {
           question={currentQuestion}
           locale={locale}
           disabled={!isPlaying}
-          onSelect={handleSelect}
+          onSubmit={handleSelect}
         />
 
         {isFeedback && lastAnswer && (

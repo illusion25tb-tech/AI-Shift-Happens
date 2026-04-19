@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
     if (action === 'update_question') {
       const { question_id, updates } = body as { question_id: string; updates: Record<string, unknown> }
       // SECURITY: Only allow specific fields to be updated
-      const ALLOWED_FIELDS = ['scenario_text', 'mindset_tip', 'options', 'difficulty', 'category', 'is_active', 'locale']
+      const ALLOWED_FIELDS = ['scenario_text', 'mindset_tip', 'options', 'difficulty', 'category', 'is_active', 'locale', 'is_bullshit_trap']
       const safeUpdates: Record<string, unknown> = {}
       for (const key of ALLOWED_FIELDS) {
         if (key in updates) safeUpdates[key] = updates[key]
@@ -298,6 +298,76 @@ Deno.serve(async (req: Request) => {
     if (action === 'delete_prize') {
       const { prize_id } = body as { prize_id: string }
       const { error } = await db.from('prizes').delete().eq('id', prize_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
+    // ─── MARK BULLSHIT TRAPS ───
+
+    if (action === 'mark_bullshit_traps') {
+      const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')
+      if (!anthropicKey) return jsonResponse({ error: 'ANTHROPIC_API_KEY not set' }, 500)
+
+      const batchSize = 20
+      const { data: questions } = await db.from('questions')
+        .select('id, locale, scenario_text, options')
+        .eq('is_active', true)
+        .eq('is_bullshit_trap', false)
+        .limit(batchSize)
+      if (!questions || questions.length === 0) return jsonResponse({ marked: 0, message: 'No unprocessed questions' })
+
+      const prompt = `Analyze these ${questions.length} quiz questions. For each, determine if ONE of the wrong answers (score != 100) qualifies as a "bullshit trap" — an answer that SOUNDS impressive and professional but is actually empty corporate jargon / consultant-speak / buzzword salad.
+
+Criteria for bullshit trap:
+- Uses terms like "ganzheitlich", "synergistisch", "holistisch", "transformativ", "Stakeholder-Alignment", "Cross-funktional", "agil" in a vague way
+- Sounds like a LinkedIn post or consulting pitch
+- Promises everything but specifies nothing concrete
+- The WRONG answer sounds MORE professional than the correct one
+
+Return a JSON array of question IDs that have a bullshit trap answer:
+[{"id": "uuid-here", "is_trap": true}, {"id": "uuid-here", "is_trap": false}]
+
+Only mark as true if there's a CLEAR buzzword/jargon trap. When in doubt, mark false.
+ONLY JSON output, no markdown.
+
+Questions:
+${JSON.stringify(questions.map(q => ({ id: q.id, locale: q.locale, scenario_text: q.scenario_text.substring(0, 100), options: (q.options as any[]).map(o => ({ text: o.text, score: o.score })) })), null, 0)}`
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] }),
+      })
+
+      if (!response.ok) return jsonResponse({ error: 'Claude API error', status: response.status }, 500)
+
+      const result = await response.json()
+      const text = result.content?.[0]?.text ?? ''
+      let parsed: Array<{ id: string; is_trap: boolean }>
+      try {
+        parsed = JSON.parse(text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim())
+      } catch {
+        return jsonResponse({ error: 'JSON parse error', raw: text.substring(0, 200) }, 500)
+      }
+
+      let marked = 0
+      for (const item of parsed) {
+        if (item.is_trap && item.id) {
+          await db.from('questions').update({ is_bullshit_trap: true }).eq('id', item.id)
+          marked++
+        }
+      }
+
+      const { count: totalTraps } = await db.from('questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_bullshit_trap', true)
+
+      return jsonResponse({ marked, batch_size: questions.length, total_traps: totalTraps })
+    }
+
+    if (action === 'toggle_bullshit_trap') {
+      const { question_id, is_bullshit_trap } = body as { question_id: string; is_bullshit_trap: boolean }
+      const { error } = await db.from('questions').update({ is_bullshit_trap }).eq('id', question_id)
       if (error) return jsonResponse({ error: error.message }, 500)
       return jsonResponse({ ok: true })
     }

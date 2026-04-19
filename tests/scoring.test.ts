@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateScore, getStreakMultiplier } from '../src/lib/scoring'
+import { calculateScore, getStreakMultiplier, calculateCalibrationBonus, calculateBullshitBonus } from '../src/lib/scoring'
 
 describe('getStreakMultiplier', () => {
   it('returns 1.0 for first correct answer', () => {
@@ -20,58 +20,139 @@ describe('getStreakMultiplier', () => {
   })
 })
 
-describe('calculateScore', () => {
-  it('scores +100 base for correct answer', () => {
-    const result = calculateScore({ optionScore: 100, streakCount: 1, answerTimeMs: 10_000, isBonus: false })
-    expect(result.base_score).toBe(100)
-    expect(result.is_correct).toBe(true)
-    expect(result.is_dangerous).toBe(false)
+describe('calculateScore — Confidence Betting', () => {
+  it('vorsichtig + richtig = +50', () => {
+    const r = calculateScore({ optionScore: 100, streakCount: 1, confidence: 1, isBonus: false, isBullshitTrap: false })
+    expect(r.base_score).toBe(50)
+    expect(r.total_score).toBe(50)
+    expect(r.is_correct).toBe(true)
   })
 
-  it('scores 0 for traditional answer', () => {
-    const result = calculateScore({ optionScore: 0, streakCount: 3, answerTimeMs: 5_000, isBonus: false })
-    expect(result.base_score).toBe(0)
-    expect(result.total_score).toBe(0)
-    expect(result.speed_bonus).toBe(0)
-    expect(result.is_correct).toBe(false)
-    expect(result.is_dangerous).toBe(false)
+  it('mittel + richtig = +150', () => {
+    const r = calculateScore({ optionScore: 100, streakCount: 1, confidence: 2, isBonus: false, isBullshitTrap: false })
+    expect(r.base_score).toBe(150)
+    expect(r.total_score).toBe(150)
   })
 
-  it('scores -100 for dangerous answer', () => {
-    const result = calculateScore({ optionScore: -100, streakCount: 3, answerTimeMs: 5_000, isBonus: false })
-    expect(result.base_score).toBe(-100)
-    expect(result.total_score).toBe(-100)
-    expect(result.speed_bonus).toBe(0)
-    expect(result.is_dangerous).toBe(true)
+  it('sicher + richtig = +300', () => {
+    const r = calculateScore({ optionScore: 100, streakCount: 1, confidence: 3, isBonus: false, isBullshitTrap: false })
+    expect(r.base_score).toBe(300)
+    expect(r.total_score).toBe(300)
   })
 
-  it('applies streak multiplier to correct answers', () => {
-    // At 30s (no speed bonus): 100 * 2.0 = 200
-    const result = calculateScore({ optionScore: 100, streakCount: 3, answerTimeMs: 30_000, isBonus: false })
-    expect(result.streak_multi).toBe(2.0)
-    expect(result.total_score).toBe(200)
+  it('sicher + falsch = -150', () => {
+    const r = calculateScore({ optionScore: 0, streakCount: 1, confidence: 3, isBonus: false, isBullshitTrap: false })
+    expect(r.base_score).toBe(-150)
+    expect(r.total_score).toBe(-150)
+    expect(r.is_correct).toBe(false)
   })
 
-  it('calculates speed bonus for correct fast answers', () => {
-    // SPEED_BONUS_DECAY = 1.67, so 4s → round(50 - 4*1.67) = round(43.32) = 43
-    const result = calculateScore({ optionScore: 100, streakCount: 1, answerTimeMs: 4_000, isBonus: false })
-    expect(result.speed_bonus).toBe(43)
-    expect(result.total_score).toBe(143)
+  it('vorsichtig + falsch = 0', () => {
+    const r = calculateScore({ optionScore: 0, streakCount: 1, confidence: 1, isBonus: false, isBullshitTrap: false })
+    expect(r.base_score).toBe(0)
+    expect(r.total_score).toBe(0)
   })
 
-  it('gives zero speed bonus at 30+ seconds', () => {
-    // 30s timer: at 30s → round(50 - 30*1.67) = round(-0.1) → 0
-    const result = calculateScore({ optionScore: 100, streakCount: 1, answerTimeMs: 30_000, isBonus: false })
-    expect(result.speed_bonus).toBe(0)
-    expect(result.total_score).toBe(100)
+  it('sicher + bullshit trap = -200', () => {
+    const r = calculateScore({ optionScore: 0, streakCount: 1, confidence: 3, isBonus: false, isBullshitTrap: true })
+    expect(r.base_score).toBe(-200)
+    expect(r.total_score).toBe(-200)
   })
 
-  it('applies 1.5x bonus multiplier for bonus questions', () => {
-    // streak 4 bonus: 3.0x, bonus: 1.5x, speed at 4s: 43
-    // total = round(100 * 3.0 * 1.5 + 43 * 1.5) = round(450 + 64.5) = 515
-    const result = calculateScore({ optionScore: 100, streakCount: 4, answerTimeMs: 4_000, isBonus: true })
-    expect(result.bonus_multi).toBe(1.5)
-    expect(result.streak_multi).toBe(3.0)
-    expect(result.total_score).toBe(515)
+  it('mittel + bullshit trap = -75', () => {
+    const r = calculateScore({ optionScore: 0, streakCount: 1, confidence: 2, isBonus: false, isBullshitTrap: true })
+    expect(r.base_score).toBe(-75)
+    expect(r.total_score).toBe(-75)
+  })
+
+  it('vorsichtig + bullshit trap = 0 (kein Schaden)', () => {
+    const r = calculateScore({ optionScore: 0, streakCount: 1, confidence: 1, isBonus: false, isBullshitTrap: true })
+    expect(r.base_score).toBe(0)
+    expect(r.total_score).toBe(0)
+  })
+
+  it('applies streak multiplier to confident correct', () => {
+    // sicher + richtig + streak 3: 300 * 2.0 = 600
+    const r = calculateScore({ optionScore: 100, streakCount: 3, confidence: 3, isBonus: false, isBullshitTrap: false })
+    expect(r.streak_multi).toBe(2.0)
+    expect(r.total_score).toBe(600)
+  })
+
+  it('applies bonus multiplier', () => {
+    // sicher + richtig + bonus: streak 1 + isBonus → streakMulti=1.5, bonus=1.5
+    // 300 * 1.5 * 1.5 = 675
+    const r = calculateScore({ optionScore: 100, streakCount: 1, confidence: 3, isBonus: true, isBullshitTrap: false })
+    expect(r.bonus_multi).toBe(1.5)
+    expect(r.total_score).toBe(675)
+  })
+
+  it('applies streak + bonus multiplier', () => {
+    // sicher + richtig + streak 4 bonus: 300 * 3.0 * 1.5 = 1350
+    const r = calculateScore({ optionScore: 100, streakCount: 4, confidence: 3, isBonus: true, isBullshitTrap: false })
+    expect(r.total_score).toBe(1350)
+  })
+
+  it('marks dangerous answers', () => {
+    const r = calculateScore({ optionScore: -100, streakCount: 1, confidence: 3, isBonus: false, isBullshitTrap: false })
+    expect(r.is_dangerous).toBe(true)
+    // Dangerous answers use confidence wrong scoring
+    expect(r.base_score).toBe(-150)
+  })
+})
+
+describe('calculateCalibrationBonus', () => {
+  it('returns +100 for good calibration (>= 80% confident correct)', () => {
+    const answers = [
+      { confidence: 3 as const, is_correct: true },
+      { confidence: 3 as const, is_correct: true },
+      { confidence: 3 as const, is_correct: true },
+      { confidence: 3 as const, is_correct: true },
+      { confidence: 3 as const, is_correct: false },
+    ]
+    expect(calculateCalibrationBonus(answers)).toBe(100)
+  })
+
+  it('returns -100 for bad calibration (< 50% confident correct)', () => {
+    const answers = [
+      { confidence: 3 as const, is_correct: false },
+      { confidence: 3 as const, is_correct: false },
+      { confidence: 3 as const, is_correct: true },
+    ]
+    expect(calculateCalibrationBonus(answers)).toBe(-100)
+  })
+
+  it('returns 0 if no confident answers', () => {
+    const answers = [
+      { confidence: 1 as const, is_correct: true },
+      { confidence: 2 as const, is_correct: false },
+    ]
+    expect(calculateCalibrationBonus(answers)).toBe(0)
+  })
+
+  it('returns 0 for moderate calibration (50-79%)', () => {
+    const answers = [
+      { confidence: 3 as const, is_correct: true },
+      { confidence: 3 as const, is_correct: false },
+    ]
+    expect(calculateCalibrationBonus(answers)).toBe(0)
+  })
+})
+
+describe('calculateBullshitBonus', () => {
+  it('rewards not being confident on bullshit traps', () => {
+    const answers = [
+      { is_bullshit_trap: true, confidence: 1 as const },  // detected
+      { is_bullshit_trap: true, confidence: 2 as const },  // detected
+      { is_bullshit_trap: true, confidence: 3 as const },  // fell for it
+      { is_bullshit_trap: false, confidence: 1 as const }, // not a trap, irrelevant
+    ]
+    expect(calculateBullshitBonus(answers)).toBe(100) // 2 × 50
+  })
+
+  it('returns 0 if no traps', () => {
+    const answers = [
+      { is_bullshit_trap: false, confidence: 3 as const },
+    ]
+    expect(calculateBullshitBonus(answers)).toBe(0)
   })
 })
