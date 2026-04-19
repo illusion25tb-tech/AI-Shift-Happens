@@ -1,8 +1,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+// Hard-coded admin emails — these always have admin access
+const ADMIN_EMAILS = [
+  'illusion25.tb@gmail.com',
+  'illumination25@gmx.de',
+]
+
 /**
  * Verify request is from an admin user.
- * Returns user + db client, or null if unauthorized.
+ * Checks: 1) hard-coded admin emails, 2) is_admin flag in profile.
+ * Auto-promotes hard-coded admins if not yet flagged.
  */
 export async function verifyAdmin(req: Request) {
   const authHeader = req.headers.get('Authorization')
@@ -19,6 +26,14 @@ export async function verifyAdmin(req: Request) {
   if (error || !user) return null
 
   const db = createClient(supabaseUrl, serviceKey)
+
+  // Hard-coded admin emails — always allowed, auto-promote
+  const isHardcodedAdmin = ADMIN_EMAILS.includes(user.email ?? '')
+  if (isHardcodedAdmin) {
+    await db.from('profiles').update({ is_admin: true }).eq('id', user.id)
+    return { user, db }
+  }
+
   const { data: profile } = await db
     .from('profiles')
     .select('is_admin')

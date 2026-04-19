@@ -184,6 +184,49 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ id: data.id })
     }
 
+    // ─── RESET FUNCTIONS (Probephase) ───
+
+    if (action === 'reset_user') {
+      const { user_id } = body as { user_id: string }
+      if (!user_id) return jsonResponse({ error: 'user_id required' }, 400)
+      await db.from('quiz_attempts').delete().eq('user_id', user_id)
+      await db.from('weekly_scores').delete().eq('user_id', user_id)
+      await db.from('user_badges').delete().eq('user_id', user_id)
+      await db.from('profiles').update({
+        total_xp: 0, level: 1, current_streak: 0, longest_streak: 0, last_played_at: null,
+      }).eq('id', user_id)
+      return jsonResponse({ ok: true, message: 'User reset: XP, badges, attempts, scores cleared' })
+    }
+
+    if (action === 'reset_all_scores') {
+      const { count: attempts } = await db.from('quiz_attempts').select('*', { count: 'exact', head: true })
+      await db.from('quiz_attempts').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      await db.from('weekly_scores').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      await db.from('user_badges').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      // Reset all profiles
+      await db.from('profiles').update({
+        total_xp: 0, level: 1, current_streak: 0, longest_streak: 0, last_played_at: null,
+      }).neq('id', '00000000-0000-0000-0000-000000000000')
+      return jsonResponse({ ok: true, message: `All scores reset. ${attempts ?? 0} attempts deleted.` })
+    }
+
+    if (action === 'reset_daily_quizzes') {
+      await db.from('daily_quizzes').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+      return jsonResponse({ ok: true, message: 'All daily quizzes deleted. Cron will recreate.' })
+    }
+
+    if (action === 'delete_user') {
+      const { user_id } = body as { user_id: string }
+      if (!user_id) return jsonResponse({ error: 'user_id required' }, 400)
+      // Clean up game data
+      await db.from('quiz_attempts').delete().eq('user_id', user_id)
+      await db.from('weekly_scores').delete().eq('user_id', user_id)
+      await db.from('user_badges').delete().eq('user_id', user_id)
+      await db.from('challenges').delete().eq('challenger_id', user_id)
+      await db.from('profiles').delete().eq('id', user_id)
+      return jsonResponse({ ok: true, message: 'User and all data deleted' })
+    }
+
     // ─── SPONSORS ───
 
     if (action === 'list_sponsors') {

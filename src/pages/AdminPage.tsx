@@ -7,7 +7,7 @@ import { useLocale } from '../hooks/useLocale'
 import { CATEGORIES, CATEGORY_LABELS } from '../lib/constants'
 import type { CategoryId } from '../lib/constants'
 
-type AdminTab = 'dashboard' | 'questions' | 'users' | 'sponsors'
+type AdminTab = 'dashboard' | 'questions' | 'users' | 'sponsors' | 'reset'
 
 async function adminCall(action: string, body: Record<string, unknown> = {}) {
   const { data: { session } } = await supabase.auth.getSession()
@@ -514,11 +514,98 @@ function SponsorsTab() {
   )
 }
 
+// ─── Reset Tab ───
+function ResetTab() {
+  const [msg, setMsg] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  const doReset = async (action: string, confirm: string) => {
+    if (!window.confirm(confirm)) return
+    setLoading(true); setMsg(null)
+    try {
+      const data = await adminCall(action)
+      setMsg(data.message ?? 'Erledigt')
+    } catch (e: any) { setMsg(`Fehler: ${e.message}`) }
+    setLoading(false)
+  }
+
+  const doResetUser = async () => {
+    const email = prompt('User-E-Mail zum Zurücksetzen:')
+    if (!email) return
+    // Find user by listing
+    setLoading(true); setMsg(null)
+    try {
+      const data = await adminCall('list_users', { search: email, limit: 1 })
+      const user = data.users?.[0]
+      if (!user) { setMsg('User nicht gefunden'); setLoading(false); return }
+      if (!window.confirm(`${user.display_name} (${email}) wirklich zurücksetzen? Alle Scores, Badges, XP werden gelöscht.`)) {
+        setLoading(false); return
+      }
+      const result = await adminCall('reset_user', { user_id: user.id })
+      setMsg(result.message ?? 'User zurückgesetzt')
+    } catch (e: any) { setMsg(`Fehler: ${e.message}`) }
+    setLoading(false)
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-danger/5 border border-danger/20 rounded-xl p-4 space-y-2">
+        <h3 className="text-sm font-bold text-danger">Probephase — Reset-Funktionen</h3>
+        <p className="text-xs text-text-secondary">Diese Funktionen löschen Spieldaten unwiderruflich. Nur für die Testphase gedacht.</p>
+      </div>
+
+      {msg && (
+        <div className="bg-white/4 border border-white/6 rounded-xl p-3 text-sm text-text-secondary">{msg}</div>
+      )}
+
+      <div className="space-y-2">
+        <button onClick={doResetUser} disabled={loading}
+          className="w-full text-left bg-white/4 border border-white/6 rounded-xl p-4 hover:border-primary/30 transition-colors disabled:opacity-50">
+          <div className="font-semibold text-sm">Einzelnen User zurücksetzen</div>
+          <div className="text-xs text-text-muted">XP, Level, Streak, Badges, Versuche auf 0 — User-Account bleibt</div>
+        </button>
+
+        <button onClick={() => doReset('reset_all_scores', 'ALLE Scores, Badges, XP für ALLE User zurücksetzen? Das betrifft jeden Spieler!')} disabled={loading}
+          className="w-full text-left bg-white/4 border border-danger/10 rounded-xl p-4 hover:border-danger/30 transition-colors disabled:opacity-50">
+          <div className="font-semibold text-sm text-danger">Alle Scores zurücksetzen</div>
+          <div className="text-xs text-text-muted">Alle Versuche, Badges, XP, Streaks für alle User löschen — Neustart</div>
+        </button>
+
+        <button onClick={() => doReset('reset_daily_quizzes', 'Alle Daily Quizzes löschen? Der Cron-Job erstellt sie automatisch neu.')} disabled={loading}
+          className="w-full text-left bg-white/4 border border-white/6 rounded-xl p-4 hover:border-gold/30 transition-colors disabled:opacity-50">
+          <div className="font-semibold text-sm">Daily Quizzes neu generieren</div>
+          <div className="text-xs text-text-muted">Alle Daily-Quiz-Einträge löschen — Cron erstellt neue</div>
+        </button>
+
+        <button onClick={async () => {
+          const email = prompt('User-E-Mail zum LÖSCHEN (unwiderruflich):')
+          if (!email) return
+          setLoading(true); setMsg(null)
+          try {
+            const data = await adminCall('list_users', { search: email, limit: 1 })
+            const user = data.users?.[0]
+            if (!user) { setMsg('User nicht gefunden'); setLoading(false); return }
+            if (!window.confirm(`${user.display_name} KOMPLETT LÖSCHEN? Account + alle Daten!`)) { setLoading(false); return }
+            const result = await adminCall('delete_user', { user_id: user.id })
+            setMsg(result.message ?? 'User gelöscht')
+          } catch (e: any) { setMsg(`Fehler: ${e.message}`) }
+          setLoading(false)
+        }} disabled={loading}
+          className="w-full text-left bg-white/4 border border-danger/20 rounded-xl p-4 hover:border-danger/40 transition-colors disabled:opacity-50">
+          <div className="font-semibold text-sm text-danger">User komplett löschen</div>
+          <div className="text-xs text-text-muted">Account, Profil und alle Spieldaten unwiderruflich löschen</div>
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const TABS: { key: AdminTab; label: string }[] = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'questions', label: 'Fragen' },
   { key: 'users', label: 'User' },
   { key: 'sponsors', label: 'Sponsoren' },
+  { key: 'reset', label: 'Reset' },
 ]
 
 export function AdminPage() {
@@ -571,6 +658,7 @@ export function AdminPage() {
         {tab === 'questions' && <QuestionsTab />}
         {tab === 'users' && <UsersTab />}
         {tab === 'sponsors' && <SponsorsTab />}
+        {tab === 'reset' && <ResetTab />}
       </main>
     </div>
   )
