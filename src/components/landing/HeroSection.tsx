@@ -26,20 +26,26 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-5 py-16 overflow-hidden">
 
-      {/* Video background */}
+      {/* Video background — mobile optimized */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'brightness(0.3) saturate(1.2)' }}
+        disablePictureInPicture
+        className="absolute inset-0 w-full h-full object-cover object-center"
+        style={{
+          filter: 'brightness(0.3) saturate(1.2)',
+          minHeight: '100%',
+          minWidth: '100%',
+        }}
+        poster="/mindset-shift/shift-logo.png"
       >
         <source src="/mindset-shift/hero-loop.mp4" type="video/mp4" />
       </video>
 
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-bg-base/60 via-transparent to-bg-base/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-base/70 via-bg-base/20 to-bg-base/95" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
         {/* Title text only — no logo on landing */}
