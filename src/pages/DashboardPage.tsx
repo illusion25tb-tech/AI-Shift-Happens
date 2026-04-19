@@ -274,34 +274,59 @@ export function DashboardPage() {
           </div>
         )}
 
-        {/* Daily Quiz Card */}
-        <Link
-          to="/app/daily"
-          className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
-          style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, #3B82F6 100%)' }}
-        >
-          <div className="p-5 space-y-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">{t('dashboard.dailyQuiz')}</p>
-                <p className="text-white font-bold text-lg mt-0.5 capitalize">{weekday}</p>
-                <p className="text-white/60 text-sm">{dateStr}</p>
+        {/* Daily Quiz Card — weekend vs weekday */}
+        {now.getDay() === 0 || now.getDay() === 6 ? (
+          <div className="rounded-2xl overflow-hidden border border-white/6 bg-white/4">
+            <div className="p-5 space-y-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-text-muted text-xs font-semibold uppercase tracking-wider">{t('dashboard.dailyQuiz')}</p>
+                  <p className="font-bold text-lg mt-0.5">☀️ {locale === 'de' ? 'Wochenende' : 'Weekend'}</p>
+                </div>
+                <div className="text-2xl">😎</div>
               </div>
-              <div className="text-3xl">🧠</div>
-            </div>
-            <p className="text-white/80 text-sm">3+1 Bonus · ~3 Min</p>
-            <div className="flex gap-2">
-              <span className="inline-block bg-white text-primary font-bold text-sm px-5 py-2 rounded-xl">
-                {t('dashboard.playNow')}
-              </span>
-              {activeToday > 0 && (
-                <span className="inline-block bg-white/20 text-white/80 text-xs px-3 py-2 rounded-xl">
-                  {activeToday} {locale === 'de' ? 'gespielt' : 'played'}
-                </span>
-              )}
+              <p className="text-text-secondary text-sm">
+                {locale === 'de'
+                  ? 'Das Daily Quiz geht am Montag weiter. Dein Streak bleibt erhalten!'
+                  : 'Daily quiz continues on Monday. Your streak is preserved!'}
+              </p>
+              <Link
+                to="/app/freeplay"
+                className="inline-block bg-primary text-white font-bold text-sm px-5 py-2 rounded-xl hover:bg-primary-hover transition-colors"
+              >
+                {locale === 'de' ? '🎮 Free Play starten' : '🎮 Start Free Play'}
+              </Link>
             </div>
           </div>
-        </Link>
+        ) : (
+          <Link
+            to="/app/daily"
+            className="block rounded-2xl overflow-hidden hover:scale-[1.01] transition-transform"
+            style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, #3B82F6 100%)' }}
+          >
+            <div className="p-5 space-y-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">{t('dashboard.dailyQuiz')}</p>
+                  <p className="text-white font-bold text-lg mt-0.5 capitalize">{weekday}</p>
+                  <p className="text-white/60 text-sm">{dateStr}</p>
+                </div>
+                <div className="text-3xl">🧠</div>
+              </div>
+              <p className="text-white/80 text-sm">3+1 Bonus · ~3 Min</p>
+              <div className="flex gap-2">
+                <span className="inline-block bg-white text-primary font-bold text-sm px-5 py-2 rounded-xl">
+                  {t('dashboard.playNow')}
+                </span>
+                {activeToday > 0 && (
+                  <span className="inline-block bg-white/20 text-white/80 text-xs px-3 py-2 rounded-xl">
+                    {activeToday} {locale === 'de' ? 'gespielt' : 'played'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
+        )}
 
         {/* Quick Free Play */}
         <Link
