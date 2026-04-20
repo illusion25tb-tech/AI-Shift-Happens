@@ -191,7 +191,7 @@ export function FaqPage() {
         {/* Categories */}
         <div className="mt-4">
           <h2 className="text-lg font-bold mb-3">
-            {locale === 'de' ? '10 Kategorien' : '10 Categories'}
+            {locale === 'de' ? '15 Kategorien' : '15 Categories'}
           </h2>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map(cat => (

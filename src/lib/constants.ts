@@ -9,6 +9,11 @@ export const CATEGORIES = [
   'knowledge-research',
   'change-collaboration',
   'quality-measurement',
+  'ai-law-regulation',
+  'ai-security-risk',
+  'ai-leadership',
+  'ai-sales-marketing',
+  'ai-cost-business',
 ] as const
 
 export type CategoryId = (typeof CATEGORIES)[number]
@@ -24,6 +29,11 @@ export const CATEGORY_LABELS: Record<CategoryId, { de: string; en: string }> = {
   'knowledge-research': { de: 'Wissensmanagement & Recherche', en: 'Knowledge Management & Research' },
   'change-collaboration': { de: 'Change & Zusammenarbeit', en: 'Change & Collaboration' },
   'quality-measurement': { de: 'Messbarkeit & Qualität', en: 'Quality & Measurement' },
+  'ai-law-regulation': { de: 'KI & Recht', en: 'AI & Law' },
+  'ai-security-risk': { de: 'KI-Sicherheit & Risiko', en: 'AI Security & Risk' },
+  'ai-leadership': { de: 'KI & Führung', en: 'AI & Leadership' },
+  'ai-sales-marketing': { de: 'KI im Vertrieb', en: 'AI in Sales & Marketing' },
+  'ai-cost-business': { de: 'KI-Kosten & Business Case', en: 'AI Cost & Business Case' },
 }
 
 export const LEVELS = [
@@ -240,6 +250,11 @@ export const CATEGORY_COLORS: Record<CategoryId, string> = {
   'knowledge-research': '#059669',
   'change-collaboration': '#FBBF24',
   'quality-measurement': '#06B6D4',
+  'ai-law-regulation': '#EF4444',
+  'ai-security-risk': '#F43F5E',
+  'ai-leadership': '#A855F7',
+  'ai-sales-marketing': '#10B981',
+  'ai-cost-business': '#F59E0B',
 }
 
 export const DAILY_QUESTION_COUNT = 3
