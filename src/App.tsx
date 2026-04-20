@@ -56,7 +56,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-    <BrowserRouter basename="/mindset-shift">
+    <BrowserRouter>
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
         <CookieConsent locale={locale} />
         <BottomNav locale={locale} />

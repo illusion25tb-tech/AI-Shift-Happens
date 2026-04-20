@@ -1,4 +1,4 @@
-name: Build & Deploy to Strato
+name: Build & Deploy to GitHub Pages
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -34,17 +36,12 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Rename dist for upload
-        run: mv dist mindset-shift
+      - name: Copy index.html → 404.html (SPA deep-link routing)
+        run: cp dist/index.html dist/404.html
 
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          username: ${{ secrets.FTP_USERNAME }}
-          server: ${{ secrets.FTP_SERVER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22
-          local_path: './mindset-shift/'
-          remote_path: './site/'
-          sftpArgs: '-o ConnectTimeout=5'
-          sftp_only: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: ai-shift-happens.com
