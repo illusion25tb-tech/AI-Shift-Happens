@@ -33,6 +33,29 @@ interface TeamRanking {
   total_score: number
 }
 
+interface TeamStats {
+  member_count: number
+  total_xp: number
+  avg_xp: number
+  avg_level: number
+  longest_streak: number
+  week_score: number
+  week_quizzes: number
+}
+
+interface TeamChallenge {
+  id: string
+  challenger_team_id: string
+  challenged_team_id: string
+  challenger: { name: string }
+  challenged: { name: string }
+  week_start: string
+  status: string
+  challenger_score: number
+  challenged_score: number
+  winner_team_id: string | null
+}
+
 async function teamCall(action: string, body: Record<string, unknown> = {}) {
   const { data: { session } } = await supabase.auth.getSession()
   const { data, error } = await supabase.functions.invoke('teams', {
@@ -59,7 +82,9 @@ export function TeamPage() {
   const [loading, setLoading] = useState(true)
   const [team, setTeam] = useState<TeamInfo | null>(null)
   const [rankings, setRankings] = useState<TeamRanking[]>([])
-  const [tab, setTab] = useState<'team' | 'ranking'>('team')
+  const [tab, setTab] = useState<'team' | 'battles' | 'ranking'>('team')
+  const [teamStats, setTeamStats] = useState<TeamStats | null>(null)
+  const [challenges, setChallenges] = useState<TeamChallenge[]>([])
   const [error, setError] = useState<string | null>(null)
 
   const [createName, setCreateName] = useState('')
@@ -85,6 +110,29 @@ export function TeamPage() {
     } catch { /* ignore */ }
   }, [])
 
+  const loadStats = useCallback(async () => {
+    try {
+      const data = await teamCall('stats')
+      setTeamStats(data.stats ?? null)
+    } catch { /* ignore */ }
+  }, [])
+
+  const loadChallenges = useCallback(async () => {
+    try {
+      const data = await teamCall('my_challenges')
+      setChallenges(data.challenges ?? [])
+    } catch { /* ignore */ }
+  }, [])
+
+  const challengeTeam = async (targetTeamId: string) => {
+    setActionLoading(true); setError(null)
+    try {
+      await teamCall('challenge_team', { target_team_id: targetTeamId })
+      await loadChallenges()
+    } catch (err) { setError(err instanceof Error ? err.message : 'Error') }
+    setActionLoading(false)
+  }
+
   // Auto-join if invite code in URL
   const codeFromUrl = searchParams.get('code')
 
@@ -97,7 +145,9 @@ export function TeamPage() {
       }
     })
     loadRankings()
-  }, [loadTeam, loadRankings, codeFromUrl, setSearchParams])
+    loadStats()
+    loadChallenges()
+  }, [loadTeam, loadRankings, loadStats, loadChallenges, codeFromUrl, setSearchParams])
 
   const createTeam = async () => {
     if (!createName.trim()) return
@@ -216,6 +266,7 @@ export function TeamPage() {
         <div className="flex gap-1 bg-white/4 rounded-xl p-1">
           {[
             { key: 'team' as const, label: locale === 'de' ? 'Mein Team' : 'My Team' },
+            { key: 'battles' as const, label: 'Battles' },
             { key: 'ranking' as const, label: 'Ranking' },
           ].map(t => (
             <button
@@ -358,6 +409,23 @@ export function TeamPage() {
                 })}
               </div>
 
+              {/* Team Stats */}
+              {teamStats && (
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { val: teamStats.week_score.toLocaleString(), label: locale === 'de' ? 'Wochen-Score' : 'Week Score', color: 'text-primary' },
+                    { val: teamStats.week_quizzes, label: locale === 'de' ? 'Quizzes diese Woche' : 'Quizzes this week', color: 'text-teal' },
+                    { val: teamStats.avg_level, label: locale === 'de' ? 'Avg. Level' : 'Avg. Level', color: 'text-gold' },
+                    { val: `🔥${teamStats.longest_streak}`, label: locale === 'de' ? 'Bester Streak' : 'Best Streak', color: 'text-fire' },
+                  ].map(s => (
+                    <div key={s.label} className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
+                      <div className={`text-lg font-bold font-mono ${s.color}`}>{s.val}</div>
+                      <div className="text-[10px] text-text-muted">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Role legend */}
               <div className="text-[10px] text-text-muted space-y-0.5 px-1">
                 <p>👑 <span className="text-gold">Captain</span> — {locale === 'de' ? 'Kann alles: einladen, Admin ernennen/entfernen, kicken' : 'Can do everything: invite, promote/demote, kick'}</p>
@@ -432,6 +500,92 @@ export function TeamPage() {
               </div>
             </div>
           )
+        )}
+
+        {tab === 'battles' && (
+          <div className="space-y-4 pt-2">
+            {!team ? (
+              <p className="text-text-muted text-center py-8 text-sm">
+                {locale === 'de' ? 'Tritt einem Team bei um Battles zu starten.' : 'Join a team to start battles.'}
+              </p>
+            ) : (
+              <>
+                {/* Active challenges */}
+                <h3 className="text-sm font-bold">{locale === 'de' ? 'Aktive Battles' : 'Active Battles'}</h3>
+                {challenges.length === 0 ? (
+                  <p className="text-text-muted text-sm">
+                    {locale === 'de' ? 'Noch keine Battles. Fordere ein Team im Ranking heraus!' : 'No battles yet. Challenge a team from the ranking!'}
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {challenges.map(ch => {
+                      const isChallenger = ch.challenger_team_id === team.id
+                      const myScore = isChallenger ? ch.challenger_score : ch.challenged_score
+                      const theirScore = isChallenger ? ch.challenged_score : ch.challenger_score
+                      const opponentName = isChallenger ? ch.challenged?.name : ch.challenger?.name
+                      const isWon = ch.winner_team_id === team.id
+                      const isLost = ch.winner_team_id && ch.winner_team_id !== team.id
+
+                      return (
+                        <div key={ch.id} className="bg-white/4 border border-white/6 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-bold">{team.name}</span>
+                            <span className="text-xs text-text-muted">vs</span>
+                            <span className="text-sm font-bold">{opponentName}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono font-bold text-primary">{myScore}</span>
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                              ch.status === 'completed'
+                                ? isWon ? 'bg-teal/15 text-teal' : isLost ? 'bg-danger/15 text-danger' : 'bg-gold/15 text-gold'
+                                : 'bg-primary/15 text-primary'
+                            }`}>
+                              {ch.status === 'completed'
+                                ? isWon ? (locale === 'de' ? 'Gewonnen!' : 'Won!') : isLost ? (locale === 'de' ? 'Verloren' : 'Lost') : 'Draw'
+                                : (locale === 'de' ? 'Läuft' : 'Active')}
+                            </span>
+                            <span className="font-mono font-bold text-fire">{theirScore}</span>
+                          </div>
+                          <div className="text-[10px] text-text-muted mt-1 text-center">
+                            KW {ch.week_start}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Challenge from ranking */}
+                <h3 className="text-sm font-bold mt-4">{locale === 'de' ? 'Team herausfordern' : 'Challenge a Team'}</h3>
+                <p className="text-xs text-text-muted mb-2">
+                  {locale === 'de'
+                    ? 'Wähle ein Team aus dem Ranking für ein Wochen-Battle:'
+                    : 'Pick a team from the ranking for a weekly battle:'}
+                </p>
+                {rankings.filter(r => r.team_id !== team.id).length === 0 ? (
+                  <p className="text-text-muted text-sm">{locale === 'de' ? 'Keine anderen Teams verfügbar.' : 'No other teams available.'}</p>
+                ) : (
+                  <div className="space-y-2">
+                    {rankings.filter(r => r.team_id !== team.id).slice(0, 5).map(r => (
+                      <div key={r.team_id} className="flex items-center gap-3 bg-white/4 border border-white/6 rounded-xl px-4 py-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold truncate">{r.team_name}</div>
+                          <div className="text-[10px] text-text-muted">{r.member_count} {locale === 'de' ? 'Spieler' : 'players'} · {r.total_score} Pts</div>
+                        </div>
+                        <button
+                          onClick={() => challengeTeam(r.team_id)}
+                          disabled={actionLoading}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-fire/15 text-fire font-semibold hover:bg-fire/25 transition-colors disabled:opacity-50"
+                        >
+                          ⚔️ {locale === 'de' ? 'Herausfordern' : 'Challenge'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         )}
 
         {tab === 'ranking' && (

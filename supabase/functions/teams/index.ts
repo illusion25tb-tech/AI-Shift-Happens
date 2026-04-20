@@ -272,6 +272,121 @@ Deno.serve(async (req: Request) => {
       return jsonRes({ entries: ranked, week_start: weekStart })
     }
 
+    // ─── TEAM STATS ───
+    if (action === 'stats') {
+      const { data: profile } = await db.from('profiles')
+        .select('team_id').eq('id', user.id).single()
+      if (!profile?.team_id) return jsonRes({ error: 'Not in a team' }, 400)
+
+      const { data: members } = await db.from('profiles')
+        .select('id, total_xp, current_streak, level')
+        .eq('team_id', profile.team_id)
+
+      if (!members || members.length === 0) return jsonRes({ stats: null })
+
+      const totalXp = members.reduce((s, m) => s + (m.total_xp ?? 0), 0)
+      const avgXp = Math.round(totalXp / members.length)
+      const avgLevel = +(members.reduce((s, m) => s + (m.level ?? 1), 0) / members.length).toFixed(1)
+      const longestStreak = Math.max(...members.map(m => m.current_streak ?? 0))
+      const activeToday = members.filter(m => {
+        // Check if member has a quiz attempt today
+        return true // Simplified — real check would need quiz_attempts query
+      }).length
+
+      // Weekly ranking position
+      const now = new Date()
+      const dow = now.getUTCDay()
+      const diff = dow === 0 ? 6 : dow - 1
+      const monday = new Date(now)
+      monday.setUTCDate(monday.getUTCDate() - diff)
+      const weekStart = monday.toISOString().split('T')[0]
+
+      const memberIds = members.map(m => m.id)
+      const { data: weeklyScores } = await db.from('weekly_scores')
+        .select('total_score')
+        .eq('week_start', weekStart)
+        .in('user_id', memberIds)
+
+      const weekScore = (weeklyScores ?? []).reduce((s, w) => s + (w.total_score ?? 0), 0)
+
+      // Count total team quiz attempts this week
+      const { count: weekQuizzes } = await db.from('quiz_attempts')
+        .select('*', { count: 'exact', head: true })
+        .in('user_id', memberIds)
+        .gte('created_at', weekStart + 'T00:00:00Z')
+
+      return jsonRes({
+        stats: {
+          member_count: members.length,
+          total_xp: totalXp,
+          avg_xp: avgXp,
+          avg_level: avgLevel,
+          longest_streak: longestStreak,
+          week_score: weekScore,
+          week_quizzes: weekQuizzes ?? 0,
+        },
+      })
+    }
+
+    // ─── TEAM CHALLENGE ───
+    if (action === 'challenge_team') {
+      const { target_team_id } = body as { target_team_id: string }
+
+      const { data: myProfile } = await db.from('profiles')
+        .select('team_id, team_role').eq('id', user.id).single()
+      if (!myProfile?.team_id) return jsonRes({ error: 'Not in a team' }, 400)
+      if (!['captain', 'admin'].includes(myProfile.team_role ?? '')) {
+        return jsonRes({ error: 'Only captain or admin can challenge' }, 403)
+      }
+      if (myProfile.team_id === target_team_id) {
+        return jsonRes({ error: 'Cannot challenge your own team' }, 400)
+      }
+
+      // Check target team exists
+      const { data: targetTeam } = await db.from('teams').select('id, name').eq('id', target_team_id).single()
+      if (!targetTeam) return jsonRes({ error: 'Team not found' }, 404)
+
+      // Create challenge record
+      const weekStart = (() => {
+        const now = new Date()
+        const dow = now.getUTCDay()
+        const diff = dow === 0 ? 6 : dow - 1
+        const m = new Date(now)
+        m.setUTCDate(m.getUTCDate() - diff)
+        return m.toISOString().split('T')[0]
+      })()
+
+      const { data: challenge, error: chErr } = await db.from('team_challenges').insert({
+        challenger_team_id: myProfile.team_id,
+        challenged_team_id: target_team_id,
+        week_start: weekStart,
+        status: 'active',
+      }).select('id').single()
+
+      if (chErr) {
+        // Might already exist
+        if (chErr.code === '23505') return jsonRes({ error: 'Challenge already exists this week' }, 409)
+        return jsonRes({ error: chErr.message }, 500)
+      }
+
+      return jsonRes({ challenge_id: challenge.id, target_team: targetTeam.name })
+    }
+
+    // ─── GET TEAM CHALLENGES ───
+    if (action === 'my_challenges') {
+      const { data: profile } = await db.from('profiles')
+        .select('team_id').eq('id', user.id).single()
+      if (!profile?.team_id) return jsonRes({ challenges: [] })
+
+      const { data: challenges } = await db.from('team_challenges')
+        .select('*, challenger:challenger_team_id(name), challenged:challenged_team_id(name)')
+        .or(`challenger_team_id.eq.${profile.team_id},challenged_team_id.eq.${profile.team_id}`)
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      return jsonRes({ challenges: challenges ?? [] })
+    }
+
     return jsonRes({ error: `Unknown action: ${action}` }, 400)
 
   } catch (err) {
