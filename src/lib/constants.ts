@@ -14,6 +14,20 @@ export const CATEGORIES = [
   'ai-leadership',
   'ai-sales-marketing',
   'ai-cost-business',
+  'ai-everyday',
+  'ai-career',
+  'ai-communication',
+  'ai-tools-comparison',
+  'ai-customer-service',
+  'ai-finance',
+  'ai-health',
+  'ai-education',
+  'ai-manufacturing',
+  'ai-public-sector',
+  'ai-media-content',
+  'ai-sustainability',
+  'ai-psychology',
+  'ai-myths-facts',
 ] as const
 
 export type CategoryId = (typeof CATEGORIES)[number]
@@ -34,6 +48,20 @@ export const CATEGORY_LABELS: Record<CategoryId, { de: string; en: string }> = {
   'ai-leadership': { de: 'KI & Führung', en: 'AI & Leadership' },
   'ai-sales-marketing': { de: 'KI im Vertrieb', en: 'AI in Sales & Marketing' },
   'ai-cost-business': { de: 'KI-Kosten & Business Case', en: 'AI Cost & Business Case' },
+  'ai-everyday': { de: 'KI im Alltag', en: 'AI in Everyday Life' },
+  'ai-career': { de: 'KI & Karriere', en: 'AI & Career' },
+  'ai-communication': { de: 'KI & Kommunikation', en: 'AI & Communication' },
+  'ai-tools-comparison': { de: 'KI-Tools im Vergleich', en: 'AI Tools Comparison' },
+  'ai-customer-service': { de: 'KI & Kundenservice', en: 'AI & Customer Service' },
+  'ai-finance': { de: 'KI & Finanzen', en: 'AI & Finance' },
+  'ai-health': { de: 'KI & Gesundheit', en: 'AI & Health' },
+  'ai-education': { de: 'KI & Bildung', en: 'AI & Education' },
+  'ai-manufacturing': { de: 'KI & Handwerk/Produktion', en: 'AI & Manufacturing' },
+  'ai-public-sector': { de: 'KI & Öffentlicher Dienst', en: 'AI & Public Sector' },
+  'ai-media-content': { de: 'KI & Medien/Content', en: 'AI & Media/Content' },
+  'ai-sustainability': { de: 'KI & Nachhaltigkeit', en: 'AI & Sustainability' },
+  'ai-psychology': { de: 'KI & Psychologie', en: 'AI & Psychology' },
+  'ai-myths-facts': { de: 'KI-Mythen & Fakten', en: 'AI Myths & Facts' },
 }
 
 export const LEVELS = [
@@ -255,6 +283,20 @@ export const CATEGORY_COLORS: Record<CategoryId, string> = {
   'ai-leadership': '#A855F7',
   'ai-sales-marketing': '#10B981',
   'ai-cost-business': '#F59E0B',
+  'ai-everyday': '#60A5FA',
+  'ai-career': '#C084FC',
+  'ai-communication': '#34D399',
+  'ai-tools-comparison': '#FB923C',
+  'ai-customer-service': '#38BDF8',
+  'ai-finance': '#4ADE80',
+  'ai-health': '#F87171',
+  'ai-education': '#FBBF24',
+  'ai-manufacturing': '#94A3B8',
+  'ai-public-sector': '#818CF8',
+  'ai-media-content': '#E879F9',
+  'ai-sustainability': '#22D3EE',
+  'ai-psychology': '#FB7185',
+  'ai-myths-facts': '#A78BFA',
 }
 
 export const DAILY_QUESTION_COUNT = 3

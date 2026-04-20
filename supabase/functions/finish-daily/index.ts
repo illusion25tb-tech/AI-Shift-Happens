@@ -364,7 +364,7 @@ Deno.serve(async (req: Request) => {
       }
 
       const playedCats = new Set(Object.keys(catCorrect))
-      if (playedCats.size >= 15) award('categories_all')
+      if (playedCats.size >= 30) award('categories_all')
 
       // Specialist: 80%+ in any category with 5+ questions
       for (const [, stats] of Object.entries(catCorrect)) {
