@@ -22,18 +22,18 @@ const TEXT_STEPS = [
   // SHIFT selection step is handled separately (index 1)
   {
     emoji: '🎯',
-    title: { de: 'Confidence Betting', en: 'Confidence Betting' },
+    title: { de: 'Confidence Betting + Timer', en: 'Confidence Betting + Timer' },
     body: {
-      de: 'Nach jeder Antwort wählst du dein Confidence-Level: Vorsichtig (🤔), Mittel (🎯) oder Sicher (🔥). Hohe Confidence = hohe Punkte bei richtig, aber auch hoher Verlust bei falsch! Vorsicht vor Bullshit-Fallen — Antworten die gut klingen, aber falsch sind.',
-      en: 'After each answer, pick your confidence level: Cautious (🤔), Medium (🎯) or Sure (🔥). High confidence = high points when right, but big losses when wrong! Watch out for BS traps — answers that sound great but are wrong.',
+      de: '60 Sekunden pro Frage. Nach der Antwort wählst du: Wie sicher bist du? 🤔 Hmm (+50), 🎯 Ziemlich sicher (+150) oder 🔥 Absolut sicher (+300). Aber Achtung: Hohe Confidence + falsch = hoher Verlust! Dazu gibt es Speed-Bonus für schnelle Antworten. Vorsicht vor Bullshit-Fallen!',
+      en: '60 seconds per question. After answering, choose: How confident are you? 🤔 Hmm (+50), 🎯 Pretty sure (+150) or 🔥 Absolutely sure (+300). But careful: High confidence + wrong = big loss! Plus speed bonus for fast answers. Watch out for BS traps!',
     },
   },
   {
     emoji: '🏆',
     title: { de: 'Level Up & Compete', en: 'Level Up & Compete' },
     body: {
-      de: '6 Level (AI Rookie → AI Dirigent), 25+ Badges, Wochen-Champion, Team Battles und 1v1 Challenges. Steige auf und zeig dein KI-Wissen!',
-      en: '6 levels (AI Rookie → AI Dirigent), 25+ badges, weekly champion, team battles and 1v1 challenges. Level up and show your AI knowledge!',
+      de: '6 Level (AI Rookie → AI Dirigent), 29 Badges, Wochen-Champion, Team Battles und 1v1 Challenges. Dein KI-Buddy SHIFT kommentiert jede Antwort — frech oder seriös, du entscheidest!',
+      en: '6 levels (AI Rookie → AI Dirigent), 29 badges, weekly champion, team battles and 1v1 challenges. Your AI buddy SHIFT comments on every answer — cheeky or serious, you decide!',
     },
   },
 ]

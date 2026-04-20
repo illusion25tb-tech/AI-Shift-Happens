@@ -20,29 +20,44 @@ const sections: FaqSection[] = [
     content: (locale) => (
       <div className="space-y-3">
         <p>{locale === 'de'
-          ? 'Jede Frage hat 3 Antwortmöglichkeiten mit unterschiedlichen Punkten:'
-          : 'Each question has 3 answer options with different scores:'}</p>
+          ? 'Nach jeder Antwort wählst du dein Confidence-Level — wie sicher bist du dir?'
+          : 'After each answer, you choose your confidence level — how sure are you?'}</p>
         <div className="grid gap-2">
           <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-2">
-            <span className="text-green-400 font-bold text-lg">+100</span>
-            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Optimale Antwort' : 'Optimal answer'}</span>
+            <span className="text-lg">🔥</span>
+            <span className="text-green-400 font-bold">+300 / -150</span>
+            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Absolut sicher' : 'Absolutely sure'}</span>
           </div>
           <div className="flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl px-4 py-2">
-            <span className="text-yellow-400 font-bold text-lg">0</span>
-            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Akzeptabel, aber nicht optimal' : 'Acceptable, but not optimal'}</span>
+            <span className="text-lg">🎯</span>
+            <span className="text-yellow-400 font-bold">+150 / -50</span>
+            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Ziemlich sicher' : 'Pretty sure'}</span>
           </div>
-          <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
-            <span className="text-red-400 font-bold text-lg">-100</span>
-            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Gefährlich \u2014 bricht den Streak!' : 'Dangerous \u2014 breaks your streak!'}</span>
+          <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-2">
+            <span className="text-lg">🤔</span>
+            <span className="text-blue-400 font-bold">+50 / 0</span>
+            <span className="text-text-secondary text-sm">{locale === 'de' ? 'Hmm... unsicher' : 'Hmm... not sure'}</span>
           </div>
         </div>
         <p className="text-sm text-text-secondary">
           {locale === 'de'
-            ? 'Dein Endscore berechnet sich so: Base \u00d7 Streak-Multiplikator + Speed-Bonus. Bei Bonus-Fragen wird alles nochmal \u00d71.5 multipliziert.'
-            : 'Your final score is calculated as: Base \u00d7 Streak Multiplier + Speed Bonus. Bonus questions get an additional \u00d71.5 multiplier.'}
+            ? 'Dazu kommt ein Speed-Bonus (bis +50) für schnelle Antworten, ein Streak-Multiplikator und bei Bonus-Fragen nochmal \u00d71.5.'
+            : 'On top: speed bonus (up to +50) for fast answers, streak multiplier, and bonus questions get \u00d71.5.'}
         </p>
       </div>
     ),
+  },
+  {
+    title: { de: 'Was ist der Bullshit-Detektor?', en: 'What is the Bullshit Detector?' },
+    content: (locale) => locale === 'de'
+      ? 'Manche Fragen haben eine Bullshit-Falle: Eine Antwort die professionell klingt, aber inhaltsleer ist \u2014 typisches Berater-Deutsch oder LinkedIn-Sprech. Wer mit hoher Confidence auf die Falle reinfällt, verliert extra Punkte (-200 statt -150). Wer die Falle erkennt, bekommt einen Bonus. Es gibt spezielle Badges dafür!'
+      : 'Some questions have a BS trap: an answer that sounds professional but is empty \u2014 typical consultant-speak or LinkedIn jargon. High confidence on the trap means extra point loss (-200 instead of -150). Detecting traps earns a bonus. There are special badges for it!',
+  },
+  {
+    title: { de: 'Wer ist SHIFT?', en: 'Who is SHIFT?' },
+    content: (locale) => locale === 'de'
+      ? 'SHIFT ist dein KI-Buddy, der jede Antwort kommentiert. Du kannst zwischen zwei Styles wählen: \ud83c\udfa9 Seriös (professionell, motivierend) oder \ud83d\ude0e Frech (Memes, Roasts, Gen-Z-Energy). SHIFT reagiert auf deine Confidence: Overconfident + falsch = maximaler Roast. Wechsel jederzeit im Profil.'
+      : 'SHIFT is your AI buddy who comments on every answer. Choose between two styles: \ud83c\udfa9 Serious (professional, motivating) or \ud83d\ude0e Cheeky (memes, roasts, Gen-Z energy). SHIFT reacts to your confidence: Overconfident + wrong = maximum roast. Switch anytime in your profile.',
   },
   {
     title: { de: 'Streak-Multiplikator', en: 'Streak Multiplier' },
@@ -76,10 +91,10 @@ const sections: FaqSection[] = [
     ),
   },
   {
-    title: { de: 'Speed-Bonus', en: 'Speed Bonus' },
+    title: { de: 'Timer & Speed-Bonus', en: 'Timer & Speed Bonus' },
     content: (locale) => locale === 'de'
-      ? 'Bei richtigen Antworten bekommst du bis zu 50 Bonus-Punkte für Schnelligkeit. Der Bonus sinkt um 2.5 Punkte pro Sekunde. Wer innerhalb von 5 Sekunden antwortet, bekommt den vollen Bonus. Nach 20 Sekunden gibt es keinen Speed-Bonus mehr.'
-      : 'For correct answers you get up to 50 bonus points for speed. The bonus decreases by 2.5 points per second. Answering within 5 seconds gives full bonus. After 20 seconds there is no speed bonus.',
+      ? 'Du hast 60 Sekunden pro Frage (im Daily Quiz und bei Challenges). Bei richtigen Antworten bekommst du bis zu 50 Bonus-Punkte für Schnelligkeit \u2014 der Bonus sinkt ca. 1 Punkt pro Sekunde. Sofortige Antwort = +50, nach 60 Sekunden = +0. Free Play hat keinen Timer \u2014 dort lernst du ohne Zeitdruck.'
+      : 'You have 60 seconds per question (in Daily Quiz and Challenges). For correct answers you get up to 50 bonus points for speed \u2014 the bonus decreases about 1 point per second. Instant answer = +50, after 60 seconds = +0. Free Play has no timer \u2014 learn without time pressure.',
   },
   {
     title: { de: 'Tages-Streaks', en: 'Daily Streaks' },
