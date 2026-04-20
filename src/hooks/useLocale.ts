@@ -3,7 +3,7 @@ import type { Locale } from '../types'
 
 type Messages = Record<string, string>
 
-let cachedMessages: Record<Locale, Messages | null> = { de: null, en: null }
+let cachedMessages: Record<Locale, Messages | null> = { de: null, en: null, tr: null, es: null }
 
 export function useLocale() {
   const [locale, setLocaleState] = useState<Locale>(

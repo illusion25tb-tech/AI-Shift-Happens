@@ -86,7 +86,7 @@ export interface LeaderboardEntry {
   rank: number
 }
 
-export type Locale = 'de' | 'en'
+export type Locale = 'de' | 'en' | 'tr' | 'es'
 
 export type GameState =
   | 'idle'

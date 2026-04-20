@@ -118,6 +118,8 @@ function QuestionsTab() {
           <option value="">DE+EN</option>
           <option value="de">DE</option>
           <option value="en">EN</option>
+          <option value="tr">TR</option>
+          <option value="es">ES</option>
         </select>
       </div>
 
@@ -232,6 +234,8 @@ function CreateQuestionForm({ onCreated }: { onCreated: () => void }) {
         <select value={locale} onChange={e => setLocale(e.target.value)} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
           <option value="de">DE</option>
           <option value="en">EN</option>
+          <option value="tr">TR</option>
+          <option value="es">ES</option>
         </select>
         <select value={category} onChange={e => setCategory(e.target.value as CategoryId)} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
           {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c][uiLocale]}</option>)}

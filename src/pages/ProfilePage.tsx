@@ -606,19 +606,16 @@ export function ProfilePage() {
         {/* Language Toggle */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">
           <span className="text-sm font-semibold">{locale === 'de' ? 'Sprache' : 'Language'}</span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setLocale('de')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${locale === 'de' ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
-            >
-              DE
-            </button>
-            <button
-              onClick={() => setLocale('en')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${locale === 'en' ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
-            >
-              EN
-            </button>
+          <div className="flex gap-1.5">
+            {(['de', 'en', 'tr', 'es'] as const).map(l => (
+              <button
+                key={l}
+                onClick={() => setLocale(l)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${locale === l ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
 

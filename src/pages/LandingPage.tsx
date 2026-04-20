@@ -15,12 +15,16 @@ export function LandingPage() {
   return (
     <div className="bg-bg-base text-text-primary font-sans">
       <div className="fixed top-4 right-4 z-50">
-        <button
-          onClick={() => setLocale(locale === 'de' ? 'en' : 'de')}
-          className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-colors backdrop-blur-sm"
+        <select
+          value={locale}
+          onChange={e => setLocale(e.target.value as any)}
+          className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-colors backdrop-blur-sm cursor-pointer"
         >
-          {locale === 'de' ? '🇬🇧 EN' : '🇩🇪 DE'}
-        </button>
+          <option value="de">DE</option>
+          <option value="en">EN</option>
+          <option value="tr">TR</option>
+          <option value="es">ES</option>
+        </select>
       </div>
 
       <HeroSection onStart={handleStart} locale={locale} />

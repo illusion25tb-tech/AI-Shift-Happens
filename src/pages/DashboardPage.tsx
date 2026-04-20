@@ -195,12 +195,16 @@ export function DashboardPage() {
       <header className="flex items-center justify-between px-5 py-4 border-b border-white/6">
         <img src="/mindset-shift/shift-logo.png" alt="AI-Shift Happens" className="h-8" />
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setLocale(locale === 'de' ? 'en' : 'de')}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/6 text-text-secondary hover:text-text-primary hover:border-primary transition-colors"
+          <select
+            value={locale}
+            onChange={e => setLocale(e.target.value as any)}
+            className="text-xs font-semibold px-2 py-1.5 rounded-lg border border-white/6 bg-transparent text-text-secondary hover:border-primary transition-colors cursor-pointer"
           >
-            {locale === 'de' ? 'EN' : 'DE'}
-          </button>
+            <option value="de">DE</option>
+            <option value="en">EN</option>
+            <option value="tr">TR</option>
+            <option value="es">ES</option>
+          </select>
           <Link to="/app/profile" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
             {avatarInitial}
           </Link>
