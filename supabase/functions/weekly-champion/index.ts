@@ -87,12 +87,59 @@ Deno.serve(async (req: Request) => {
       await db.from('prizes').update({ winner_id: champion.user_id }).eq('id', weeklyPrize.id)
     }
 
+    // ─── TEAM BATTLE RESULTS ───
+    // Resolve all active team challenges for last week
+    const { data: activeBattles } = await db.from('team_challenges')
+      .select('id, challenger_team_id, challenged_team_id')
+      .eq('week_start', weekStart)
+      .eq('status', 'active')
+
+    let battlesResolved = 0
+    for (const battle of (activeBattles ?? [])) {
+      // Calculate each team's weekly score
+      const [challengerMembers, challengedMembers] = await Promise.all([
+        db.from('profiles').select('id').eq('team_id', battle.challenger_team_id),
+        db.from('profiles').select('id').eq('team_id', battle.challenged_team_id),
+      ])
+
+      const cIds = (challengerMembers.data ?? []).map(m => m.id)
+      const dIds = (challengedMembers.data ?? []).map(m => m.id)
+
+      const [cScores, dScores] = await Promise.all([
+        cIds.length > 0
+          ? db.from('weekly_scores').select('total_score').eq('week_start', weekStart).in('user_id', cIds)
+          : { data: [] },
+        dIds.length > 0
+          ? db.from('weekly_scores').select('total_score').eq('week_start', weekStart).in('user_id', dIds)
+          : { data: [] },
+      ])
+
+      const challengerScore = (cScores.data ?? []).reduce((s: number, r: any) => s + (r.total_score ?? 0), 0)
+      const challengedScore = (dScores.data ?? []).reduce((s: number, r: any) => s + (r.total_score ?? 0), 0)
+
+      const winnerId = challengerScore > challengedScore
+        ? battle.challenger_team_id
+        : challengedScore > challengerScore
+        ? battle.challenged_team_id
+        : null // draw
+
+      await db.from('team_challenges').update({
+        status: 'completed',
+        challenger_score: challengerScore,
+        challenged_score: challengedScore,
+        winner_team_id: winnerId,
+      }).eq('id', battle.id)
+
+      battlesResolved++
+    }
+
     return new Response(JSON.stringify({
       week_start: weekStart,
       champion_user_id: champion.user_id,
       champion_score: champion.total_score,
       total_participants: scores.length,
       prize_assigned: !!weeklyPrize,
+      team_battles_resolved: battlesResolved,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (err) {

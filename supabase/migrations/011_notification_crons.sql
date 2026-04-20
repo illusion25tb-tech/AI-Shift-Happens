@@ -1,0 +1,36 @@
+-- 011: Notification Cron Jobs
+-- Streak Warning: Mo-Fr um 18:00 UTC (20:00 CET) — erinnert User mit Streak >= 3
+-- Weekly Digest: Montag 07:00 UTC (09:00 CET) — Wochen-Recap
+
+-- Note: pg_cron jobs must be created via Supabase Dashboard SQL Editor
+-- or via this migration if pg_cron extension is available.
+
+-- These pg_cron entries call Edge Functions via HTTP:
+--
+-- Streak Warning (Mo-Fr 18:00 UTC):
+-- SELECT cron.schedule(
+--   'streak-warning',
+--   '0 18 * * 1-5',
+--   $$SELECT net.http_post(
+--     url := 'https://amhfxaqolholacanqyas.supabase.co/functions/v1/send-notifications',
+--     headers := jsonb_build_object(
+--       'Authorization', 'Bearer ' || current_setting('app.settings.cron_secret'),
+--       'Content-Type', 'application/json'
+--     ),
+--     body := '{"type":"streak_warning"}'
+--   )$$
+-- );
+--
+-- Weekly Digest (Montag 07:00 UTC):
+-- SELECT cron.schedule(
+--   'weekly-digest',
+--   '0 7 * * 1',
+--   $$SELECT net.http_post(
+--     url := 'https://amhfxaqolholacanqyas.supabase.co/functions/v1/send-notifications',
+--     headers := jsonb_build_object(
+--       'Authorization', 'Bearer ' || current_setting('app.settings.cron_secret'),
+--       'Content-Type', 'application/json'
+--     ),
+--     body := '{"type":"weekly_digest"}'
+--   )$$
+-- );
