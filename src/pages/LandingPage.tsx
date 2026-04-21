@@ -26,12 +26,13 @@ export function LandingPage() {
         <select
           value={locale}
           onChange={e => setLocale(e.target.value as any)}
-          className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-colors backdrop-blur-sm cursor-pointer"
+          className="text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 text-white/70 hover:text-white hover:border-white/20 transition-colors cursor-pointer"
+          style={{ background: '#0f0f1a' }}
         >
-          <option value="de">DE</option>
-          <option value="en">EN</option>
-          <option value="tr">TR</option>
-          <option value="es">ES</option>
+          <option value="de" style={{ background: '#0f0f1a', color: '#fff' }}>DE</option>
+          <option value="en" style={{ background: '#0f0f1a', color: '#fff' }}>EN</option>
+          <option value="tr" style={{ background: '#0f0f1a', color: '#fff' }}>TR</option>
+          <option value="es" style={{ background: '#0f0f1a', color: '#fff' }}>ES</option>
         </select>
       </div>
 
