@@ -149,7 +149,7 @@
     </footer>
   </div>
 
-  <a id="secret-entry" href="#" title="" aria-hidden="true" tabindex="-1">
+  <a id="secret-entry" href="https://tbai.com.de/mindset-shift/" title="" aria-hidden="true" tabindex="-1">
     <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
       <circle cx="5" cy="5" r="4.5" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1"/>
       <polygon points="4,3 7,5 4,7" fill="rgba(255,255,255,0.8)"/>
@@ -208,20 +208,6 @@
 
       try { localStorage.setItem('lang', lang); } catch (e) {}
     }
-
-    (function initSecretEntry() {
-      const btn = document.getElementById('secret-entry');
-      if (!btn) return;
-      const SUPABASE_URL = 'https://amhfxaqolholacanqyas.supabase.co';
-      const REDIRECT_TO = 'https://tbai.com.de/mindset-shift/app';
-      const oauthUrl =
-        SUPABASE_URL + '/auth/v1/authorize?provider=google' +
-        '&redirect_to=' + encodeURIComponent(REDIRECT_TO);
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = oauthUrl;
-      });
-    })();
 
     (function init() {
       let saved = null;
