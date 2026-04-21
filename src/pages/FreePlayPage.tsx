@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useLocale } from '../hooks/useLocale'
-import { CATEGORIES, CATEGORY_LABELS, FREEPLAY_QUESTION_COUNT } from '../lib/constants'
+import { CATEGORIES, CATEGORY_LABELS, FREEPLAY_QUESTION_COUNT, lf } from '../lib/constants'
 import ProgressBar from '../components/ProgressBar'
 import ScoreDisplay from '../components/ScoreDisplay'
 // TimerBar removed — Free Play has no time pressure
@@ -146,18 +146,18 @@ export function FreePlayPage() {
 
         <main className="flex-1 flex flex-col px-5 py-6 gap-4 max-w-md mx-auto w-full">
           <p className="text-text-secondary text-sm">
-            {locale === 'de'
+            {t('freeplay.intro') || (locale === 'de'
               ? `Wähle eine Kategorie oder spiele alle. ${FREEPLAY_QUESTION_COUNT} Fragen pro Runde — ohne Zeitdruck, zum Lernen.`
-              : `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} questions per round — no time pressure, for learning.`}
+              : `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} questions per round — no time pressure, for learning.`)}
           </p>
 
           <button
             onClick={() => startGame('all')}
             className="w-full bg-primary/20 border border-primary/30 rounded-2xl px-5 py-4 text-left hover:bg-primary/30 transition-colors"
           >
-            <div className="text-lg font-bold text-primary">🎲 {locale === 'de' ? 'Alle Kategorien' : 'All Categories'}</div>
+            <div className="text-lg font-bold text-primary">🎲 {lf({de:'Alle Kategorien',en:'All Categories'}, locale)}</div>
             <div className="text-text-secondary text-sm mt-1">
-              {locale === 'de' ? 'Zufällig gemischt aus allen 10 Bereichen' : 'Randomly mixed from all 10 areas'}
+              {lf({de:'Zufällig gemischt aus allen Bereichen',en:'Randomly mixed from all areas'}, locale)}
             </div>
           </button>
 
@@ -168,7 +168,7 @@ export function FreePlayPage() {
                 onClick={() => startGame(cat)}
                 className="w-full bg-white/4 border border-white/6 rounded-xl px-4 py-3 text-left hover:border-primary/30 transition-colors"
               >
-                <span className="font-semibold text-sm">{CATEGORY_LABELS[cat][locale as 'de' | 'en']}</span>
+                <span className="font-semibold text-sm">{lf(CATEGORY_LABELS[cat], locale)}</span>
               </button>
             ))}
           </div>
