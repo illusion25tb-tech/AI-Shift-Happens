@@ -19,7 +19,7 @@ interface StatsData {
 }
 
 // SVG Radar Chart
-function RadarChart({ scores, locale }: { scores: Record<string, number>; locale: 'de' | 'en' }) {
+function RadarChart({ scores, locale }: { scores: Record<string, number>; locale: string }) {
   const size = 280
   const cx = size / 2
   const cy = size / 2
@@ -74,7 +74,7 @@ function RadarChart({ scores, locale }: { scores: Record<string, number>; locale
       {/* Labels */}
       {cats.map((cat, i) => {
         const labelPoint = getPoint(i, 125)
-        const label = CATEGORY_LABELS[cat as CategoryId]?.[locale] ?? cat
+        const label = CATEGORY_LABELS[cat as CategoryId]?.[locale as 'de' | 'en'] ?? cat
         const shortLabel = label.length > 12 ? label.slice(0, 11) + '...' : label
         return (
           <text
@@ -96,7 +96,7 @@ function RadarChart({ scores, locale }: { scores: Record<string, number>; locale
 }
 
 // Score History Chart
-function ScoreChart({ history, locale }: { history: StatsData['score_history']; locale: 'de' | 'en' }) {
+function ScoreChart({ history, locale }: { history: StatsData['score_history']; locale: string }) {
   if (history.length < 2) {
     return (
       <p className="text-text-muted text-sm text-center py-4">
@@ -248,7 +248,7 @@ export function StatsPage() {
                   .map(([cat, score]) => (
                     <div key={cat} className="flex items-center justify-between text-[10px] px-1">
                       <span className="text-text-muted truncate">
-                        {CATEGORY_LABELS[cat as CategoryId]?.[locale] ?? cat}
+                        {CATEGORY_LABELS[cat as CategoryId]?.[locale as 'de' | 'en'] ?? cat}
                       </span>
                       <span className={`font-mono ${score >= 70 ? 'text-teal' : score >= 40 ? 'text-gold' : 'text-fire'}`}>
                         {score}%
@@ -267,7 +267,7 @@ export function StatsPage() {
                 {Object.entries(stats.category_scores)
                   .sort(([, a], [, b]) => b - a)
                   .map(([cat, score]) => {
-                    const label = CATEGORY_LABELS[cat as CategoryId]?.[locale] ?? cat
+                    const label = CATEGORY_LABELS[cat as CategoryId]?.[locale as 'de' | 'en'] ?? cat
                     const mastery = score >= 80 ? 'master' : score >= 50 ? 'good' : 'learning'
                     const masteryLabel = mastery === 'master'
                       ? (locale === 'de' ? 'Meister' : 'Master')

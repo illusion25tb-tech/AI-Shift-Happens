@@ -1,5 +1,5 @@
 interface LevelTimelineProps {
-  locale: 'de' | 'en'
+  locale: string
 }
 
 const levels = [

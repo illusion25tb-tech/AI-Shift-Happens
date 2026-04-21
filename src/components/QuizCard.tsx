@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { QuestionForClient, Locale } from '../types'
-import { CATEGORY_LABELS, CATEGORY_COLORS, CONFIDENCE_LABELS } from '../lib/constants'
+import { CATEGORY_LABELS, CATEGORY_COLORS, CONFIDENCE_LABELS, lf } from '../lib/constants'
 import type { CategoryId, ConfidenceLevel } from '../lib/constants'
 
 interface QuizCardProps {
@@ -58,9 +58,8 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [handleKeyPress])
 
-  const categoryLabel =
-    CATEGORY_LABELS[question.category as keyof typeof CATEGORY_LABELS]?.[locale] ??
-    question.category
+  const _catEntry = CATEGORY_LABELS[question.category as keyof typeof CATEGORY_LABELS]
+  const categoryLabel = _catEntry ? lf(_catEntry, locale) : question.category
 
   const handleConfirm = () => {
     if (selectedIndex !== null && confidence !== null) {
@@ -179,7 +178,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
                     }}
                   >
                     <div className="text-xl mb-1">{label.emoji}</div>
-                    <div className="text-xs font-semibold text-text-primary">{label[locale]}</div>
+                    <div className="text-xs font-semibold text-text-primary">{lf(label, locale)}</div>
                   </button>
                 )
               })}

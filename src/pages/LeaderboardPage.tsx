@@ -77,7 +77,7 @@ export function LeaderboardPage() {
               className={`flex-1 text-center py-2 rounded-lg text-xs font-semibold transition-colors
                 ${lb.tab === t.key ? 'bg-primary text-white' : 'text-text-muted hover:text-text-secondary'}`}
             >
-              {t[locale]}
+              {t[locale as 'de' | 'en'] ?? t.en}
             </button>
           ))}
         </div>

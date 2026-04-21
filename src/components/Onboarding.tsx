@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Locale } from '../types'
 import { supabase } from '../lib/supabase'
+import { lf } from '../lib/constants'
 
 interface OnboardingProps {
   locale: Locale
@@ -157,8 +158,8 @@ export default function Onboarding({ locale, onComplete }: OnboardingProps) {
             className="max-w-sm w-full text-center space-y-6"
           >
             <div className="text-6xl">{textStep.emoji}</div>
-            <h2 className="text-xl font-bold">{textStep.title[locale]}</h2>
-            <p className="text-text-secondary text-sm leading-relaxed">{textStep.body[locale]}</p>
+            <h2 className="text-xl font-bold">{lf(textStep.title, locale)}</h2>
+            <p className="text-text-secondary text-sm leading-relaxed">{lf(textStep.body, locale)}</p>
 
             <div className="flex justify-center gap-2">
               {Array.from({ length: TOTAL_STEPS }).map((_, i) => (

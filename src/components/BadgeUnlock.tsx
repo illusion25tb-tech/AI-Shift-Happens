@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { Locale } from '../types'
-import { BADGES } from '../lib/constants'
+import { BADGES, lf } from '../lib/constants'
 
 interface BadgeUnlockProps {
   badgeTypes: string[]
@@ -62,10 +62,10 @@ export default function BadgeUnlock({ badgeTypes, locale, onClose }: BadgeUnlock
             {locale === 'de' ? 'Neues Badge!' : 'New Badge!'}
           </p>
           <h2 className="text-xl font-extrabold text-text-primary mb-2">
-            {badge.title[locale]}
+            {lf(badge.title, locale)}
           </h2>
           <p className="text-sm text-text-secondary mb-6">
-            {badge.description[locale]}
+            {lf(badge.description, locale)}
           </p>
         </motion.div>
 

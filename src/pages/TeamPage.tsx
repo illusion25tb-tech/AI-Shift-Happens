@@ -339,7 +339,7 @@ export function TeamPage() {
                   <span>{team.member_count} {locale === 'de' ? 'Mitglieder' : 'members'}</span>
                   <span>·</span>
                   <span className={ROLE_LABELS[team.my_role].color}>
-                    {ROLE_LABELS[team.my_role][locale]}
+                    {ROLE_LABELS[team.my_role][locale as 'de' | 'en']}
                   </span>
                 </div>
               </div>
@@ -362,7 +362,7 @@ export function TeamPage() {
                           {m.display_name || 'Anonym'}
                           {isMe && <span className="text-[10px] text-primary">(du)</span>}
                           <span className={`text-[10px] ${ROLE_LABELS[role].color}`}>
-                            {role !== 'member' && ROLE_LABELS[role][locale]}
+                            {role !== 'member' && ROLE_LABELS[role][locale as 'de' | 'en']}
                           </span>
                         </div>
                         <div className="text-[10px] text-text-muted">

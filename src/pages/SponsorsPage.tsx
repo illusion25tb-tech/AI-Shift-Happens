@@ -143,7 +143,7 @@ export function SponsorsPage() {
                     <div className="flex-1">
                       <p className="font-bold">{s.name}</p>
                       <p className="text-[10px] text-text-muted uppercase">
-                        {tierLabels[s.tier as keyof typeof tierLabels]?.[locale] ?? 'Sponsor'}
+                        {tierLabels[s.tier as keyof typeof tierLabels]?.[locale as 'de' | 'en'] ?? 'Sponsor'}
                       </p>
                       {s.description && <p className="text-xs text-text-secondary mt-1">{s.description}</p>}
                     </div>

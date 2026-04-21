@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
+import type { Locale } from '../types'
 import { supabase } from '../lib/supabase'
 import StreakBar from '../components/StreakBar'
 import LevelBar from '../components/LevelBar'
@@ -53,9 +54,9 @@ const DAILY_TIPS = {
   ],
 }
 
-function DailyTip({ locale }: { locale: 'de' | 'en' }) {
+function DailyTip({ locale }: { locale: Locale }) {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-  const tips = DAILY_TIPS[locale]
+  const tips = DAILY_TIPS[(locale as 'de' | 'en') in DAILY_TIPS ? (locale as 'de' | 'en') : 'en']
   const tip = tips[dayOfYear % tips.length]
 
   return (

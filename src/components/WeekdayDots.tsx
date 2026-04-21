@@ -28,7 +28,7 @@ export default function WeekdayDots({ playedDays, locale }: WeekdayDotsProps) {
             className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition-colors
               ${played ? 'bg-fire text-white' : isToday ? 'bg-primary text-white' : 'bg-white/6 text-text-muted'}`}
           >
-            {d[locale]}
+            {(d as Record<string, string>)[locale] ?? d.en}
           </div>
         )
       })}

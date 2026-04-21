@@ -1,6 +1,6 @@
 interface BottomCTAProps {
   onStart: () => void
-  locale: 'de' | 'en'
+  locale: string
 }
 
 export default function BottomCTA({ onStart, locale }: BottomCTAProps) {

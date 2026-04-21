@@ -8,11 +8,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { path: '/app', emoji: '🏠', label: { de: 'Home', en: 'Home' } },
-  { path: '/app/daily', emoji: '🧠', label: { de: 'Quiz', en: 'Quiz' } },
-  { path: '/app/leaderboard', emoji: '🏆', label: { de: 'Ranking', en: 'Ranking' } },
-  { path: '/app/stats', emoji: '📊', label: { de: 'Stats', en: 'Stats' } },
-  { path: '/app/profile', emoji: '👤', label: { de: 'Profil', en: 'Profile' } },
+  { path: '/app', emoji: '🏠', label: { de: 'Home', en: 'Home', tr: 'Home', es: 'Home' } },
+  { path: '/app/daily', emoji: '🧠', label: { de: 'Quiz', en: 'Quiz', tr: 'Quiz', es: 'Quiz' } },
+  { path: '/app/leaderboard', emoji: '🏆', label: { de: 'Ranking', en: 'Ranking', tr: 'Ranking', es: 'Ranking' } },
+  { path: '/app/stats', emoji: '📊', label: { de: 'Stats', en: 'Stats', tr: 'Stats', es: 'Stats' } },
+  { path: '/app/profile', emoji: '👤', label: { de: 'Profil', en: 'Profile', tr: 'Profil', es: 'Perfil' } },
 ]
 
 export default function BottomNav({ locale }: { locale: Locale }) {

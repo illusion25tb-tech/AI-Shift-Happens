@@ -1,5 +1,5 @@
 import type { Locale } from '../types'
-import { BADGES } from '../lib/constants'
+import { BADGES, lf } from '../lib/constants'
 
 interface BadgeGridProps {
   earnedBadges: string[]
@@ -19,10 +19,10 @@ export default function BadgeGrid({ earnedBadges, locale }: BadgeGridProps) {
           >
             <div className="text-2xl mb-1">{badge.emoji}</div>
             <div className="text-xs font-bold text-text-primary truncate">
-              {badge.title[locale]}
+              {lf(badge.title, locale)}
             </div>
             <div className="text-[10px] text-text-muted mt-0.5 line-clamp-2">
-              {badge.description[locale]}
+              {lf(badge.description, locale)}
             </div>
           </div>
         )

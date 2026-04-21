@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import type { AnswerResult, Locale } from '../types'
-import { LEVELS, BADGES } from '../lib/constants'
+import { LEVELS, BADGES, lf } from '../lib/constants'
 import Confetti from './Confetti'
 import AnimatedCounter from './AnimatedCounter'
 
@@ -30,7 +30,6 @@ export default function ResultScreen({
   gamificationResult,
 }: ResultScreenProps) {
   const correctCount = answers.filter(a => a.is_correct).length
-  const confidentCorrectCount = answers.filter(a => a.is_correct && a.confidence === 3).length
   const totalSpeedBonus = answers.reduce((sum, a) => sum + (a.speed_bonus ?? 0), 0)
 
   // Find matching level based on score
@@ -38,7 +37,7 @@ export default function ResultScreen({
     .reverse()
     .find(l => score >= l.xp) ?? LEVELS[0]
 
-  const levelTitle = level.title[locale]
+  const levelTitle = lf(level.title, locale)
   const levelEmoji = level.emoji
 
   // Ring: map score to 0–100% assuming max ~500 points per question as rough scale
@@ -112,7 +111,7 @@ export default function ResultScreen({
             const badge = BADGES.find(b => b.type === type)
             return badge ? (
               <span key={type} className="bg-gold/10 border border-gold/20 text-gold px-3 py-1 rounded-full text-xs font-bold">
-                {badge.emoji} {badge.title[locale]}
+                {badge.emoji} {lf(badge.title, locale)}
               </span>
             ) : null
           })}

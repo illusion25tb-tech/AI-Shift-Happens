@@ -1,8 +1,8 @@
 interface FeaturesGridProps {
-  locale: 'de' | 'en'
+  locale: string
 }
 
-const features = {
+const features: Record<string, { emoji: string; title: string; desc: string }[]> = {
   de: [
     { emoji: '🔥', title: 'Daily Streaks', desc: 'Spiele jeden Werktag. Streak verlieren tut weh.' },
     { emoji: '⚔️', title: '1v1 Challenges', desc: 'Fordere Kollegen per Link heraus.' },
@@ -15,11 +15,23 @@ const features = {
     { emoji: '🏢', title: 'Team Battles', desc: 'Department vs. department.' },
     { emoji: '🎖️', title: '12 Badges', desc: 'Collect them all.' },
   ],
+  tr: [
+    { emoji: '🔥', title: 'Günlük Seriler', desc: 'Her iş gününde oyna. Seriyi kaybetmek acıtır.' },
+    { emoji: '⚔️', title: '1v1 Meydan Okuma', desc: 'Meslektaşlarına link ile meydan oku.' },
+    { emoji: '🏢', title: 'Takım Savaşları', desc: 'Departman vs. departman.' },
+    { emoji: '🎖️', title: '12 Rozet', desc: 'Hepsini topla.' },
+  ],
+  es: [
+    { emoji: '🔥', title: 'Rachas Diarias', desc: 'Juega cada día laboral. Perder tu racha duele.' },
+    { emoji: '⚔️', title: 'Duelos 1v1', desc: 'Reta a colegas con un link.' },
+    { emoji: '🏢', title: 'Batallas de Equipo', desc: 'Departamento vs. departamento.' },
+    { emoji: '🎖️', title: '12 Badges', desc: 'Colecciónalos todos.' },
+  ],
 }
 
 export default function FeaturesGrid({ locale }: FeaturesGridProps) {
   const isDE = locale === 'de'
-  const items = features[locale]
+  const items = features[locale] ?? features['en']
 
   return (
     <section className="py-20">

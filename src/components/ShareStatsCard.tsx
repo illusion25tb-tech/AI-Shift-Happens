@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react'
 import type { Locale } from '../types'
-import { LEVELS } from '../lib/constants'
+import { LEVELS, lf } from '../lib/constants'
 
 interface ShareStatsCardProps {
   displayName: string
@@ -57,7 +57,7 @@ export default function ShareStatsCard({
 
     ctx.fillStyle = '#5B4FC7'
     ctx.font = '600 16px Arial, sans-serif'
-    ctx.fillText(`${levelInfo.emoji} ${levelInfo.title[locale]} (Level ${level})`, 40, 120)
+    ctx.fillText(`${levelInfo.emoji} ${lf(levelInfo.title, locale)} (Level ${level})`, 40, 120)
 
     // Stats boxes
     const stats = [

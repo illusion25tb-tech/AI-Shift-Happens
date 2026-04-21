@@ -168,7 +168,7 @@ export function FreePlayPage() {
                 onClick={() => startGame(cat)}
                 className="w-full bg-white/4 border border-white/6 rounded-xl px-4 py-3 text-left hover:border-primary/30 transition-colors"
               >
-                <span className="font-semibold text-sm">{CATEGORY_LABELS[cat][locale]}</span>
+                <span className="font-semibold text-sm">{CATEGORY_LABELS[cat][locale as 'de' | 'en']}</span>
               </button>
             ))}
           </div>

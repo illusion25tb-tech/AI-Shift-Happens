@@ -4,7 +4,7 @@ import { LEVELS, BADGES, CATEGORIES, CATEGORY_LABELS } from '../lib/constants'
 import type { Locale } from '../types'
 
 interface FaqSection {
-  title: Record<Locale, string>
+  title: Record<string, string>
   content: (locale: Locale) => React.ReactNode
 }
 
@@ -159,7 +159,7 @@ export function FaqPage() {
               <div key={lvl.level} className="flex items-center gap-3 bg-white/4 border border-white/6 rounded-xl px-4 py-3">
                 <span className="text-xl">{lvl.emoji}</span>
                 <div className="flex-1">
-                  <span className="font-semibold text-sm">{lvl.title[locale]}</span>
+                  <span className="font-semibold text-sm">{lvl.title[locale as 'de' | 'en']}</span>
                   <span className="text-text-muted text-xs ml-2">Level {lvl.level}</span>
                 </div>
                 <span className="text-primary text-xs font-mono">
@@ -180,8 +180,8 @@ export function FaqPage() {
               <div key={b.type} className="flex items-center gap-3 bg-white/4 border border-white/6 rounded-xl px-4 py-3">
                 <span className="text-xl">{b.emoji}</span>
                 <div>
-                  <div className="font-semibold text-sm">{b.title[locale]}</div>
-                  <div className="text-text-muted text-xs">{b.description[locale]}</div>
+                  <div className="font-semibold text-sm">{b.title[locale as 'de' | 'en']}</div>
+                  <div className="text-text-muted text-xs">{b.description[locale as 'de' | 'en']}</div>
                 </div>
               </div>
             ))}
@@ -196,7 +196,7 @@ export function FaqPage() {
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map(cat => (
               <span key={cat} className="bg-primary/10 text-primary text-xs font-semibold px-3 py-1.5 rounded-lg">
-                {CATEGORY_LABELS[cat][locale]}
+                {CATEGORY_LABELS[cat][locale as 'de' | 'en']}
               </span>
             ))}
           </div>

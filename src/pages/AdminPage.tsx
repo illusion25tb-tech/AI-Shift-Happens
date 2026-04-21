@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
-import { CATEGORIES, CATEGORY_LABELS } from '../lib/constants'
+import { CATEGORIES, CATEGORY_LABELS, lf } from '../lib/constants'
 import type { CategoryId } from '../lib/constants'
 
 type AdminTab = 'dashboard' | 'questions' | 'users' | 'sponsors' | 'reset'
@@ -107,7 +107,7 @@ function QuestionsTab() {
         >
           <option value="">Alle Kat.</option>
           {CATEGORIES.map(c => (
-            <option key={c} value={c}>{CATEGORY_LABELS[c][locale]}</option>
+            <option key={c} value={c}>{lf(CATEGORY_LABELS[c], locale)}</option>
           ))}
         </select>
         <select
@@ -238,7 +238,7 @@ function CreateQuestionForm({ onCreated }: { onCreated: () => void }) {
           <option value="es">ES</option>
         </select>
         <select value={category} onChange={e => setCategory(e.target.value as CategoryId)} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
-          {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c][uiLocale]}</option>)}
+          {CATEGORIES.map(c => <option key={c} value={c}>{lf(CATEGORY_LABELS[c], uiLocale)}</option>)}
         </select>
         <select value={difficulty} onChange={e => setDifficulty(Number(e.target.value))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
           <option value={1}>Leicht</option>

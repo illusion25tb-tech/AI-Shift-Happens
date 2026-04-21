@@ -413,7 +413,7 @@ export function ProfilePage() {
                 {stats.categoryBreakdown.slice(0, 5).map(c => (
                   <div key={c.category} className="flex items-center justify-between text-xs">
                     <span className="text-text-secondary">
-                      {CATEGORY_LABELS[c.category as CategoryId]?.[locale] ?? c.category}
+                      {CATEGORY_LABELS[c.category as CategoryId]?.[locale as 'de' | 'en'] ?? c.category}
                     </span>
                     <span className="font-mono text-text-muted">{c.count}×</span>
                   </div>

@@ -6,7 +6,7 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 interface HeroSectionProps {
   onStart: () => void
-  locale: 'de' | 'en'
+  locale: string
 }
 
 export default function HeroSection({ onStart, locale }: HeroSectionProps) {

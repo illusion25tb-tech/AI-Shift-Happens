@@ -1,8 +1,8 @@
 interface HowItWorksProps {
-  locale: 'de' | 'en'
+  locale: string
 }
 
-const cards = {
+const cards: Record<string, { emoji: string; title: string; desc: string }[]> = {
   de: [
     {
       emoji: '🎯',
@@ -37,11 +37,45 @@ const cards = {
       desc: 'Collect XP, level up through 6 levels, become weekly champion.',
     },
   ],
+  tr: [
+    {
+      emoji: '🎯',
+      title: 'Günlük Quiz Oyna',
+      desc: 'Her iş gününde 3 senaryo + 1 bonus. Herkes için aynı sorular.',
+    },
+    {
+      emoji: '🧠',
+      title: 'Zihniyetini Geliştir',
+      desc: 'Her cevap neden doğru veya riskli olduğunu açıklar.',
+    },
+    {
+      emoji: '🏆',
+      title: 'Şampiyon Ol',
+      desc: 'XP topla, 6 seviyeden geç, haftalık şampiyon ol.',
+    },
+  ],
+  es: [
+    {
+      emoji: '🎯',
+      title: 'Juega el Quiz Diario',
+      desc: 'Cada día laboral 3 escenarios + 1 bonus. Las mismas preguntas para todos.',
+    },
+    {
+      emoji: '🧠',
+      title: 'Entrena tu Mindset',
+      desc: 'Cada respuesta explica por qué es correcta o arriesgada.',
+    },
+    {
+      emoji: '🏆',
+      title: 'Conviértete en Campeón',
+      desc: 'Acumula XP, sube por 6 niveles, conviértete en campeón semanal.',
+    },
+  ],
 }
 
 export default function HowItWorks({ locale }: HowItWorksProps) {
   const isDE = locale === 'de'
-  const items = cards[locale]
+  const items = cards[locale] ?? cards['en']
 
   return (
     <section id="how-it-works" className="py-20">

@@ -1,3 +1,10 @@
+import type { Locale } from '../types'
+
+/** Locale-Fallback: gibt obj[locale] oder obj.en zurück (für Objekte ohne tr/es-Übersetzung) */
+export function lf<T extends { de: string; en: string }>(obj: T, locale: Locale): string {
+  return (obj as unknown as Record<string, string>)[locale] ?? obj.en
+}
+
 export const CATEGORIES = [
   'prompt-architecture',
   'creativity-ideation',
