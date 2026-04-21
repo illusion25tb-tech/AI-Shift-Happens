@@ -18,7 +18,7 @@ interface UseAuthReturn {
   signOut: () => Promise<void>
 }
 
-const REDIRECT_URL = 'https://ai-shift-happens.com/app'
+const REDIRECT_URL = window.location.origin + import.meta.env.BASE_URL + 'app'
 
 async function fetchProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase

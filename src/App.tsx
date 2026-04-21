@@ -56,7 +56,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
         <CookieConsent locale={locale} />
         <BottomNav locale={locale} />
