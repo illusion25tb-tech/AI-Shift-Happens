@@ -69,6 +69,13 @@ async function teamCall(action: string, body: Record<string, unknown> = {}) {
   return data
 }
 
+function getCalendarWeek(dateStr: string): number {
+  const d = new Date(dateStr)
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+}
+
 const ROLE_LABELS = {
   captain: { de: 'Captain', en: 'Captain', color: 'text-gold' },
   admin: { de: 'Admin', en: 'Admin', color: 'text-primary' },
@@ -547,7 +554,7 @@ export function TeamPage() {
                             <span className="font-mono font-bold text-fire">{theirScore}</span>
                           </div>
                           <div className="text-[10px] text-text-muted mt-1 text-center">
-                            KW {ch.week_start}
+                            KW {getCalendarWeek(ch.week_start)}
                           </div>
                         </div>
                       )

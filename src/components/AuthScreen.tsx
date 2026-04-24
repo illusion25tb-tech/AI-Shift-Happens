@@ -55,7 +55,7 @@ export default function AuthScreen() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <img src="/mindset-shift/shift-logo.png" alt="AI-Shift Happens" className="w-40 mx-auto mb-4" />
+          <img src={import.meta.env.BASE_URL + 'shift-logo.png'} alt="AI-Shift Happens" className="w-40 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-text-primary mb-2">AI-Shift Happens</h1>
           <p className="text-text-secondary">{t('auth.tagline')}</p>
         </div>
@@ -225,7 +225,7 @@ export default function AuthScreen() {
                   if (!email) { setError(locale === 'de' ? 'Bitte E-Mail eingeben' : 'Please enter email'); return }
                   setSubmitting(true)
                   const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/mindset-shift/app/profile',
+                    redirectTo: window.location.origin + import.meta.env.BASE_URL + 'app/profile',
                   })
                   setSubmitting(false)
                   if (resetErr) { setError(resetErr.message) }

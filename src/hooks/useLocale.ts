@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Locale } from '../types'
+import { supabase } from '../lib/supabase'
 
 type Messages = Record<string, string>
 
@@ -29,6 +30,12 @@ export function useLocale() {
   function setLocale(l: Locale) {
     localStorage.setItem('locale', l)
     setLocaleState(l)
+    // Sync locale to profile so backend (get-daily-quiz) serves questions in the right language
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        supabase.from('profiles').update({ locale: l }).eq('id', session.user.id).then(() => {})
+      }
+    })
   }
 
   const t = useCallback(

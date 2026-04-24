@@ -384,7 +384,38 @@ Deno.serve(async (req: Request) => {
         .order('created_at', { ascending: false })
         .limit(10)
 
-      return jsonRes({ challenges: challenges ?? [] })
+      if (!challenges || challenges.length === 0) return jsonRes({ challenges: [] })
+
+      // For active challenges, compute live scores from weekly_scores instead of
+      // the stored 0s (those are only written when weekly-champion resolves the battle).
+      const enriched = await Promise.all(challenges.map(async (ch: any) => {
+        if (ch.status === 'completed') return ch
+
+        const [cMembers, dMembers] = await Promise.all([
+          db.from('profiles').select('id').eq('team_id', ch.challenger_team_id),
+          db.from('profiles').select('id').eq('team_id', ch.challenged_team_id),
+        ])
+
+        const cIds = (cMembers.data ?? []).map((m: any) => m.id)
+        const dIds = (dMembers.data ?? []).map((m: any) => m.id)
+
+        const [cScores, dScores] = await Promise.all([
+          cIds.length > 0
+            ? db.from('weekly_scores').select('total_score').eq('week_start', ch.week_start).in('user_id', cIds)
+            : { data: [] },
+          dIds.length > 0
+            ? db.from('weekly_scores').select('total_score').eq('week_start', ch.week_start).in('user_id', dIds)
+            : { data: [] },
+        ])
+
+        return {
+          ...ch,
+          challenger_score: (cScores.data ?? []).reduce((s: number, r: any) => s + (r.total_score ?? 0), 0),
+          challenged_score: (dScores.data ?? []).reduce((s: number, r: any) => s + (r.total_score ?? 0), 0),
+        }
+      }))
+
+      return jsonRes({ challenges: enriched })
     }
 
     return jsonRes({ error: `Unknown action: ${action}` }, 400)
