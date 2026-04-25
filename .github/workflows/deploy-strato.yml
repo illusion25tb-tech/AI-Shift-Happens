@@ -35,6 +35,9 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Substitute base path in .htaccess
+        run: sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/.htaccess
+
       - name: Rename dist for upload
         run: mv dist ai-shift-happens
 
