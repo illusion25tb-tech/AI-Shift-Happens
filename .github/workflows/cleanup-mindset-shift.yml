@@ -1,0 +1,65 @@
+name: Cleanup /mindset-shift/ on Strato (one-shot)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DELETE to confirm deletion of /site/mindset-shift/'
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirmation gate
+        run: |
+          if [ "${{ inputs.confirm }}" != "DELETE" ]; then
+            echo "Confirmation failed. Got '${{ inputs.confirm }}', expected 'DELETE'."
+            exit 1
+          fi
+          echo "Confirmation OK — proceeding with cleanup."
+
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -qq -y lftp
+
+      - name: List target directory before deletion (audit log)
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" sftp://"$FTP_SERVER" -e "
+            set sftp:auto-confirm yes;
+            cd site/mindset-shift && cls -la;
+            quit
+          "
+
+      - name: Delete /site/mindset-shift/ recursively
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" sftp://"$FTP_SERVER" -e "
+            set sftp:auto-confirm yes;
+            rm -r -f site/mindset-shift;
+            quit
+          "
+
+      - name: Verify deletion
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" sftp://"$FTP_SERVER" -e "
+            set sftp:auto-confirm yes;
+            cd site && cls -la;
+            quit
+          " | tee /tmp/after.txt
+          if grep -q " mindset-shift" /tmp/after.txt; then
+            echo "ERROR: /site/mindset-shift/ still exists!"
+            exit 1
+          fi
+          echo "OK: /site/mindset-shift/ removed."
