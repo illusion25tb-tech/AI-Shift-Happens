@@ -107,7 +107,7 @@ export default function ShareStatsCard({
     // Footer
     ctx.fillStyle = '#5C586E'
     ctx.font = '12px Arial, sans-serif'
-    ctx.fillText('tbai.com.de/mindset-shift', 40, H - 30)
+    ctx.fillText(`${window.location.host}${import.meta.env.BASE_URL.replace(/\/$/, '')}`, 40, H - 30)
 
     ctx.fillStyle = '#A8A4BA'
     ctx.font = '600 12px Arial, sans-serif'

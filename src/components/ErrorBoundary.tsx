@@ -33,7 +33,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           <button
             onClick={() => {
               this.setState({ hasError: false, error: null })
-              window.location.href = '/mindset-shift/'
+              window.location.href = import.meta.env.BASE_URL
             }}
             className="px-6 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-hover transition-colors"
           >

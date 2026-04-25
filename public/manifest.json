@@ -2,25 +2,25 @@
   "name": "AI-Shift Happens",
   "short_name": "Shift Happens",
   "description": "Das tägliche KI-Mindset Quiz",
-  "start_url": "/mindset-shift/app",
-  "scope": "/mindset-shift/",
+  "start_url": "__BASE_PATH__app",
+  "scope": "__BASE_PATH__",
   "display": "standalone",
   "background_color": "#080B1A",
   "theme_color": "#5B4FC7",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/mindset-shift/icons/icon-192.png",
+      "src": "__BASE_PATH__icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/mindset-shift/icons/icon-512.png",
+      "src": "__BASE_PATH__icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/mindset-shift/icons/icon-512.png",
+      "src": "__BASE_PATH__icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

@@ -7,21 +7,21 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'AI-Shift Happens';
   const options = {
     body: data.body || 'Vergiss nicht dein Daily Quiz!',
-    icon: '/mindset-shift/favicon.svg',
-    badge: '/mindset-shift/favicon.svg',
+    icon: '__BASE_PATH__favicon.svg',
+    badge: '__BASE_PATH__favicon.svg',
     tag: data.tag || 'daily-reminder',
-    data: { url: data.url || '/mindset-shift/app/daily' },
+    data: { url: data.url || '__BASE_PATH__app/daily' },
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data?.url || '/mindset-shift/app';
+  const url = event.notification.data?.url || '__BASE_PATH__app';
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
       for (const client of clients) {
-        if (client.url.includes('/mindset-shift/') && 'focus' in client) {
+        if (client.url.includes('__BASE_PATH__') && 'focus' in client) {
           return client.focus();
         }
       }

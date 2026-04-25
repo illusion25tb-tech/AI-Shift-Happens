@@ -125,7 +125,7 @@ export default function ResultScreen({
           const postText = locale === 'de'
             ? `🧠 Gerade mein AI-Mindset getestet: ${score} Punkte, ${pct}% richtig!\n\nAI-Shift Happens — das tägliche KI-Quiz. Wie AI-ready bist du?\n\n👉 `
             : `🧠 Just tested my AI mindset: ${score} points, ${pct}% correct!\n\nAI-Shift Happens — the daily AI quiz. How AI-ready are you?\n\n👉 `
-          const url = 'https://tbai.com.de/mindset-shift/'
+          const url = `${window.location.origin}${import.meta.env.BASE_URL}`
 
           // Copy post text to clipboard, then open LinkedIn
           navigator.clipboard.writeText(postText + url).then(() => {

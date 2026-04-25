@@ -39,9 +39,9 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
           minHeight: '100%',
           minWidth: '100%',
         }}
-        poster="/mindset-shift/shift-logo.png"
+        poster={`${import.meta.env.BASE_URL}shift-logo.png`}
       >
-        <source src="/mindset-shift/hero-loop.mp4" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}hero-loop.mp4`} type="video/mp4" />
       </video>
 
       {/* Dark overlay for text readability */}

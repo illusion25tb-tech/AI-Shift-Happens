@@ -27,7 +27,7 @@ export default function CookieConsent({ locale }: { locale: Locale }) {
             ? 'Diese App nutzt nur technisch notwendige Cookies und LocalStorage für Login und Spielfortschritt. Kein Tracking, keine Werbung.'
             : 'This app only uses technically necessary cookies and LocalStorage for login and game progress. No tracking, no ads.'}
           {' '}
-          <a href="/mindset-shift/app/privacy" className="text-primary hover:underline">
+          <a href={`${import.meta.env.BASE_URL}app/privacy`} className="text-primary hover:underline">
             {locale === 'de' ? 'Datenschutz' : 'Privacy'}
           </a>
         </p>

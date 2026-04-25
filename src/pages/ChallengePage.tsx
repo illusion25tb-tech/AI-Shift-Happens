@@ -107,7 +107,7 @@ export function ChallengePage() {
         return
       }
 
-      const link = `${window.location.origin}/mindset-shift/app/challenge?id=${data.challenge_id}`
+      const link = `${window.location.origin}${import.meta.env.BASE_URL}app/challenge?id=${data.challenge_id}`
       setChallengeLink(link)
 
       // Now load and play the challenge ourselves
@@ -347,7 +347,7 @@ export function ChallengePage() {
           {!challengeLink && challengeInfo && (
             <button
               onClick={() => {
-                const link = `${window.location.origin}/mindset-shift/app/challenge?id=${challengeInfo.challenge_id}`
+                const link = `${window.location.origin}${import.meta.env.BASE_URL}app/challenge?id=${challengeInfo.challenge_id}`
                 setChallengeLink(link)
                 navigator.clipboard.writeText(link)
                 setCopied(true)

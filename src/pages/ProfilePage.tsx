@@ -346,7 +346,7 @@ export function ProfilePage() {
               <span className="font-mono text-primary font-bold text-xs">{profile.invite_code}</span>
               <button
                 onClick={() => {
-                  const url = `${window.location.origin}/mindset-shift/login?ref=${profile.invite_code}`
+                  const url = `${window.location.origin}${import.meta.env.BASE_URL}login?ref=${profile.invite_code}`
                   navigator.clipboard.writeText(url)
                 }}
                 className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary"

@@ -1,5 +1,5 @@
 const REMINDER_KEY = 'shift-happens-reminder'
-const SW_PATH = '/mindset-shift/sw.js'
+const SW_PATH = `${import.meta.env.BASE_URL}sw.js`
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) return null
@@ -63,7 +63,7 @@ export function scheduleLocalReminder(): void {
     localStorage.setItem('shift-happens-last-reminder', today)
     new Notification('AI-Shift Happens 🧠', {
       body: 'Dein Daily Quiz wartet! Halte deinen Streak am Leben.',
-      icon: '/mindset-shift/favicon.svg',
+      icon: `${import.meta.env.BASE_URL}favicon.svg`,
       tag: 'daily-reminder',
     })
   }, checkInterval)

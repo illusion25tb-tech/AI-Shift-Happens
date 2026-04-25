@@ -194,7 +194,7 @@ export function DashboardPage() {
 
       {/* Header */}
       <header className="flex items-center justify-between px-5 py-4 border-b border-white/6">
-        <img src="/mindset-shift/shift-logo.png" alt="AI-Shift Happens" className="h-8" />
+        <img src={`${import.meta.env.BASE_URL}shift-logo.png`} alt="AI-Shift Happens" className="h-8" />
         <div className="flex items-center gap-3">
           <select
             value={locale}

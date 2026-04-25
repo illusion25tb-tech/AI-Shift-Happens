@@ -203,7 +203,7 @@ export function TeamPage() {
   }
 
   const inviteUrl = team?.invite_code
-    ? `${window.location.origin}/mindset-shift/app/team?code=${team.invite_code}`
+    ? `${window.location.origin}${import.meta.env.BASE_URL}app/team?code=${team.invite_code}`
     : null
 
   const inviteText = (name: string) => locale === 'de'

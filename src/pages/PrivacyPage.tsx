@@ -19,7 +19,7 @@ export function PrivacyPage() {
         <section>
           <h2 className="text-lg font-bold text-text-primary mb-2">{de ? 'Impressum' : 'Legal Notice'}</h2>
           <div className="flex items-start gap-4">
-            <img src="/mindset-shift/tbai-cloud-logo.png" alt="tbai" className="w-16 rounded-lg mt-1" />
+            <img src={`${import.meta.env.BASE_URL}tbai-cloud-logo.png`} alt="tbai" className="w-16 rounded-lg mt-1" />
             <div>
               <p className="font-semibold">tbai — Thorsten Behder AI Consulting</p>
               <p>Thorsten Behder</p>
