@@ -99,7 +99,7 @@ export default function ResultScreen({
         <div className="flex items-center justify-center gap-4 my-3">
           <span className="text-teal font-mono font-bold text-lg">+{gamificationResult.xp_gained} XP</span>
           {gamificationResult.streak > 0 && (
-            <span className="text-fire font-bold text-sm">🔥 {gamificationResult.streak} {t('result.streakCount', { days: gamificationResult.streak })}</span>
+            <span className="text-fire font-bold text-sm">🔥 {t('result.streakCount', { days: gamificationResult.streak })}</span>
           )}
         </div>
       )}

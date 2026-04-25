@@ -67,7 +67,7 @@ export default function FeedbackCard({ result, streak, isLast, onNext, t }: Feed
 
         {is_correct && streak > 1 && (
           <span className="inline-flex items-center gap-1 text-fire font-semibold text-sm px-3 py-1 rounded-full bg-fire/10 border border-fire/20">
-            🔥 {streak}x Streak
+            🔥 {streak}× Streak
           </span>
         )}
       </div>

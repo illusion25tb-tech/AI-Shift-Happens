@@ -14,7 +14,7 @@ export default function StreakBar({ streak, playedDays, locale, t }: StreakBarPr
       <div className="text-3xl">🔥</div>
       <div className="flex-1">
         <div className="text-2xl font-extrabold text-fire">{streak}</div>
-        <div className="text-xs text-text-muted">{t('dashboard.streakDays')}</div>
+        <div className="text-xs text-text-muted">{t(streak === 1 ? 'dashboard.streakDay' : 'dashboard.streakDays')}</div>
       </div>
       <WeekdayDots playedDays={playedDays} locale={locale} />
     </div>
