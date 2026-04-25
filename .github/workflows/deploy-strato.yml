@@ -35,11 +35,12 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Substitute base path in static files
+      - name: Substitute base path and site URL in static files
         run: |
           sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/.htaccess
           sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/manifest.json
           sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/sw.js
+          sed -i "s|__SITE_URL__|https://tbai.com.de/ai-shift-happens|g" dist/index.html
 
       - name: Rename dist for upload
         run: mv dist ai-shift-happens
