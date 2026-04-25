@@ -24,3 +24,9 @@ dist-ssr
 *.sln
 *.sw?
 supabase/.temp/
+
+# Test artifacts (Playwright snapshots, ad-hoc screenshots, dump files in repo root)
+/.playwright-cli/
+/*.png
+/*.yml
+!/.github/**/*.yml
