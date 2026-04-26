@@ -10,17 +10,18 @@ tags: [prelaunch, outage, i18n, bugs, launch]
 
 ## TL;DR — Launch-Status
 
-**Launch-Empfehlung morgen: 🟡 BEDINGT GO**
+**Launch-Empfehlung morgen: 🟢 GO** (nach 1 Sicht-Check)
 
 Vor Launch unbedingt:
-- [ ] Direkten App-Aufruf testen: https://tbai.com.de/ai-shift-happens/app — falls "Loading…" hängt: User über Landing einsteigen lassen (siehe Bug #5)
-- [ ] Sponsor-Description Mojibake "fÃ¼r" → "fuer" oder "für" im Admin-UI fixen (1 Klick, siehe Bug #4)
+- [ ] Sponsor-Description Mojibake "fÃ¼r" → "für" oder "fuer" im Admin-UI fixen (1 Klick, 30 Sek, siehe Bug #4)
+
+Update vom späten Abend (commits `1c8bb48`, `17a5674`):
+- ✅ Bug #2 (Profile-Locale-Reset) gefixt — User-Wahl gewinnt jetzt gegen DB-Default
+- ✅ Bug #5 (`/app` direct-Aufruf hängt) gefixt — useAuth race condition behoben + 8s Safety-Timer
+- ✅ Bug #6 (Team-Page hardcoded DE-Strings) gefixt — 3 Stellen i18n-fähig gemacht
 
 Nice-to-have nach Launch:
 - TR/ES Übersetzungen für Sponsor + Prizes pflegen (Admin-UI)
-- Profile-Locale-Reset-Bug fixen (#2)
-- /app direct-Aufruf hängt fixen (#5)
-- Team-Page i18n (#6)
 
 ---
 
@@ -94,8 +95,8 @@ Schema-Settings im Dashboard checken, nicht stundenlang im Code suchen.
 **Severity**: ~~High~~ → behoben. logo_url ist jetzt korrekt
 (`https://tbai.com.de/ai-shift-happens/tbai-cloud-logo.png`).
 
-### Bug #2 — Profile-Locale-Reset-Bug
-**Severity**: High für EN-Marketing · **Aufwand**: ~30 Min
+### Bug #2 — Profile-Locale-Reset-Bug ✅ GEFIXT (`1c8bb48`)
+**Severity**: ~~High für EN-Marketing~~ → behoben · **Fix**: useAuth syncLocaleToProfile()
 
 **Symptom**: User wählt EN auf Landing → loggt sich ein → ist auf DE.
 Der eingeloggte User sieht alles in DE, egal was er vorher gewählt hat.
@@ -139,8 +140,8 @@ Latin-1 → UTF-8 Doppel-Encoding). Mein Fehler.
 
 **Bonus**: Gleichzeitig EN/TR/ES für Prize + Sponsor pflegen.
 
-### Bug #5 — Direkter `/app`-Aufruf hängt auf "Loading…"
-**Severity**: Medium · **Aufwand**: ~30 Min
+### Bug #5 — Direkter `/app`-Aufruf hängt auf "Loading…" ✅ GEFIXT (`1c8bb48`)
+**Severity**: ~~Medium~~ → behoben · **Fix**: useAuth race-condition + mounted-Flag + 8s Safety-Timer
 
 **Symptom**:
 - `https://tbai.com.de/ai-shift-happens/app` direkt aufrufen → hängt forever
@@ -158,8 +159,8 @@ Schwarzbild. Workaround: einmal über Landing einsteigen, dann funktioniert es.
 **Fix-Idee**: useAuth refactoren, sodass `getSession` initial-Pfad UND
 `onAuthStateChange` getrennt sind. Profile nur bei einem der beiden fetchen.
 
-### Bug #6 — Team-Page komplett DE (auch im EN-Modus)
-**Severity**: Medium · **Aufwand**: ~30-60 Min
+### Bug #6 — Team-Page komplett DE (auch im EN-Modus) ✅ GEFIXT (`17a5674`)
+**Severity**: ~~Medium~~ → behoben · **Fix**: 3 hardcoded Strings i18n-bar gemacht. Hauptproblem war eigentlich Bug #2 (Profile-Locale-Reset).
 
 **Symptom**: `/app/team` zeigt "Mein Team", "Team Battles", "Wochen-Score",
 "Quizzes diese Woche", "Avg. Level", "Bester Streak", "Captain — Kann
