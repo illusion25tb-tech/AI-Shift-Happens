@@ -366,7 +366,7 @@ export function TeamPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold truncate flex items-center gap-1.5">
-                          {m.display_name || 'Anonym'}
+                          {m.display_name || (locale === 'de' ? 'Anonym' : 'Anonymous')}
                           {isMe && <span className="text-[10px] text-primary">(du)</span>}
                           <span className={`text-[10px] ${ROLE_LABELS[role].color}`}>
                             {role !== 'member' && ROLE_LABELS[role][locale as 'de' | 'en']}
@@ -437,7 +437,7 @@ export function TeamPage() {
               <div className="text-[10px] text-text-muted space-y-0.5 px-1">
                 <p>👑 <span className="text-gold">Captain</span> — {locale === 'de' ? 'Kann alles: einladen, Admin ernennen/entfernen, kicken' : 'Can do everything: invite, promote/demote, kick'}</p>
                 <p>🛡️ <span className="text-primary">Admin</span> — {locale === 'de' ? 'Kann einladen und Mitglieder kicken' : 'Can invite and kick members'}</p>
-                <p>👤 Mitglied — {locale === 'de' ? 'Kann spielen und Ranking sehen' : 'Can play and see rankings'}</p>
+                <p>👤 <span className="text-text-muted">{ROLE_LABELS.member[locale as 'de' | 'en']}</span> — {locale === 'de' ? 'Kann spielen und Ranking sehen' : 'Can play and see rankings'}</p>
               </div>
 
               <button
@@ -554,7 +554,7 @@ export function TeamPage() {
                             <span className="font-mono font-bold text-fire">{theirScore}</span>
                           </div>
                           <div className="text-[10px] text-text-muted mt-1 text-center">
-                            KW {getCalendarWeek(ch.week_start)}
+                            {locale === 'de' ? 'KW' : 'Week'} {getCalendarWeek(ch.week_start)}
                           </div>
                         </div>
                       )
