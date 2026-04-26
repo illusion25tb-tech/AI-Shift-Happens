@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import type { Locale } from '../types'
 import { supabase } from '../lib/supabase'
 
@@ -6,7 +7,15 @@ type Messages = Record<string, string>
 
 let cachedMessages: Record<Locale, Messages | null> = { de: null, en: null, tr: null, es: null }
 
-export function useLocale() {
+interface LocaleContextValue {
+  locale: Locale
+  setLocale: (l: Locale) => void
+  t: (key: string, vars?: Record<string, string | number>) => string
+}
+
+const LocaleContext = createContext<LocaleContextValue | null>(null)
+
+export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(
     () => (localStorage.getItem('locale') as Locale) || 'de'
   )
@@ -51,5 +60,15 @@ export function useLocale() {
     [messages]
   )
 
-  return { locale, setLocale, t }
+  return (
+    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+      {children}
+    </LocaleContext.Provider>
+  )
+}
+
+export function useLocale(): LocaleContextValue {
+  const ctx = useContext(LocaleContext)
+  if (!ctx) throw new Error('useLocale must be used within LocaleProvider')
+  return ctx
 }
