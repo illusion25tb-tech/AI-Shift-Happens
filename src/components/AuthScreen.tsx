@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 
 export default function AuthScreen() {
   const { signInWithGoogle, signInWithLinkedIn, signInWithApple, signInWithMicrosoft, signInWithMagicLink, signInWithEmail, signUpWithEmail } = useAuth()
-  const { locale, t } = useLocale()
+  const { t } = useLocale()
   const [searchParams] = useSearchParams()
 
   const [isSignUp, setIsSignUp] = useState(false)
@@ -36,7 +36,7 @@ export default function AuthScreen() {
     try {
       if (magicLinkMode) {
         await signInWithMagicLink(email)
-        setSuccessMessage(locale === 'de' ? 'Magic Link gesendet! Prüfe deine E-Mails.' : 'Magic link sent! Check your email.')
+        setSuccessMessage(t('auth.magicLinkSent'))
       } else if (isSignUp) {
         await signUpWithEmail(email, password)
         setSuccessMessage(t('auth.emailVerification'))
@@ -85,7 +85,7 @@ export default function AuthScreen() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
             </svg>
-            {locale === 'de' ? 'Mit Apple anmelden' : 'Sign in with Apple'}
+            {t('auth.signInWithApple')}
           </button>
 
           {/* Microsoft */}
@@ -102,7 +102,7 @@ export default function AuthScreen() {
               <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
               <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
             </svg>
-            {locale === 'de' ? 'Mit Microsoft anmelden' : 'Sign in with Microsoft'}
+            {t('auth.signInWithMicrosoft')}
           </button>
 
           {/* LinkedIn */}
@@ -134,13 +134,13 @@ export default function AuthScreen() {
                 className="w-full flex items-center justify-center gap-2 bg-primary/10 text-primary font-semibold py-3 px-4 rounded-xl hover:bg-primary/20 transition-colors border border-primary/20"
               >
                 <span className="text-lg">✉️</span>
-                {locale === 'de' ? 'Magic Link per E-Mail' : 'Magic Link via Email'}
+                {t('auth.magicLink')}
               </button>
               <button
                 onClick={() => { setMagicLinkMode(false); setShowEmailForm(true) }}
                 className="w-full text-text-muted text-sm hover:text-text-secondary transition-colors py-1"
               >
-                {locale === 'de' ? 'Mit E-Mail & Passwort anmelden' : 'Sign in with email & password'}
+                {t('auth.signInWithEmailPassword')}
               </button>
             </div>
           )}
@@ -180,7 +180,7 @@ export default function AuthScreen() {
                 {submitting
                   ? t('auth.submitting')
                   : magicLinkMode
-                  ? (locale === 'de' ? 'Magic Link senden' : 'Send Magic Link')
+                  ? t('auth.sendMagicLink')
                   : isSignUp
                   ? t('auth.signUp')
                   : t('auth.signIn')}
@@ -196,9 +196,7 @@ export default function AuthScreen() {
                 }}
                 className="text-xs text-text-muted hover:text-primary transition-colors w-full text-center"
               >
-                {magicLinkMode
-                  ? (locale === 'de' ? 'Lieber mit Passwort anmelden' : 'Prefer password sign in')
-                  : (locale === 'de' ? 'Lieber Magic Link per E-Mail' : 'Prefer Magic Link via email')}
+                {magicLinkMode ? t('auth.preferPassword') : t('auth.preferMagicLink')}
               </button>
             </form>
           )}
@@ -209,20 +207,16 @@ export default function AuthScreen() {
               onClick={() => setShowForgotPw(true)}
               className="text-xs text-text-muted hover:text-primary transition-colors w-full text-center"
             >
-              {locale === 'de' ? 'Passwort vergessen?' : 'Forgot password?'}
+              {t('auth.forgotPassword')}
             </button>
           )}
 
           {showForgotPw && (
             <div className="bg-bg-mid border border-bg-card-border rounded-xl p-4 space-y-2">
-              <p className="text-xs text-text-secondary">
-                {locale === 'de'
-                  ? 'E-Mail eingeben — du bekommst einen Link zum Zurücksetzen.'
-                  : 'Enter your email — you will receive a reset link.'}
-              </p>
+              <p className="text-xs text-text-secondary">{t('auth.resetExplain')}</p>
               <button
                 onClick={async () => {
-                  if (!email) { setError(locale === 'de' ? 'Bitte E-Mail eingeben' : 'Please enter email'); return }
+                  if (!email) { setError(t('auth.enterEmail')); return }
                   setSubmitting(true)
                   const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + import.meta.env.BASE_URL + 'app/profile',
@@ -230,14 +224,14 @@ export default function AuthScreen() {
                   setSubmitting(false)
                   if (resetErr) { setError(resetErr.message) }
                   else {
-                    setSuccessMessage(locale === 'de' ? 'Reset-Link gesendet!' : 'Reset link sent!')
+                    setSuccessMessage(t('auth.resetSent'))
                     setShowForgotPw(false)
                   }
                 }}
                 disabled={submitting}
                 className="w-full bg-primary/20 text-primary font-semibold py-2 rounded-lg text-sm hover:bg-primary/30 transition-colors disabled:opacity-50"
               >
-                {submitting ? '...' : (locale === 'de' ? 'Reset-Link senden' : 'Send reset link')}
+                {submitting ? '...' : t('auth.sendResetLink')}
               </button>
             </div>
           )}

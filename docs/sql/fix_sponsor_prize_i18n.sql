@@ -30,6 +30,16 @@ SET
   )
 WHERE title = 'AI Enablement Workshop';
 
+-- 3) Migration 014: Spanish (es) locale für Fragen-Tabellen freischalten
+ALTER TABLE questions DROP CONSTRAINT IF EXISTS questions_locale_check;
+ALTER TABLE questions ADD CONSTRAINT questions_locale_check CHECK (locale IN ('de', 'en', 'tr', 'es'));
+
+ALTER TABLE daily_quizzes DROP CONSTRAINT IF EXISTS daily_quizzes_locale_check;
+ALTER TABLE daily_quizzes ADD CONSTRAINT daily_quizzes_locale_check CHECK (locale IN ('de', 'en', 'tr', 'es'));
+
+ALTER TABLE email_log DROP CONSTRAINT IF EXISTS email_log_locale_check;
+ALTER TABLE email_log ADD CONSTRAINT email_log_locale_check CHECK (locale IN ('de', 'en', 'tr', 'es'));
+
 -- Verifikation
 SELECT
   'sponsor' as type, name, description_i18n
@@ -40,3 +50,9 @@ SELECT
   'prize ' || prize_type, title, jsonb_build_object('title', title_i18n, 'desc', description_i18n)
 FROM public.prizes
 WHERE title = 'AI Enablement Workshop';
+
+-- Diagnose: Wieviele Fragen pro Locale?
+SELECT locale, count(*) as count
+FROM questions
+GROUP BY locale
+ORDER BY locale;
