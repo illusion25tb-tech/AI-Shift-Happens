@@ -54,6 +54,20 @@ export function ProfilePage() {
   // Account deletion
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
+  // SHIFT-Mode local state (re-renders nach Toggle, profile aus useAuth ist stale)
+  const [shiftMode, setShiftMode] = useState<'serious' | 'cheeky'>('cheeky')
+  const [shiftSaving, setShiftSaving] = useState(false)
+
+  // Reminder local state (isReminderEnabled liest localStorage, triggert keinen rerender)
+  const [reminderOn, setReminderOn] = useState(false)
+  const [reminderSaving, setReminderSaving] = useState(false)
+
+  // Sync local state mit profile + localStorage on mount/profile-change
+  useEffect(() => {
+    if (profile) setShiftMode(profile.shift_mode ?? 'cheeky')
+    setReminderOn(isReminderEnabled())
+  }, [profile])
+
   useEffect(() => {
     if (!profile) return
     setCompanyInput(profile.company_name ?? '')
@@ -539,20 +553,23 @@ export function ProfilePage() {
           </p>
           <div className="flex gap-2">
             {(['serious', 'cheeky'] as const).map(mode => {
-              const isActive = (profile?.shift_mode ?? 'cheeky') === mode
+              const isActive = shiftMode === mode
               return (
                 <button
                   key={mode}
+                  disabled={shiftSaving}
                   onClick={async () => {
+                    if (shiftMode === mode || shiftSaving) return
+                    setShiftSaving(true)
+                    setShiftMode(mode) // optimistic UI update
                     const { data: { session } } = await supabase.auth.getSession()
                     if (session) {
-                      await supabase.from('profiles').update({ shift_mode: mode }).eq('id', session.user.id)
-                      // Trigger profile refresh
-                      setCompanySaved(true)
-                      setTimeout(() => setCompanySaved(false), 1500)
+                      const { error } = await supabase.from('profiles').update({ shift_mode: mode }).eq('id', session.user.id)
+                      if (error) setShiftMode(profile?.shift_mode ?? 'cheeky') // revert on error
                     }
+                    setShiftSaving(false)
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl border text-center transition-all duration-200"
+                  className="flex-1 py-2 px-3 rounded-xl border text-center transition-all duration-200 disabled:opacity-60"
                   style={{
                     borderColor: isActive ? 'var(--color-primary)' : 'rgba(255,255,255,0.06)',
                     backgroundColor: isActive ? 'rgba(91,79,199,0.12)' : 'rgba(255,255,255,0.03)',
@@ -578,27 +595,31 @@ export function ProfilePage() {
               </p>
             </div>
             <button
+              disabled={reminderSaving}
               onClick={async () => {
-                if (!isReminderEnabled()) {
+                if (reminderSaving) return
+                setReminderSaving(true)
+                if (!reminderOn) {
                   const granted = notificationPermission() === 'granted' || await requestNotificationPermission()
                   if (granted) {
                     setReminderEnabled(true)
                     scheduleLocalReminder()
+                    setReminderOn(true)
                   }
+                  // Wenn Permission abgelehnt: Toggle bleibt auf "Aus"
                 } else {
                   setReminderEnabled(false)
+                  setReminderOn(false)
                 }
-                // Force re-render
-                setCompanySaved(prev => !prev)
-                setTimeout(() => setCompanySaved(prev => !prev), 0)
+                setReminderSaving(false)
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                isReminderEnabled()
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-60 ${
+                reminderOn
                   ? 'bg-primary text-white'
                   : 'bg-white/6 text-text-muted'
               }`}
             >
-              {isReminderEnabled() ? (locale === 'de' ? 'An' : 'On') : (locale === 'de' ? 'Aus' : 'Off')}
+              {reminderOn ? (locale === 'de' ? 'An' : 'On') : (locale === 'de' ? 'Aus' : 'Off')}
             </button>
           </div>
         )}
