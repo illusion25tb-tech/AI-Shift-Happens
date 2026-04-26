@@ -383,14 +383,31 @@ function UsersTab() {
 
 // ─── Main Admin Page ───
 // ─── Sponsors Tab ───
+const I18N_LOCALES = ['de', 'en', 'tr', 'es'] as const
+type I18nLocale = typeof I18N_LOCALES[number]
+type I18nFields = Record<I18nLocale, string>
+const emptyI18n = (): I18nFields => ({ de: '', en: '', tr: '', es: '' })
+const stripEmpty = (i18n: I18nFields) =>
+  Object.fromEntries(Object.entries(i18n).filter(([_, v]) => v.trim() !== ''))
+const fromExisting = (i18n: Record<string, string> | null | undefined, fallback: string | null | undefined): I18nFields => ({
+  de: i18n?.de ?? fallback ?? '',
+  en: i18n?.en ?? '',
+  tr: i18n?.tr ?? '',
+  es: i18n?.es ?? '',
+})
+
 function SponsorsTab() {
   const [sponsors, setSponsors] = useState<any[]>([])
   const [prizes, setPrizes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [showPrize, setShowPrize] = useState(false)
-  const [form, setForm] = useState({ name: '', logo_url: '', website_url: '', description: '', tier: 'standard' })
-  const [prizeForm, setPrizeForm] = useState({ sponsor_id: '', title: '', description: '', prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
+  const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null)
+  const [editingPrizeId, setEditingPrizeId] = useState<string | null>(null)
+  const [form, setForm] = useState({ name: '', logo_url: '', website_url: '', description_i18n: emptyI18n(), tier: 'standard' })
+  const [prizeForm, setPrizeForm] = useState({ sponsor_id: '', title_i18n: emptyI18n(), description_i18n: emptyI18n(), prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
+  const [editSponsorI18n, setEditSponsorI18n] = useState<I18nFields>(emptyI18n())
+  const [editPrizeI18n, setEditPrizeI18n] = useState<{ title: I18nFields; description: I18nFields }>({ title: emptyI18n(), description: emptyI18n() })
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -406,19 +423,64 @@ function SponsorsTab() {
   useEffect(() => { load() }, [load])
 
   const createSponsor = async () => {
-    await adminCall('create_sponsor', form)
-    setForm({ name: '', logo_url: '', website_url: '', description: '', tier: 'standard' })
+    await adminCall('create_sponsor', {
+      name: form.name,
+      logo_url: form.logo_url,
+      website_url: form.website_url,
+      tier: form.tier,
+      description_i18n: stripEmpty(form.description_i18n),
+    })
+    setForm({ name: '', logo_url: '', website_url: '', description_i18n: emptyI18n(), tier: 'standard' })
     setShowCreate(false)
+    load()
+  }
+
+  const startEditSponsor = (s: any) => {
+    setEditingSponsorId(s.id)
+    setEditSponsorI18n(fromExisting(s.description_i18n, s.description))
+  }
+
+  const saveEditSponsor = async (sponsor_id: string) => {
+    await adminCall('update_sponsor', {
+      sponsor_id,
+      updates: { description_i18n: stripEmpty(editSponsorI18n) },
+    })
+    setEditingSponsorId(null)
     load()
   }
 
   const createPrize = async () => {
     await adminCall('create_prize', {
-      ...prizeForm,
+      sponsor_id: prizeForm.sponsor_id,
+      prize_type: prizeForm.prize_type,
+      week_start: prizeForm.week_start,
+      month_start: prizeForm.month_start,
+      title_i18n: stripEmpty(prizeForm.title_i18n),
+      description_i18n: stripEmpty(prizeForm.description_i18n),
       value_eur: prizeForm.value_eur ? Number(prizeForm.value_eur) : null,
     })
-    setPrizeForm({ sponsor_id: '', title: '', description: '', prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
+    setPrizeForm({ sponsor_id: '', title_i18n: emptyI18n(), description_i18n: emptyI18n(), prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
     setShowPrize(false)
+    load()
+  }
+
+  const startEditPrize = (p: any) => {
+    setEditingPrizeId(p.id)
+    setEditPrizeI18n({
+      title: fromExisting(p.title_i18n, p.title),
+      description: fromExisting(p.description_i18n, p.description),
+    })
+  }
+
+  const saveEditPrize = async (prize_id: string) => {
+    await adminCall('update_prize', {
+      prize_id,
+      updates: {
+        title_i18n: stripEmpty(editPrizeI18n.title),
+        description_i18n: stripEmpty(editPrizeI18n.description),
+      },
+    })
+    setEditingPrizeId(null)
     load()
   }
 
@@ -439,7 +501,21 @@ function SponsorsTab() {
           <input value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} placeholder="Name..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary" />
           <input value={form.logo_url} onChange={e => setForm(f => ({...f, logo_url: e.target.value}))} placeholder="Logo URL..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
           <input value={form.website_url} onChange={e => setForm(f => ({...f, website_url: e.target.value}))} placeholder="Website URL..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
-          <textarea value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} placeholder="Beschreibung..." rows={2} className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none" />
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase tracking-wider text-text-muted">Beschreibung (pro Sprache)</p>
+            {I18N_LOCALES.map(lang => (
+              <div key={lang} className="flex items-start gap-2">
+                <span className="w-7 pt-1.5 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                <textarea
+                  value={form.description_i18n[lang]}
+                  onChange={e => setForm(f => ({...f, description_i18n: {...f.description_i18n, [lang]: e.target.value}}))}
+                  placeholder={`Beschreibung ${lang.toUpperCase()}...`}
+                  rows={2}
+                  className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none"
+                />
+              </div>
+            ))}
+          </div>
           <select value={form.tier} onChange={e => setForm(f => ({...f, tier: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
             <option value="gold">Gold</option>
             <option value="silver">Silber</option>
@@ -450,20 +526,47 @@ function SponsorsTab() {
       )}
 
       {sponsors.map(s => (
-        <div key={s.id} className={`bg-white/4 border rounded-xl p-3 flex items-center gap-3 ${s.is_active ? 'border-white/6' : 'border-danger/20 opacity-60'}`}>
-          {s.logo_url ? <img src={s.logo_url} alt={s.name} className="w-8 h-8 object-contain rounded" /> : <div className="w-8 h-8 bg-primary/20 rounded flex items-center justify-center text-xs font-bold text-primary">{s.name[0]}</div>}
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate">{s.name}</div>
-            <div className="text-[10px] text-text-muted">{s.tier} · {s.is_active ? 'aktiv' : 'inaktiv'}</div>
+        <div key={s.id} className={`bg-white/4 border rounded-xl ${s.is_active ? 'border-white/6' : 'border-danger/20 opacity-60'}`}>
+          <div className="p-3 flex items-center gap-3">
+            {s.logo_url ? <img src={s.logo_url} alt={s.name} className="w-8 h-8 object-contain rounded" /> : <div className="w-8 h-8 bg-primary/20 rounded flex items-center justify-center text-xs font-bold text-primary">{s.name[0]}</div>}
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold truncate">{s.name}</div>
+              <div className="text-[10px] text-text-muted">
+                {s.tier} · {s.is_active ? 'aktiv' : 'inaktiv'}
+                {' · i18n: '}
+                {I18N_LOCALES.map(l => (s.description_i18n?.[l] ? l : null)).filter(Boolean).join(',') || '—'}
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <button onClick={() => editingSponsorId === s.id ? setEditingSponsorId(null) : startEditSponsor(s)}
+                className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary">
+                {editingSponsorId === s.id ? '×' : 'i18n'}
+              </button>
+              <button onClick={async () => { await adminCall('update_sponsor', { sponsor_id: s.id, updates: { is_active: !s.is_active } }); load() }}
+                className={`text-[10px] px-2 py-1 rounded ${s.is_active ? 'bg-teal/10 text-teal' : 'bg-danger/10 text-danger'}`}>
+                {s.is_active ? 'aktiv' : 'inaktiv'}
+              </button>
+              <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_sponsor', { sponsor_id: s.id }); load() } }}
+                className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
+            </div>
           </div>
-          <div className="flex gap-1">
-            <button onClick={async () => { await adminCall('update_sponsor', { sponsor_id: s.id, updates: { is_active: !s.is_active } }); load() }}
-              className={`text-[10px] px-2 py-1 rounded ${s.is_active ? 'bg-teal/10 text-teal' : 'bg-danger/10 text-danger'}`}>
-              {s.is_active ? 'aktiv' : 'inaktiv'}
-            </button>
-            <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_sponsor', { sponsor_id: s.id }); load() } }}
-              className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
-          </div>
+          {editingSponsorId === s.id && (
+            <div className="px-3 pb-3 pt-1 space-y-1 border-t border-white/6">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted pt-2">Beschreibung pro Sprache</p>
+              {I18N_LOCALES.map(lang => (
+                <div key={lang} className="flex items-start gap-2">
+                  <span className="w-7 pt-1.5 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                  <textarea
+                    value={editSponsorI18n[lang]}
+                    onChange={e => setEditSponsorI18n(prev => ({...prev, [lang]: e.target.value}))}
+                    rows={2}
+                    className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none"
+                  />
+                </div>
+              ))}
+              <button onClick={() => saveEditSponsor(s.id)} className="w-full bg-primary text-white font-semibold py-2 rounded-lg text-sm">Speichern</button>
+            </div>
+          )}
         </div>
       ))}
 
@@ -481,8 +584,35 @@ function SponsorsTab() {
             <option value="">Sponsor wählen...</option>
             {sponsors.filter(s => s.is_active).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
-          <input value={prizeForm.title} onChange={e => setPrizeForm(f => ({...f, title: e.target.value}))} placeholder="Preis-Titel..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary" />
-          <input value={prizeForm.description} onChange={e => setPrizeForm(f => ({...f, description: e.target.value}))} placeholder="Beschreibung..." className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary" />
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase tracking-wider text-text-muted">Titel pro Sprache</p>
+            {I18N_LOCALES.map(lang => (
+              <div key={lang} className="flex items-center gap-2">
+                <span className="w-7 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                <input
+                  value={prizeForm.title_i18n[lang]}
+                  onChange={e => setPrizeForm(f => ({...f, title_i18n: {...f.title_i18n, [lang]: e.target.value}}))}
+                  placeholder={`Titel ${lang.toUpperCase()}...`}
+                  className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase tracking-wider text-text-muted">Beschreibung pro Sprache</p>
+            {I18N_LOCALES.map(lang => (
+              <div key={lang} className="flex items-start gap-2">
+                <span className="w-7 pt-1.5 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                <textarea
+                  value={prizeForm.description_i18n[lang]}
+                  onChange={e => setPrizeForm(f => ({...f, description_i18n: {...f.description_i18n, [lang]: e.target.value}}))}
+                  placeholder={`Beschreibung ${lang.toUpperCase()}...`}
+                  rows={2}
+                  className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none"
+                />
+              </div>
+            ))}
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <select value={prizeForm.prize_type} onChange={e => setPrizeForm(f => ({...f, prize_type: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
               <option value="weekly">Wöchentlich</option>
@@ -495,23 +625,59 @@ function SponsorsTab() {
             <input value={prizeForm.week_start} onChange={e => setPrizeForm(f => ({...f, week_start: e.target.value}))} placeholder="KW-Start (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
             <input value={prizeForm.month_start} onChange={e => setPrizeForm(f => ({...f, month_start: e.target.value}))} placeholder="Monat (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
           </div>
-          <button onClick={createPrize} disabled={!prizeForm.title.trim()} className="w-full bg-gold/20 text-gold font-semibold py-2 rounded-lg text-sm disabled:opacity-50">Preis erstellen</button>
+          <button onClick={createPrize} disabled={!prizeForm.title_i18n.de.trim() && !prizeForm.title_i18n.en.trim()} className="w-full bg-gold/20 text-gold font-semibold py-2 rounded-lg text-sm disabled:opacity-50">Preis erstellen</button>
         </div>
       )}
 
       {prizes.map(p => (
-        <div key={p.id} className="bg-white/4 border border-white/6 rounded-xl p-3 flex items-center gap-3">
-          <span className="text-xl">{p.prize_type === 'weekly' ? '🏆' : p.prize_type === 'monthly' ? '🎁' : '⭐'}</span>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate">{p.title}</div>
-            <div className="text-[10px] text-text-muted">
-              {p.prize_type} · {p.sponsors?.name ?? 'kein Sponsor'}
-              {p.value_eur && ` · ${p.value_eur}€`}
-              {p.winner_id && ` · Gewinner: ${p.profiles?.display_name ?? '?'}`}
+        <div key={p.id} className="bg-white/4 border border-white/6 rounded-xl">
+          <div className="p-3 flex items-center gap-3">
+            <span className="text-xl">{p.prize_type === 'weekly' ? '🏆' : p.prize_type === 'monthly' ? '🎁' : '⭐'}</span>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold truncate">{p.title_i18n?.de ?? p.title_i18n?.en ?? p.title ?? '—'}</div>
+              <div className="text-[10px] text-text-muted">
+                {p.prize_type} · {p.sponsors?.name ?? 'kein Sponsor'}
+                {p.value_eur && ` · ${p.value_eur}€`}
+                {p.winner_id && ` · Gewinner: ${p.profiles?.display_name ?? '?'}`}
+                {' · i18n: '}
+                {I18N_LOCALES.map(l => (p.title_i18n?.[l] ? l : null)).filter(Boolean).join(',') || '—'}
+              </div>
             </div>
+            <button onClick={() => editingPrizeId === p.id ? setEditingPrizeId(null) : startEditPrize(p)}
+              className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary">
+              {editingPrizeId === p.id ? '×' : 'i18n'}
+            </button>
+            <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_prize', { prize_id: p.id }); load() } }}
+              className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
           </div>
-          <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_prize', { prize_id: p.id }); load() } }}
-            className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
+          {editingPrizeId === p.id && (
+            <div className="px-3 pb-3 pt-1 space-y-2 border-t border-white/6">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted pt-2">Titel pro Sprache</p>
+              {I18N_LOCALES.map(lang => (
+                <div key={lang} className="flex items-center gap-2">
+                  <span className="w-7 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                  <input
+                    value={editPrizeI18n.title[lang]}
+                    onChange={e => setEditPrizeI18n(prev => ({...prev, title: {...prev.title, [lang]: e.target.value}}))}
+                    className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
+                  />
+                </div>
+              ))}
+              <p className="text-[10px] uppercase tracking-wider text-text-muted">Beschreibung pro Sprache</p>
+              {I18N_LOCALES.map(lang => (
+                <div key={lang} className="flex items-start gap-2">
+                  <span className="w-7 pt-1.5 text-[10px] font-mono text-text-muted">{lang.toUpperCase()}</span>
+                  <textarea
+                    value={editPrizeI18n.description[lang]}
+                    onChange={e => setEditPrizeI18n(prev => ({...prev, description: {...prev.description, [lang]: e.target.value}}))}
+                    rows={2}
+                    className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-primary resize-none"
+                  />
+                </div>
+              ))}
+              <button onClick={() => saveEditPrize(p.id)} className="w-full bg-primary text-white font-semibold py-2 rounded-lg text-sm">Speichern</button>
+            </div>
+          )}
         </div>
       ))}
     </div>

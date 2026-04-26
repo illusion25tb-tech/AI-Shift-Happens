@@ -2,17 +2,20 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useLocale } from '../hooks/useLocale'
+import { getI18nText, type I18nField } from '../lib/i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 interface Sponsor {
   id: string; name: string; logo_url: string | null
-  website_url: string | null; description: string | null; tier: string
+  website_url: string | null; description: string | null
+  description_i18n: I18nField; tier: string
 }
 
 interface Prize {
   id: string; title: string; description: string | null
+  title_i18n: I18nField; description_i18n: I18nField
   value_eur: number | null; prize_type: string
   sponsors: { name: string; logo_url: string | null } | null
   profiles: { display_name: string } | null
@@ -75,11 +78,14 @@ export function SponsorsPage() {
                     <p className="text-[10px] font-semibold uppercase text-gold">
                       {locale === 'de' ? 'Wochenpreis' : 'Weekly Prize'}
                     </p>
-                    <p className="text-lg font-bold">{p.title}</p>
+                    <p className="text-lg font-bold">{getI18nText(p.title_i18n, locale, p.title)}</p>
                   </div>
                   {p.value_eur && <span className="text-xl font-mono font-bold text-gold">{p.value_eur}€</span>}
                 </div>
-                {p.description && <p className="text-sm text-text-secondary">{p.description}</p>}
+                {(() => {
+                  const desc = getI18nText(p.description_i18n, locale, p.description)
+                  return desc && <p className="text-sm text-text-secondary">{desc}</p>
+                })()}
                 {p.sponsors && (
                   <p className="text-xs text-text-muted">
                     {locale === 'de' ? 'Gesponsert von' : 'Sponsored by'} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
@@ -100,11 +106,14 @@ export function SponsorsPage() {
                     <p className="text-[10px] font-semibold uppercase text-primary">
                       {locale === 'de' ? 'Monatspreis' : 'Monthly Prize'}
                     </p>
-                    <p className="text-lg font-bold">{p.title}</p>
+                    <p className="text-lg font-bold">{getI18nText(p.title_i18n, locale, p.title)}</p>
                   </div>
                   {p.value_eur && <span className="text-xl font-mono font-bold text-primary">{p.value_eur}€</span>}
                 </div>
-                {p.description && <p className="text-sm text-text-secondary">{p.description}</p>}
+                {(() => {
+                  const desc = getI18nText(p.description_i18n, locale, p.description)
+                  return desc && <p className="text-sm text-text-secondary">{desc}</p>
+                })()}
                 {p.sponsors && (
                   <p className="text-xs text-text-muted">
                     {locale === 'de' ? 'Gesponsert von' : 'Sponsored by'} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
@@ -145,7 +154,10 @@ export function SponsorsPage() {
                       <p className="text-[10px] text-text-muted uppercase">
                         {tierLabels[s.tier as keyof typeof tierLabels]?.[locale as 'de' | 'en'] ?? 'Sponsor'}
                       </p>
-                      {s.description && <p className="text-xs text-text-secondary mt-1">{s.description}</p>}
+                      {(() => {
+                        const desc = getI18nText(s.description_i18n, locale, s.description)
+                        return desc && <p className="text-xs text-text-secondary mt-1">{desc}</p>
+                      })()}
                     </div>
                   </div>
                 </a>

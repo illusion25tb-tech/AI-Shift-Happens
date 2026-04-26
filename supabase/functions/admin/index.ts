@@ -236,9 +236,10 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === 'create_sponsor') {
-      const { name, logo_url, website_url, description, tier, start_date, end_date } = body as any
+      const { name, logo_url, website_url, description, description_i18n, tier, start_date, end_date } = body as any
       const { data, error } = await db.from('sponsors').insert({
         name, logo_url, website_url, description,
+        description_i18n: description_i18n ?? {},
         tier: tier ?? 'standard',
         start_date: start_date ?? null,
         end_date: end_date ?? null,
@@ -249,7 +250,7 @@ Deno.serve(async (req: Request) => {
 
     if (action === 'update_sponsor') {
       const { sponsor_id, updates } = body as { sponsor_id: string; updates: Record<string, unknown> }
-      const ALLOWED = ['name', 'logo_url', 'website_url', 'description', 'tier', 'is_active', 'start_date', 'end_date']
+      const ALLOWED = ['name', 'logo_url', 'website_url', 'description', 'description_i18n', 'tier', 'is_active', 'start_date', 'end_date']
       const safe: Record<string, unknown> = {}
       for (const k of ALLOWED) { if (k in updates) safe[k] = updates[k] }
       const { error } = await db.from('sponsors').update(safe).eq('id', sponsor_id)
@@ -276,9 +277,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === 'create_prize') {
-      const { sponsor_id, title, description, image_url, prize_type, value_eur, week_start, month_start } = body as any
+      const { sponsor_id, title, title_i18n, description, description_i18n, image_url, prize_type, value_eur, week_start, month_start } = body as any
       const { data, error } = await db.from('prizes').insert({
         sponsor_id, title, description, image_url,
+        title_i18n: title_i18n ?? {},
+        description_i18n: description_i18n ?? {},
         prize_type: prize_type ?? 'weekly',
         value_eur: value_eur ?? null,
         week_start: week_start ?? null,
@@ -286,6 +289,16 @@ Deno.serve(async (req: Request) => {
       }).select('id').single()
       if (error) return jsonResponse({ error: error.message }, 500)
       return jsonResponse({ id: data.id })
+    }
+
+    if (action === 'update_prize') {
+      const { prize_id, updates } = body as { prize_id: string; updates: Record<string, unknown> }
+      const ALLOWED = ['title', 'title_i18n', 'description', 'description_i18n', 'image_url', 'prize_type', 'value_eur', 'week_start', 'month_start', 'sponsor_id']
+      const safe: Record<string, unknown> = {}
+      for (const k of ALLOWED) { if (k in updates) safe[k] = updates[k] }
+      const { error } = await db.from('prizes').update(safe).eq('id', prize_id)
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
     }
 
     if (action === 'assign_prize_winner') {

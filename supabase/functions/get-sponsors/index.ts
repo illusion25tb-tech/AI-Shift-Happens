@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
 
     // Active sponsors
     const { data: sponsors } = await db.from('sponsors')
-      .select('id, name, logo_url, website_url, description, tier')
+      .select('id, name, logo_url, website_url, description, description_i18n, tier')
       .eq('is_active', true)
       .or(`end_date.is.null,end_date.gte.${today}`)
       .order('tier', { ascending: true })
@@ -29,14 +29,14 @@ Deno.serve(async (req: Request) => {
     const weekStart = monday.toISOString().split('T')[0]
 
     const { data: weeklyPrizes } = await db.from('prizes')
-      .select('id, title, description, image_url, value_eur, sponsors(name, logo_url), profiles:winner_id(display_name)')
+      .select('id, title, title_i18n, description, description_i18n, image_url, value_eur, sponsors(name, logo_url), profiles:winner_id(display_name)')
       .eq('prize_type', 'weekly')
       .eq('week_start', weekStart)
 
     // Current month's prizes
     const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
     const { data: monthlyPrizes } = await db.from('prizes')
-      .select('id, title, description, image_url, value_eur, sponsors(name, logo_url), profiles:winner_id(display_name)')
+      .select('id, title, title_i18n, description, description_i18n, image_url, value_eur, sponsors(name, logo_url), profiles:winner_id(display_name)')
       .eq('prize_type', 'monthly')
       .eq('month_start', monthStart)
 
