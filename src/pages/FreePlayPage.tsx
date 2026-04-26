@@ -50,7 +50,7 @@ export function FreePlayPage() {
 
       if (fnError || !data?.questions?.length) {
         setState('error')
-        setError(locale === 'de' ? 'Keine Fragen gefunden.' : 'No questions found.')
+        setError(lf({ de: 'Keine Fragen gefunden.', en: 'No questions found.', tr: 'Soru bulunamadı.', es: 'No se encontraron preguntas.' }, locale))
         return
       }
 
@@ -146,9 +146,12 @@ export function FreePlayPage() {
 
         <main className="flex-1 flex flex-col px-5 py-6 gap-4 max-w-md mx-auto w-full">
           <p className="text-text-secondary text-sm">
-            {t('freeplay.intro') || (locale === 'de'
-              ? `Wähle eine Kategorie oder spiele alle. ${FREEPLAY_QUESTION_COUNT} Fragen pro Runde — ohne Zeitdruck, zum Lernen.`
-              : `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} questions per round — no time pressure, for learning.`)}
+            {t('freeplay.intro') || lf({
+              de: `Wähle eine Kategorie oder spiele alle. ${FREEPLAY_QUESTION_COUNT} Fragen pro Runde — ohne Zeitdruck, zum Lernen.`,
+              en: `Choose a category or play all. ${FREEPLAY_QUESTION_COUNT} questions per round — no time pressure, for learning.`,
+              tr: `Bir kategori seç veya hepsini oyna. Tur başına ${FREEPLAY_QUESTION_COUNT} soru — zaman baskısı yok, öğrenmek için.`,
+              es: `Elige una categoría o juega todas. ${FREEPLAY_QUESTION_COUNT} preguntas por ronda — sin presión de tiempo, para aprender.`,
+            }, locale)}
           </p>
 
           <button
@@ -192,7 +195,7 @@ export function FreePlayPage() {
       <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center gap-4 px-5">
         <p className="text-danger text-center">{error}</p>
         <button onClick={playAgain} className="text-primary hover:text-primary-hover underline text-sm transition-colors">
-          {locale === 'de' ? 'Zurück zur Auswahl' : 'Back to selection'}
+          {lf({ de: 'Zurück zur Auswahl', en: 'Back to selection', tr: 'Seçime geri dön', es: 'Volver a selección' }, locale)}
         </button>
       </div>
     )

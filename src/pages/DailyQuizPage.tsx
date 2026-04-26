@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { useQuiz } from '../hooks/useQuiz'
+import { lf } from '../lib/constants'
 import ProgressBar from '../components/ProgressBar'
 import ScoreDisplay from '../components/ScoreDisplay'
 import TimerBar from '../components/TimerBar'
@@ -62,7 +63,7 @@ export function DailyQuizPage() {
       <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center gap-6 px-5">
         <div className="text-6xl">☀️</div>
         <h2 className="text-xl font-bold text-center">
-          {locale === 'de' ? 'Wochenende!' : 'Weekend!'}
+          {lf({ de: 'Wochenende!', en: 'Weekend!', tr: 'Hafta Sonu!', es: '¡Fin de semana!' }, locale)}
         </h2>
         <p className="text-text-secondary text-center text-sm max-w-xs">
           {locale === 'de'
@@ -73,16 +74,16 @@ export function DailyQuizPage() {
           to="/app/freeplay"
           className="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl transition-colors"
         >
-          {locale === 'de' ? '🎮 Free Play starten' : '🎮 Start Free Play'}
+          {lf({ de: '🎮 Free Play starten', en: '🎮 Start Free Play', tr: '🎮 Serbest Oyunu Başlat', es: '🎮 Iniciar Juego Libre' }, locale)}
         </Link>
         <Link
           to="/app/challenge"
           className="border border-white/10 text-text-secondary font-semibold py-3 px-8 rounded-xl hover:bg-white/4 transition-colors"
         >
-          {locale === 'de' ? '⚔️ Challenge starten' : '⚔️ Start Challenge'}
+          {lf({ de: '⚔️ Challenge starten', en: '⚔️ Start Challenge', tr: '⚔️ Düello Başlat', es: '⚔️ Iniciar Duelo' }, locale)}
         </Link>
         <button onClick={handleBack} className="text-text-muted text-sm hover:text-text-secondary">
-          &larr; {locale === 'de' ? 'Zurück' : 'Back'}
+          &larr; {lf({ de: 'Zurück', en: 'Back', tr: 'Geri', es: 'Atrás' }, locale)}
         </button>
       </div>
     )

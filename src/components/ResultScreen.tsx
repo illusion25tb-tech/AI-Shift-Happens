@@ -90,7 +90,7 @@ export default function ResultScreen({
         </div>
         <div className="bg-white/4 border border-bg-card-border rounded-xl p-3">
           <div className="text-2xl font-bold text-gold font-mono">+{totalSpeedBonus}</div>
-          <div className="text-xs text-text-muted mt-1">{locale === 'de' ? 'Speed Bonus' : 'Speed Bonus'}</div>
+          <div className="text-xs text-text-muted mt-1">Speed Bonus</div>
         </div>
       </div>
 
@@ -141,7 +141,12 @@ export default function ResultScreen({
         🔗 {t('result.shareLinkedin')}
       </button>
       <p className="text-[10px] text-text-muted text-center">
-        {locale === 'de' ? 'Post-Text wird in die Zwischenablage kopiert' : 'Post text copied to clipboard'}
+        {lf({
+          de: 'Post-Text wird in die Zwischenablage kopiert',
+          en: 'Post text copied to clipboard',
+          tr: 'Gönderi metni panoya kopyalanır',
+          es: 'Texto de la publicación copiado al portapapeles',
+        }, locale)}
       </p>
 
       {/* Back button */}

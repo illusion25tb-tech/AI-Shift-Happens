@@ -155,7 +155,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
             className="space-y-3"
           >
             <p className="text-text-secondary text-sm font-semibold text-center">
-              {locale === 'de' ? 'Wie sicher bist du?' : 'How confident are you?'}
+              {lf({ de: 'Wie sicher bist du?', en: 'How confident are you?', tr: 'Ne kadar eminsin?', es: '¿Qué tan seguro estás?' }, locale)}
             </p>
 
             <div className="flex gap-2 justify-center">
@@ -195,7 +195,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
                   disabled={disabled}
                   className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-colors disabled:opacity-50"
                 >
-                  {locale === 'de' ? 'Bestätigen' : 'Confirm'}
+                  {lf({ de: 'Bestätigen', en: 'Confirm', tr: 'Onayla', es: 'Confirmar' }, locale)}
                 </motion.button>
               )}
             </AnimatePresence>
