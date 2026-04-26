@@ -21,12 +21,27 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* Bottom nav safe area */
+/* Bottom nav safe area (iPhone X+ Home-Indicator) */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Add padding for bottom nav on app pages */
+/* Top safe area (iPhone Notch / Dynamic Island) */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Add padding for bottom nav on app pages — inkl. Home-Indicator */
 main {
-  padding-bottom: 70px;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Verhindert iOS-Tap-Highlight (graue Box bei Touch) */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth Scrolling auf iOS */
+html, body {
+  -webkit-overflow-scrolling: touch;
 }
