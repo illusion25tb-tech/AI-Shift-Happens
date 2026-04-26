@@ -45,21 +45,21 @@ export function LandingPage() {
       <footer className="py-8 border-t border-white/4">
         <div className="max-w-md mx-auto px-5 flex flex-col items-center gap-3">
           <div className="flex gap-4 text-xs">
-            <a href="/app/privacy" className="text-white/30 hover:text-white/60 transition-colors">
+            <a href={`${import.meta.env.BASE_URL}app/privacy`} className="text-white/30 hover:text-white/60 transition-colors">
               {locale === 'de' ? 'Datenschutz' : 'Privacy'}
             </a>
-            <a href="/app/privacy" className="text-white/30 hover:text-white/60 transition-colors">
+            <a href={`${import.meta.env.BASE_URL}app/privacy`} className="text-white/30 hover:text-white/60 transition-colors">
               {locale === 'de' ? 'Impressum' : 'Legal'}
             </a>
-            <a href="/app/faq" className="text-white/30 hover:text-white/60 transition-colors">
+            <a href={`${import.meta.env.BASE_URL}app/faq`} className="text-white/30 hover:text-white/60 transition-colors">
               FAQ
             </a>
-            <a href="/app/sponsors" className="text-white/30 hover:text-white/60 transition-colors">
+            <a href={`${import.meta.env.BASE_URL}app/sponsors`} className="text-white/30 hover:text-white/60 transition-colors">
               {locale === 'de' ? 'Sponsoren' : 'Sponsors'}
             </a>
           </div>
           <a href="https://tbai.cloud" target="_blank" rel="noopener noreferrer" className="opacity-30 hover:opacity-60 transition-opacity">
-            <img src="/tbai-cloud-logo.png" alt="tbai" className="h-6 mx-auto" />
+            <img src={`${import.meta.env.BASE_URL}tbai-cloud-logo.png`} alt="tbai" className="h-6 mx-auto" />
           </a>
           <p className="text-white/15 text-xs">
             © {new Date().getFullYear()} AI-Shift Happens by tbai
