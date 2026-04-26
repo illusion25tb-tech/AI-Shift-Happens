@@ -35,6 +35,18 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
   return data as Profile
 }
 
+// Wenn der User vor dem Login auf der Landing eine Sprache gewählt hat
+// (localStorage.locale gesetzt) und das vom Profile abweicht, wird das Profile
+// nachgeführt. Damit gewinnt die User-Wahl gegen den Default 'de' aus dem
+// handle_new_user-Trigger und get-daily-quiz liefert Fragen in der richtigen Sprache.
+function syncLocaleToProfile(userId: string, profile: Profile | null) {
+  if (!profile) return
+  const chosen = localStorage.getItem('locale')
+  if (!chosen || chosen === profile.locale) return
+  if (!['de', 'en', 'tr', 'es'].includes(chosen)) return
+  supabase.from('profiles').update({ locale: chosen }).eq('id', userId).then(() => {})
+}
+
 export function useAuth(): UseAuthReturn {
   const [session, setSession] = useState<Session | null>(null)
   const [user, setUser] = useState<User | null>(null)
@@ -42,23 +54,48 @@ export function useAuth(): UseAuthReturn {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        const p = await fetchProfile(session.user.id)
-        setProfile(p)
-      }
-      setLoading(false)
-    })
+    let mounted = true
+    let initDone = false
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+    // Safety-Net: nach 8s spätestens Loading=false, damit App nicht ewig hängt
+    const safetyTimer = setTimeout(() => {
+      if (mounted && !initDone) {
+        initDone = true
+        setLoading(false)
+      }
+    }, 8000)
+
+    const init = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!mounted) return
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
           const p = await fetchProfile(session.user.id)
+          if (!mounted) return
           setProfile(p)
+          syncLocaleToProfile(session.user.id, p)
+        }
+      } finally {
+        if (mounted) {
+          initDone = true
+          setLoading(false)
+        }
+      }
+    }
+    init()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return
+        setSession(session)
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          const p = await fetchProfile(session.user.id)
+          if (!mounted) return
+          setProfile(p)
+          syncLocaleToProfile(session.user.id, p)
 
           // Auto-claim referral after signup
           if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
@@ -77,11 +114,18 @@ export function useAuth(): UseAuthReturn {
         } else {
           setProfile(null)
         }
-        setLoading(false)
+        if (mounted) {
+          initDone = true
+          setLoading(false)
+        }
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      clearTimeout(safetyTimer)
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signInWithGoogle = async () => {
