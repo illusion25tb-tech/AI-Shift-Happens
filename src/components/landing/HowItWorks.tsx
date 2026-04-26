@@ -73,15 +73,22 @@ const cards: Record<string, { emoji: string; title: string; desc: string }[]> = 
   ],
 }
 
+const HEADERS: Record<string, string> = {
+  de: 'So funktioniert\'s',
+  en: 'How it works',
+  tr: 'Nasıl çalışır',
+  es: 'Cómo funciona',
+}
+
 export default function HowItWorks({ locale }: HowItWorksProps) {
-  const isDE = locale === 'de'
   const items = cards[locale] ?? cards['en']
+  const header = HEADERS[locale] ?? HEADERS['en']
 
   return (
     <section id="how-it-works" className="py-20">
       <div className="max-w-4xl mx-auto px-5">
         <h2 className="text-3xl md:text-4xl font-extrabold text-center text-white mb-12">
-          {isDE ? 'So funktioniert\'s' : 'How it works'}
+          {header}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {items.map((card) => (

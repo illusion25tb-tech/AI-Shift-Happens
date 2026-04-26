@@ -1,16 +1,36 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import type { Locale } from '../../types'
+import { lf } from '../../lib/constants'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 interface HeroSectionProps {
   onStart: () => void
-  locale: string
+  locale: Locale
+}
+
+const L = {
+  howPrefix: { de: 'Wie ', en: 'How ', tr: 'Ne kadar ', es: '¿Qué tan ' },
+  howSuffix: { de: ' bist du wirklich?', en: ' are you really?', tr: ' olduğunu test et?', es: ' estás realmente?' },
+  subtitle: {
+    de: 'Teste dein KI-Mindset in realistischen Büroszenarien. Tägliches Quiz, Leaderboard, Wochen-Champion. Kostenlos. 3 Minuten pro Tag.',
+    en: 'Test your AI mindset in realistic office scenarios. Daily quiz, leaderboard, weekly champion. Free. 3 minutes per day.',
+    tr: 'Yapay zeka zihniyetini gerçekçi ofis senaryolarında test et. Günlük quiz, sıralama, haftanın şampiyonu. Ücretsiz. Günde 3 dakika.',
+    es: 'Pon a prueba tu mentalidad de IA en escenarios de oficina realistas. Quiz diario, clasificación, campeón semanal. Gratis. 3 minutos al día.',
+  },
+  startNow: { de: 'Jetzt kostenlos starten', en: 'Start free now', tr: 'Şimdi ücretsiz başla', es: 'Empieza gratis ahora' },
+  howItWorks: { de: 'So funktioniert\'s ↓', en: 'How it works ↓', tr: 'Nasıl çalışır ↓', es: 'Cómo funciona ↓' },
+  players: { de: 'Spieler', en: 'Players', tr: 'Oyuncu', es: 'Jugadores' },
+  categories: { de: 'Kategorien', en: 'Categories', tr: 'Kategori', es: 'Categorías' },
+  questions: { de: 'Fragen', en: 'Questions', tr: 'Soru', es: 'Preguntas' },
+  perDay: { de: 'Pro Tag', en: 'Per Day', tr: 'Günde', es: 'Al Día' },
+  quizzesPlayed: { de: 'Quizzes gespielt', en: 'Quizzes played', tr: 'Oynanan quiz', es: 'Quizzes jugados' },
+  free: { de: 'Kostenlos', en: 'Free', tr: 'Ücretsiz', es: 'Gratis' },
 }
 
 export default function HeroSection({ onStart, locale }: HeroSectionProps) {
-  const isDE = locale === 'de'
   const [liveStats, setLiveStats] = useState<{ players: number; questions: number; quizzes_played: number } | null>(null)
 
   useEffect(() => {
@@ -60,11 +80,11 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
           transition={{ delay: 0.1 }}
           className="text-4xl md:text-6xl font-extrabold leading-tight mb-5"
         >
-          {isDE ? 'Wie ' : 'How '}
+          {lf(L.howPrefix, locale)}
           <span className="bg-gradient-to-r from-[#A78BFA] via-[#38BDF8] to-[#2DD4BF] bg-clip-text text-transparent">
             AI-ready
           </span>
-          {isDE ? ' bist du wirklich?' : ' are you really?'}
+          {lf(L.howSuffix, locale)}
         </motion.h1>
 
         {/* Subheadline */}
@@ -74,9 +94,7 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
           transition={{ delay: 0.2 }}
           className="text-lg text-white/50 max-w-md mx-auto mb-8 leading-relaxed"
         >
-          {isDE
-            ? 'Teste dein KI-Mindset in realistischen Büroszenarien. Tägliches Quiz, Leaderboard, Wochen-Champion. Kostenlos. 3 Minuten pro Tag.'
-            : 'Test your AI mindset in realistic office scenarios. Daily quiz, leaderboard, weekly champion. Free. 3 minutes per day.'}
+          {lf(L.subtitle, locale)}
         </motion.p>
 
         {/* CTAs */}
@@ -90,13 +108,13 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
             onClick={onStart}
             className="px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-[#3B82F6] text-white font-bold text-lg shadow-[0_0_30px_rgba(91,79,199,0.3)] hover:shadow-[0_0_50px_rgba(91,79,199,0.4)] hover:-translate-y-0.5 transition-all"
           >
-            {isDE ? 'Jetzt kostenlos starten' : 'Start free now'}
+            {lf(L.startNow, locale)}
           </button>
           <a
             href="#how-it-works"
             className="px-8 py-4 rounded-2xl border border-white/10 bg-white/4 text-white/60 font-semibold hover:bg-white/8 hover:text-white transition-all backdrop-blur-sm"
           >
-            {isDE ? 'So funktioniert\'s ↓' : 'How it works ↓'}
+            {lf(L.howItWorks, locale)}
           </a>
         </motion.div>
 
@@ -108,9 +126,9 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
           className="flex gap-8 justify-center pt-6 border-t border-white/6"
         >
           {[
-            { num: liveStats ? `${liveStats.players}+` : '10', label: isDE ? (liveStats ? 'Spieler' : 'Kategorien') : (liveStats ? 'Players' : 'Categories') },
-            { num: liveStats ? `${liveStats.questions}` : '3 Min', label: isDE ? (liveStats ? 'Fragen' : 'Pro Tag') : (liveStats ? 'Questions' : 'Per Day') },
-            { num: liveStats ? `${liveStats.quizzes_played}+` : '100%', label: isDE ? (liveStats ? 'Quizzes gespielt' : 'Kostenlos') : (liveStats ? 'Quizzes played' : 'Free') },
+            { num: liveStats ? `${liveStats.players}+` : '10', label: lf(liveStats ? L.players : L.categories, locale) },
+            { num: liveStats ? `${liveStats.questions}` : '3 Min', label: lf(liveStats ? L.questions : L.perDay, locale) },
+            { num: liveStats ? `${liveStats.quizzes_played}+` : '100%', label: lf(liveStats ? L.quizzesPlayed : L.free, locale) },
           ].map(item => (
             <div key={item.label} className="text-center">
               <div className="text-xl font-extrabold font-mono bg-gradient-to-r from-[#A78BFA] to-[#38BDF8] bg-clip-text text-transparent">{item.num}</div>

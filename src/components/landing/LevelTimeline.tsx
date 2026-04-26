@@ -11,14 +11,21 @@ const levels = [
   { emoji: '👑', name: 'AI Dirigent', xp: '100K' },
 ]
 
+const HEADERS: Record<string, string> = {
+  de: 'Dein Aufstieg',
+  en: 'Your progression',
+  tr: 'Yükselişin',
+  es: 'Tu progresión',
+}
+
 export default function LevelTimeline({ locale }: LevelTimelineProps) {
-  const isDE = locale === 'de'
+  const header = HEADERS[locale] ?? HEADERS['en']
 
   return (
     <section className="py-10">
       <div className="max-w-3xl mx-auto px-5">
         <h2 className="text-2xl md:text-3xl font-extrabold text-center text-white mb-10">
-          {isDE ? 'Dein Aufstieg' : 'Your progression'}
+          {header}
         </h2>
 
         {/* Timeline container */}

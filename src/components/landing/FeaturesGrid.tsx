@@ -29,15 +29,22 @@ const features: Record<string, { emoji: string; title: string; desc: string }[]>
   ],
 }
 
+const HEADERS: Record<string, string> = {
+  de: 'Mehr als ein Quiz',
+  en: 'More than a quiz',
+  tr: 'Sadece bir quiz değil',
+  es: 'Más que un quiz',
+}
+
 export default function FeaturesGrid({ locale }: FeaturesGridProps) {
-  const isDE = locale === 'de'
   const items = features[locale] ?? features['en']
+  const header = HEADERS[locale] ?? HEADERS['en']
 
   return (
     <section className="py-20">
       <div className="max-w-4xl mx-auto px-5">
         <h2 className="text-3xl md:text-4xl font-extrabold text-center text-white mb-12">
-          {isDE ? 'Mehr als ein Quiz' : 'More than a quiz'}
+          {header}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {items.map((feature) => (
