@@ -43,7 +43,7 @@ export default function FeaturesGrid({ locale }: FeaturesGridProps) {
   return (
     <section className="py-20">
       <div className="max-w-4xl mx-auto px-5">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-white mb-12">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-text-primary mb-12">
           {header}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -53,7 +53,7 @@ export default function FeaturesGrid({ locale }: FeaturesGridProps) {
               className="bg-white/4 border border-white/6 rounded-2xl p-6 hover:border-primary/30 transition-colors"
             >
               <div className="text-3xl mb-3">{feature.emoji}</div>
-              <h3 className="text-base font-bold text-white mb-1">{feature.title}</h3>
+              <h3 className="text-base font-bold text-text-primary mb-1">{feature.title}</h3>
               <p className="text-sm text-white/50 leading-relaxed">{feature.desc}</p>
             </div>
           ))}

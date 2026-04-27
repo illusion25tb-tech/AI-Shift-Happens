@@ -41,7 +41,7 @@ export default function BottomCTA({ onStart, locale }: BottomCTAProps) {
       }}
     >
       <div className="max-w-2xl mx-auto px-5 text-center">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">{t.title}</h2>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary mb-4">{t.title}</h2>
         <p className="text-white/50 mb-8 text-lg">{t.sub}</p>
         <button
           onClick={onStart}

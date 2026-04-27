@@ -87,7 +87,7 @@ export default function HowItWorks({ locale }: HowItWorksProps) {
   return (
     <section id="how-it-works" className="py-20">
       <div className="max-w-4xl mx-auto px-5">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-white mb-12">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-text-primary mb-12">
           {header}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -97,7 +97,7 @@ export default function HowItWorks({ locale }: HowItWorksProps) {
               className="bg-white/4 border border-white/6 rounded-2xl p-6"
             >
               <div className="text-4xl mb-4">{card.emoji}</div>
-              <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+              <h3 className="text-lg font-bold text-text-primary mb-2">{card.title}</h3>
               <p className="text-sm text-white/50 leading-relaxed">{card.desc}</p>
             </div>
           ))}

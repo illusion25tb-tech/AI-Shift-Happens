@@ -350,7 +350,7 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">{t('dashboard.dailyQuiz')}</p>
-                  <p className="text-white font-bold text-lg mt-0.5 capitalize">{weekday}</p>
+                  <p className="text-text-primary font-bold text-lg mt-0.5 capitalize">{weekday}</p>
                   <p className="text-white/60 text-sm">{dateStr}</p>
                 </div>
                 <div className="text-3xl">🧠</div>

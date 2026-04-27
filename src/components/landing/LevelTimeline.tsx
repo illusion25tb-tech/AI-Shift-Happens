@@ -24,7 +24,7 @@ export default function LevelTimeline({ locale }: LevelTimelineProps) {
   return (
     <section className="py-10">
       <div className="max-w-3xl mx-auto px-5">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-center text-white mb-10">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-center text-text-primary mb-10">
           {header}
         </h2>
 
