@@ -3,8 +3,36 @@ import { Link } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useLocale } from '../hooks/useLocale'
-import { CATEGORIES, CATEGORY_LABELS } from '../lib/constants'
+import { CATEGORIES, CATEGORY_LABELS, lf } from '../lib/constants'
 import type { CategoryId } from '../lib/constants'
+
+const L = {
+  morePlay: { de: 'Spiele mehr Kategorien für das Radar-Chart.', en: 'Play more categories for the radar chart.', tr: 'Radar grafiği için daha fazla kategori oyna.', es: 'Juega más categorías para el gráfico de radar.' },
+  morePlayDays: { de: 'Spiele mehr Tage für den Verlauf.', en: 'Play more days for the history.', tr: 'Geçmiş için daha fazla gün oyna.', es: 'Juega más días para el historial.' },
+  statisticsTitle: { de: 'Statistiken', en: 'Statistics', tr: 'İstatistikler', es: 'Estadísticas' },
+  playFirstQuiz: { de: 'Spiele dein erstes Quiz für Statistiken.', en: 'Play your first quiz for statistics.', tr: 'İstatistikler için ilk quizini oyna.', es: 'Juega tu primer quiz para ver estadísticas.' },
+  quizzes: { de: 'Quizzes', en: 'Quizzes', tr: 'Quizler', es: 'Quizzes' },
+  avgScore: { de: 'Ø Score', en: 'Avg Score', tr: 'Ort. Puan', es: 'Puntuación Med.' },
+  best: { de: 'Bester', en: 'Best', tr: 'En İyi', es: 'Mejor' },
+  accuracy: { de: 'Trefferquote', en: 'Accuracy', tr: 'İsabet Oranı', es: 'Precisión' },
+  correct: { de: 'richtig', en: 'correct', tr: 'doğru', es: 'correcto' },
+  categoryStrength: { de: 'Kategorien-Stärke', en: 'Category Strength', tr: 'Kategori Gücü', es: 'Fuerza por Categoría' },
+  categoryMastery: { de: 'Kategorie-Mastery', en: 'Category Mastery', tr: 'Kategori Ustalığı', es: 'Maestría por Categoría' },
+  master: { de: 'Meister', en: 'Master', tr: 'Usta', es: 'Maestro' },
+  good: { de: 'Gut', en: 'Good', tr: 'İyi', es: 'Bueno' },
+  learning: { de: 'Lernend', en: 'Learning', tr: 'Öğreniyor', es: 'Aprendiendo' },
+  scoreHistory: { de: 'Score-Verlauf', en: 'Score History', tr: 'Puan Geçmişi', es: 'Historial de Puntuación' },
+  betterThan: {
+    de: (pct: number, total: number) => `Besser als ${pct}% aller ${total} Spieler`,
+    en: (pct: number, total: number) => `Better than ${pct}% of ${total} players`,
+    tr: (pct: number, total: number) => `${total} oyuncunun %${pct}'inden daha iyi`,
+    es: (pct: number, total: number) => `Mejor que ${pct}% de ${total} jugadores`,
+  },
+}
+
+function lfFn<T extends (...args: any[]) => string>(obj: Record<string, T>, locale: string, ...args: Parameters<T>): string {
+  return (obj[locale] ?? obj.en)(...args)
+}
 
 interface StatsData {
   category_scores: Record<string, number>
@@ -29,7 +57,7 @@ function RadarChart({ scores, locale }: { scores: Record<string, number>; locale
   if (cats.length < 3) {
     return (
       <p className="text-text-muted text-sm text-center py-8">
-        {locale === 'de' ? 'Spiele mehr Kategorien für das Radar-Chart.' : 'Play more categories for the radar chart.'}
+        {lf(L.morePlay, locale)}
       </p>
     )
   }
@@ -100,7 +128,7 @@ function ScoreChart({ history, locale }: { history: StatsData['score_history']; 
   if (history.length < 2) {
     return (
       <p className="text-text-muted text-sm text-center py-4">
-        {locale === 'de' ? 'Spiele mehr Tage für den Verlauf.' : 'Play more days for the history.'}
+        {lf(L.morePlayDays, locale)}
       </p>
     )
   }
@@ -173,7 +201,7 @@ export function StatsPage() {
       <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
         <Link to="/app" className="text-text-muted hover:text-text-primary text-lg">&larr;</Link>
         <span className="text-lg font-bold tracking-tight text-primary">
-          {locale === 'de' ? 'Statistiken' : 'Statistics'}
+          {lf(L.statisticsTitle, locale)}
         </span>
       </header>
 
@@ -182,7 +210,7 @@ export function StatsPage() {
           <div className="text-center py-12 space-y-3">
             <div className="text-4xl">📊</div>
             <p className="text-text-muted">
-              {locale === 'de' ? 'Spiele dein erstes Quiz für Statistiken.' : 'Play your first quiz for statistics.'}
+              {lf(L.playFirstQuiz, locale)}
             </p>
           </div>
         ) : (
@@ -190,9 +218,9 @@ export function StatsPage() {
             {/* Totals */}
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: locale === 'de' ? 'Quizzes' : 'Quizzes', value: stats.totals.quizzes, color: 'text-primary' },
-                { label: locale === 'de' ? 'Ø Score' : 'Avg Score', value: stats.totals.avg_score, color: 'text-teal' },
-                { label: locale === 'de' ? 'Bester' : 'Best', value: stats.totals.best_score, color: 'text-gold' },
+                { label: lf(L.quizzes, locale), value: stats.totals.quizzes, color: 'text-primary' },
+                { label: lf(L.avgScore, locale), value: stats.totals.avg_score, color: 'text-teal' },
+                { label: lf(L.best, locale), value: stats.totals.best_score, color: 'text-gold' },
               ].map(s => (
                 <div key={s.label} className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
                   <div className={`text-lg font-bold font-mono ${s.color}`}>{s.value}</div>
@@ -204,7 +232,7 @@ export function StatsPage() {
             {/* Accuracy */}
             <div className="bg-white/4 border border-white/6 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold">{locale === 'de' ? 'Trefferquote' : 'Accuracy'}</span>
+                <span className="text-sm font-semibold">{lf(L.accuracy, locale)}</span>
                 <span className="font-mono font-bold text-primary">
                   {stats.totals.questions > 0 ? Math.round((stats.totals.correct / stats.totals.questions) * 100) : 0}%
                 </span>
@@ -219,7 +247,7 @@ export function StatsPage() {
                 />
               </div>
               <div className="text-xs text-text-muted mt-1">
-                {stats.totals.correct} / {stats.totals.questions} {locale === 'de' ? 'richtig' : 'correct'}
+                {stats.totals.correct} / {stats.totals.questions} {lf(L.correct, locale)}
               </div>
             </div>
 
@@ -228,9 +256,7 @@ export function StatsPage() {
               <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">
                 <p className="text-2xl font-bold text-primary font-mono">Top {100 - stats.comparison.percentile}%</p>
                 <p className="text-xs text-text-muted mt-1">
-                  {locale === 'de'
-                    ? `Besser als ${stats.comparison.percentile}% aller ${stats.comparison.total_players} Spieler`
-                    : `Better than ${stats.comparison.percentile}% of ${stats.comparison.total_players} players`}
+                  {lfFn(L.betterThan, locale, stats.comparison.percentile, stats.comparison.total_players)}
                 </p>
               </div>
             )}
@@ -238,7 +264,7 @@ export function StatsPage() {
             {/* Radar Chart */}
             <div className="bg-white/4 border border-white/6 rounded-xl p-4">
               <h3 className="text-sm font-bold mb-2">
-                {locale === 'de' ? 'Kategorien-Stärke' : 'Category Strength'}
+                {lf(L.categoryStrength, locale)}
               </h3>
               <RadarChart scores={stats.category_scores} locale={locale} />
               {/* Legend */}
@@ -262,7 +288,7 @@ export function StatsPage() {
             {Object.keys(stats.category_scores).length > 0 && (
               <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
                 <h3 className="text-sm font-bold">
-                  {locale === 'de' ? 'Kategorie-Mastery' : 'Category Mastery'}
+                  {lf(L.categoryMastery, locale)}
                 </h3>
                 {Object.entries(stats.category_scores)
                   .sort(([, a], [, b]) => b - a)
@@ -270,10 +296,10 @@ export function StatsPage() {
                     const label = CATEGORY_LABELS[cat as CategoryId]?.[locale as 'de' | 'en'] ?? cat
                     const mastery = score >= 80 ? 'master' : score >= 50 ? 'good' : 'learning'
                     const masteryLabel = mastery === 'master'
-                      ? (locale === 'de' ? 'Meister' : 'Master')
+                      ? lf(L.master, locale)
                       : mastery === 'good'
-                      ? (locale === 'de' ? 'Gut' : 'Good')
-                      : (locale === 'de' ? 'Lernend' : 'Learning')
+                      ? lf(L.good, locale)
+                      : lf(L.learning, locale)
                     const barColor = mastery === 'master' ? 'bg-teal' : mastery === 'good' ? 'bg-primary' : 'bg-gold'
                     return (
                       <div key={cat} className="space-y-1">
@@ -295,7 +321,7 @@ export function StatsPage() {
             {/* Score History */}
             <div className="bg-white/4 border border-white/6 rounded-xl p-4">
               <h3 className="text-sm font-bold mb-2">
-                {locale === 'de' ? 'Score-Verlauf' : 'Score History'}
+                {lf(L.scoreHistory, locale)}
               </h3>
               <ScoreChart history={stats.score_history} locale={locale} />
             </div>

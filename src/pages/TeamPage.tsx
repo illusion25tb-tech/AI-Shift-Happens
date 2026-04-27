@@ -4,7 +4,48 @@ import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useLocale } from '../hooks/useLocale'
 import { useAuth } from '../hooks/useAuth'
-import { LEVELS } from '../lib/constants'
+import { LEVELS, lf } from '../lib/constants'
+
+const L = {
+  reallyLeave: { de: 'Team wirklich verlassen?', en: 'Really leave team?', tr: 'Takımdan gerçekten ayrıl?', es: '¿Realmente salir del equipo?' },
+  reallyRemove: { de: 'Wirklich entfernen?', en: 'Really remove?', tr: 'Gerçekten çıkar?', es: '¿Realmente eliminar?' },
+  myTeam: { de: 'Mein Team', en: 'My Team', tr: 'Takımım', es: 'Mi Equipo' },
+  share: { de: 'Teilen', en: 'Share', tr: 'Paylaş', es: 'Compartir' },
+  inviteOnly: { de: 'Einladung nur durch Captain & Admins möglich.', en: 'Only Captain & Admins can invite.', tr: 'Sadece Kaptan ve Yöneticiler davet edebilir.', es: 'Solo Capitán y Admins pueden invitar.' },
+  members: { de: 'Mitglieder', en: 'members', tr: 'üye', es: 'miembros' },
+  anonymous: { de: 'Anonym', en: 'Anonymous', tr: 'Anonim', es: 'Anónimo' },
+  makeAdmin: { de: 'Zum Admin machen', en: 'Make admin', tr: 'Yönetici yap', es: 'Hacer admin' },
+  removeAdmin: { de: 'Admin entfernen', en: 'Remove admin', tr: 'Yönetici kaldır', es: 'Quitar admin' },
+  remove: { de: 'Entfernen', en: 'Remove', tr: 'Kaldır', es: 'Eliminar' },
+  weekScore: { de: 'Wochen-Score', en: 'Week Score', tr: 'Hafta Puanı', es: 'Puntuación Semanal' },
+  quizzesWeek: { de: 'Quizzes diese Woche', en: 'Quizzes this week', tr: 'Bu hafta quizler', es: 'Quizzes esta semana' },
+  avgLevel: { de: 'Avg. Level', en: 'Avg. Level', tr: 'Ort. Seviye', es: 'Nivel Promedio' },
+  bestStreak: { de: 'Bester Streak', en: 'Best Streak', tr: 'En İyi Seri', es: 'Mejor Racha' },
+  captainCan: { de: 'Kann alles: einladen, Admin ernennen/entfernen, kicken', en: 'Can do everything: invite, promote/demote, kick', tr: 'Her şeyi yapabilir: davet, yönetici atama/kaldırma, atma', es: 'Puede hacer todo: invitar, promover/degradar, expulsar' },
+  adminCan: { de: 'Kann einladen und Mitglieder kicken', en: 'Can invite and kick members', tr: 'Davet edebilir ve üyeleri atabilir', es: 'Puede invitar y expulsar miembros' },
+  memberCan: { de: 'Kann spielen und Ranking sehen', en: 'Can play and see rankings', tr: 'Oynayabilir ve sıralamayı görebilir', es: 'Puede jugar y ver clasificación' },
+  leaveTeam: { de: 'Team verlassen', en: 'Leave team', tr: 'Takımdan ayrıl', es: 'Salir del equipo' },
+  noTeamYet: { de: 'Noch kein Team', en: 'No team yet', tr: 'Henüz takım yok', es: 'Aún sin equipo' },
+  createOrJoin: { de: 'Erstelle ein Team oder tritt einem bei. Team-Score = Summe aller Daily-Punkte.', en: 'Create a team or join one. Team score = sum of all daily points.', tr: 'Bir takım oluştur veya katıl. Takım puanı = tüm günlük puanların toplamı.', es: 'Crea un equipo o únete a uno. Puntuación = suma de todos los puntos diarios.' },
+  createTeam: { de: 'Team erstellen', en: 'Create team', tr: 'Takım oluştur', es: 'Crear equipo' },
+  teamName: { de: 'Teamname...', en: 'Team name...', tr: 'Takım adı...', es: 'Nombre del equipo...' },
+  joinTeam: { de: 'Team beitreten', en: 'Join team', tr: 'Takıma katıl', es: 'Unirse al equipo' },
+  needInviteCode: { de: 'Du brauchst einen Invite-Code von einem Captain oder Admin.', en: 'You need an invite code from a Captain or Admin.', tr: 'Bir Kaptan veya Yöneticiden davet kodu gerekir.', es: 'Necesitas un código de invitación de un Capitán o Admin.' },
+  join: { de: 'Beitreten', en: 'Join', tr: 'Katıl', es: 'Unirse' },
+  joinForBattles: { de: 'Tritt einem Team bei um Battles zu starten.', en: 'Join a team to start battles.', tr: 'Savaşlara başlamak için bir takıma katıl.', es: 'Únete a un equipo para iniciar batallas.' },
+  activeBattles: { de: 'Aktive Battles', en: 'Active Battles', tr: 'Aktif Savaşlar', es: 'Batallas Activas' },
+  noBattles: { de: 'Noch keine Battles. Fordere ein Team im Ranking heraus!', en: 'No battles yet. Challenge a team from the ranking!', tr: 'Henüz savaş yok. Sıralamadan bir takıma meydan oku!', es: '¡Aún sin batallas. Reta a un equipo del ranking!' },
+  won: { de: 'Gewonnen!', en: 'Won!', tr: 'Kazandın!', es: '¡Ganaste!' },
+  lost: { de: 'Verloren', en: 'Lost', tr: 'Kaybettin', es: 'Perdiste' },
+  active: { de: 'Läuft', en: 'Active', tr: 'Devam ediyor', es: 'Activa' },
+  cw: { de: 'KW', en: 'Week', tr: 'Hafta', es: 'Semana' },
+  challengeTeam: { de: 'Team herausfordern', en: 'Challenge a Team', tr: 'Takıma Meydan Oku', es: 'Retar a un Equipo' },
+  pickTeam: { de: 'Wähle ein Team aus dem Ranking für ein Wochen-Battle:', en: 'Pick a team from the ranking for a weekly battle:', tr: 'Haftalık savaş için sıralamadan bir takım seç:', es: 'Elige un equipo del ranking para una batalla semanal:' },
+  noOtherTeams: { de: 'Keine anderen Teams verfügbar.', en: 'No other teams available.', tr: 'Başka takım yok.', es: 'No hay otros equipos.' },
+  players: { de: 'Spieler', en: 'players', tr: 'oyuncu', es: 'jugadores' },
+  challengeBtn: { de: 'Herausfordern', en: 'Challenge', tr: 'Meydan Oku', es: 'Retar' },
+  noTeamsScores: { de: 'Noch keine Teams mit Scores diese Woche.', en: 'No teams with scores this week yet.', tr: 'Bu hafta henüz puanlı takım yok.', es: 'Aún sin equipos con puntuaciones esta semana.' },
+}
 
 interface TeamMember {
   id: string
@@ -173,7 +214,7 @@ export function TeamPage() {
   }
 
   const leaveTeam = async () => {
-    if (!confirm(locale === 'de' ? 'Team wirklich verlassen?' : 'Really leave team?')) return
+    if (!confirm(lf(L.reallyLeave, locale))) return
     setActionLoading(true)
     try { await teamCall('leave'); setTeam(null) }
     catch (err) { setError(err instanceof Error ? err.message : 'Error') }
@@ -195,7 +236,7 @@ export function TeamPage() {
   }
 
   const kickMember = async (targetId: string) => {
-    if (!confirm(locale === 'de' ? 'Wirklich entfernen?' : 'Really remove?')) return
+    if (!confirm(lf(L.reallyRemove, locale))) return
     setActionLoading(true); setError(null)
     try { await teamCall('kick', { target_user_id: targetId }); await loadTeam() }
     catch (err) { setError(err instanceof Error ? err.message : 'Error') }
@@ -206,9 +247,12 @@ export function TeamPage() {
     ? `${window.location.origin}${import.meta.env.BASE_URL}app/team?code=${team.invite_code}`
     : null
 
-  const inviteText = (name: string) => locale === 'de'
-    ? `Tritt meinem Team "${name}" bei AI-Shift Happens bei! 🧠⚔️`
-    : `Join my team "${name}" on AI-Shift Happens! 🧠⚔️`
+  const inviteText = (name: string) => lf({
+    de: `Tritt meinem Team "${name}" bei AI-Shift Happens bei! 🧠⚔️`,
+    en: `Join my team "${name}" on AI-Shift Happens! 🧠⚔️`,
+    tr: `AI-Shift Happens'te "${name}" takımıma katıl! 🧠⚔️`,
+    es: `¡Únete a mi equipo "${name}" en AI-Shift Happens! 🧠⚔️`,
+  }, locale)
 
   const copyCode = () => {
     if (!inviteUrl) return
@@ -272,7 +316,7 @@ export function TeamPage() {
       <div className="px-5 pt-4">
         <div className="flex gap-1 bg-white/4 rounded-xl p-1">
           {[
-            { key: 'team' as const, label: locale === 'de' ? 'Mein Team' : 'My Team' },
+            { key: 'team' as const, label: lf(L.myTeam, locale) },
             { key: 'battles' as const, label: 'Battles' },
             { key: 'ranking' as const, label: 'Ranking' },
           ].map(t => (
@@ -314,7 +358,7 @@ export function TeamPage() {
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                       {'share' in navigator && (
                         <button onClick={shareNative} className="text-[10px] px-2.5 py-1 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
-                          📤 {locale === 'de' ? 'Teilen' : 'Share'}
+                          📤 {lf(L.share, locale)}
                         </button>
                       )}
                       <button onClick={shareWhatsApp} className="text-[10px] px-2.5 py-1 rounded-lg bg-[#25D366]/15 text-[#25D366] hover:bg-[#25D366]/25 transition-colors">
@@ -336,14 +380,12 @@ export function TeamPage() {
                   </div>
                 ) : (
                   <p className="text-xs text-text-muted italic">
-                    {locale === 'de'
-                      ? 'Einladung nur durch Captain & Admins möglich.'
-                      : 'Only Captain & Admins can invite.'}
+                    {lf(L.inviteOnly, locale)}
                   </p>
                 )}
 
                 <div className="flex items-center justify-center gap-3 text-xs text-text-muted">
-                  <span>{team.member_count} {locale === 'de' ? 'Mitglieder' : 'members'}</span>
+                  <span>{team.member_count} {lf(L.members, locale)}</span>
                   <span>·</span>
                   <span className={ROLE_LABELS[team.my_role].color}>
                     {ROLE_LABELS[team.my_role][locale as 'de' | 'en']}
@@ -366,7 +408,7 @@ export function TeamPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold truncate flex items-center gap-1.5">
-                          {m.display_name || (locale === 'de' ? 'Anonym' : 'Anonymous')}
+                          {m.display_name || (lf(L.anonymous, locale))}
                           {isMe && <span className="text-[10px] text-primary">(du)</span>}
                           <span className={`text-[10px] ${ROLE_LABELS[role].color}`}>
                             {role !== 'member' && ROLE_LABELS[role][locale as 'de' | 'en']}
@@ -385,7 +427,7 @@ export function TeamPage() {
                             <button
                               onClick={() => promoteMember(m.id)}
                               disabled={actionLoading}
-                              title={locale === 'de' ? 'Zum Admin machen' : 'Make admin'}
+                              title={lf(L.makeAdmin, locale)}
                               className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20"
                             >
                               ↑
@@ -395,7 +437,7 @@ export function TeamPage() {
                             <button
                               onClick={() => demoteMember(m.id)}
                               disabled={actionLoading}
-                              title={locale === 'de' ? 'Admin entfernen' : 'Remove admin'}
+                              title={lf(L.removeAdmin, locale)}
                               className="text-[10px] px-1.5 py-0.5 rounded bg-gold/10 text-gold hover:bg-gold/20"
                             >
                               ↓
@@ -404,7 +446,7 @@ export function TeamPage() {
                           <button
                             onClick={() => kickMember(m.id)}
                             disabled={actionLoading}
-                            title={locale === 'de' ? 'Entfernen' : 'Remove'}
+                            title={lf(L.remove, locale)}
                             className="text-[10px] px-1.5 py-0.5 rounded bg-danger/10 text-danger hover:bg-danger/20"
                           >
                             ✕
@@ -420,10 +462,10 @@ export function TeamPage() {
               {teamStats && (
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { val: teamStats.week_score.toLocaleString(), label: locale === 'de' ? 'Wochen-Score' : 'Week Score', color: 'text-primary' },
-                    { val: teamStats.week_quizzes, label: locale === 'de' ? 'Quizzes diese Woche' : 'Quizzes this week', color: 'text-teal' },
-                    { val: teamStats.avg_level, label: locale === 'de' ? 'Avg. Level' : 'Avg. Level', color: 'text-gold' },
-                    { val: `🔥${teamStats.longest_streak}`, label: locale === 'de' ? 'Bester Streak' : 'Best Streak', color: 'text-fire' },
+                    { val: teamStats.week_score.toLocaleString(), label: lf(L.weekScore, locale), color: 'text-primary' },
+                    { val: teamStats.week_quizzes, label: lf(L.quizzesWeek, locale), color: 'text-teal' },
+                    { val: teamStats.avg_level, label: lf(L.avgLevel, locale), color: 'text-gold' },
+                    { val: `🔥${teamStats.longest_streak}`, label: lf(L.bestStreak, locale), color: 'text-fire' },
                   ].map(s => (
                     <div key={s.label} className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
                       <div className={`text-lg font-bold font-mono ${s.color}`}>{s.val}</div>
@@ -435,9 +477,9 @@ export function TeamPage() {
 
               {/* Role legend */}
               <div className="text-[10px] text-text-muted space-y-0.5 px-1">
-                <p>👑 <span className="text-gold">Captain</span> — {locale === 'de' ? 'Kann alles: einladen, Admin ernennen/entfernen, kicken' : 'Can do everything: invite, promote/demote, kick'}</p>
-                <p>🛡️ <span className="text-primary">Admin</span> — {locale === 'de' ? 'Kann einladen und Mitglieder kicken' : 'Can invite and kick members'}</p>
-                <p>👤 <span className="text-text-muted">{ROLE_LABELS.member[locale as 'de' | 'en']}</span> — {locale === 'de' ? 'Kann spielen und Ranking sehen' : 'Can play and see rankings'}</p>
+                <p>👑 <span className="text-gold">Captain</span> — {lf(L.captainCan, locale)}</p>
+                <p>🛡️ <span className="text-primary">Admin</span> — {lf(L.adminCan, locale)}</p>
+                <p>👤 <span className="text-text-muted">{ROLE_LABELS.member[locale as 'de' | 'en']}</span> — {lf(L.memberCan, locale)}</p>
               </div>
 
               <button
@@ -445,7 +487,7 @@ export function TeamPage() {
                 disabled={actionLoading}
                 className="w-full py-2 rounded-xl border border-danger/20 text-danger text-xs font-semibold hover:bg-danger/10 transition-colors"
               >
-                {locale === 'de' ? 'Team verlassen' : 'Leave team'}
+                {lf(L.leaveTeam, locale)}
               </button>
             </div>
           ) : (
@@ -454,23 +496,21 @@ export function TeamPage() {
               <div className="text-center space-y-2">
                 <div className="text-5xl">⚔️</div>
                 <h2 className="text-lg font-bold">
-                  {locale === 'de' ? 'Noch kein Team' : 'No team yet'}
+                  {lf(L.noTeamYet, locale)}
                 </h2>
                 <p className="text-sm text-text-secondary">
-                  {locale === 'de'
-                    ? 'Erstelle ein Team oder tritt einem bei. Team-Score = Summe aller Daily-Punkte.'
-                    : 'Create a team or join one. Team score = sum of all daily points.'}
+                  {lf(L.createOrJoin, locale)}
                 </p>
               </div>
 
               <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
-                <h3 className="text-sm font-bold">{locale === 'de' ? 'Team erstellen' : 'Create team'}</h3>
+                <h3 className="text-sm font-bold">{lf(L.createTeam, locale)}</h3>
                 <input
                   type="text"
                   value={createName}
                   onChange={e => setCreateName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && createTeam()}
-                  placeholder={locale === 'de' ? 'Teamname...' : 'Team name...'}
+                  placeholder={lf(L.teamName, locale)}
                   className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
                 <button
@@ -478,16 +518,14 @@ export function TeamPage() {
                   disabled={actionLoading || !createName.trim()}
                   className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-2 rounded-lg text-sm transition-colors disabled:opacity-50"
                 >
-                  {actionLoading ? '...' : (locale === 'de' ? 'Team erstellen' : 'Create team')}
+                  {actionLoading ? '...' : (lf(L.createTeam, locale))}
                 </button>
               </div>
 
               <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
-                <h3 className="text-sm font-bold">{locale === 'de' ? 'Team beitreten' : 'Join team'}</h3>
+                <h3 className="text-sm font-bold">{lf(L.joinTeam, locale)}</h3>
                 <p className="text-xs text-text-muted">
-                  {locale === 'de'
-                    ? 'Du brauchst einen Invite-Code von einem Captain oder Admin.'
-                    : 'You need an invite code from a Captain or Admin.'}
+                  {lf(L.needInviteCode, locale)}
                 </p>
                 <input
                   type="text"
@@ -502,7 +540,7 @@ export function TeamPage() {
                   disabled={actionLoading || !joinCode.trim()}
                   className="w-full border border-primary text-primary font-semibold py-2 rounded-lg text-sm hover:bg-primary/10 transition-colors disabled:opacity-50"
                 >
-                  {actionLoading ? '...' : (locale === 'de' ? 'Beitreten' : 'Join')}
+                  {actionLoading ? '...' : (lf(L.join, locale))}
                 </button>
               </div>
             </div>
@@ -513,15 +551,15 @@ export function TeamPage() {
           <div className="space-y-4 pt-2">
             {!team ? (
               <p className="text-text-muted text-center py-8 text-sm">
-                {locale === 'de' ? 'Tritt einem Team bei um Battles zu starten.' : 'Join a team to start battles.'}
+                {lf(L.joinForBattles, locale)}
               </p>
             ) : (
               <>
                 {/* Active challenges */}
-                <h3 className="text-sm font-bold">{locale === 'de' ? 'Aktive Battles' : 'Active Battles'}</h3>
+                <h3 className="text-sm font-bold">{lf(L.activeBattles, locale)}</h3>
                 {challenges.length === 0 ? (
                   <p className="text-text-muted text-sm">
-                    {locale === 'de' ? 'Noch keine Battles. Fordere ein Team im Ranking heraus!' : 'No battles yet. Challenge a team from the ranking!'}
+                    {lf(L.noBattles, locale)}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -548,13 +586,13 @@ export function TeamPage() {
                                 : 'bg-primary/15 text-primary'
                             }`}>
                               {ch.status === 'completed'
-                                ? isWon ? (locale === 'de' ? 'Gewonnen!' : 'Won!') : isLost ? (locale === 'de' ? 'Verloren' : 'Lost') : 'Draw'
-                                : (locale === 'de' ? 'Läuft' : 'Active')}
+                                ? isWon ? (lf(L.won, locale)) : isLost ? (lf(L.lost, locale)) : 'Draw'
+                                : (lf(L.active, locale))}
                             </span>
                             <span className="font-mono font-bold text-fire">{theirScore}</span>
                           </div>
                           <div className="text-[10px] text-text-muted mt-1 text-center">
-                            {locale === 'de' ? 'KW' : 'Week'} {getCalendarWeek(ch.week_start)}
+                            {lf(L.cw, locale)} {getCalendarWeek(ch.week_start)}
                           </div>
                         </div>
                       )
@@ -563,28 +601,26 @@ export function TeamPage() {
                 )}
 
                 {/* Challenge from ranking */}
-                <h3 className="text-sm font-bold mt-4">{locale === 'de' ? 'Team herausfordern' : 'Challenge a Team'}</h3>
+                <h3 className="text-sm font-bold mt-4">{lf(L.challengeTeam, locale)}</h3>
                 <p className="text-xs text-text-muted mb-2">
-                  {locale === 'de'
-                    ? 'Wähle ein Team aus dem Ranking für ein Wochen-Battle:'
-                    : 'Pick a team from the ranking for a weekly battle:'}
+                  {lf(L.pickTeam, locale)}
                 </p>
                 {rankings.filter(r => r.team_id !== team.id).length === 0 ? (
-                  <p className="text-text-muted text-sm">{locale === 'de' ? 'Keine anderen Teams verfügbar.' : 'No other teams available.'}</p>
+                  <p className="text-text-muted text-sm">{lf(L.noOtherTeams, locale)}</p>
                 ) : (
                   <div className="space-y-2">
                     {rankings.filter(r => r.team_id !== team.id).slice(0, 5).map(r => (
                       <div key={r.team_id} className="flex items-center gap-3 bg-white/4 border border-white/6 rounded-xl px-4 py-3">
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-semibold truncate">{r.team_name}</div>
-                          <div className="text-[10px] text-text-muted">{r.member_count} {locale === 'de' ? 'Spieler' : 'players'} · {r.total_score} Pts</div>
+                          <div className="text-[10px] text-text-muted">{r.member_count} {lf(L.players, locale)} · {r.total_score} Pts</div>
                         </div>
                         <button
                           onClick={() => challengeTeam(r.team_id)}
                           disabled={actionLoading}
                           className="text-xs px-3 py-1.5 rounded-lg bg-fire/15 text-fire font-semibold hover:bg-fire/25 transition-colors disabled:opacity-50"
                         >
-                          ⚔️ {locale === 'de' ? 'Herausfordern' : 'Challenge'}
+                          ⚔️ {lf(L.challengeBtn, locale)}
                         </button>
                       </div>
                     ))}
@@ -599,9 +635,7 @@ export function TeamPage() {
           <div className="space-y-3 pt-2">
             {rankings.length === 0 ? (
               <p className="text-text-muted text-center py-8 text-sm">
-                {locale === 'de'
-                  ? 'Noch keine Teams mit Scores diese Woche.'
-                  : 'No teams with scores this week yet.'}
+                {lf(L.noTeamsScores, locale)}
               </p>
             ) : (
               <div className="bg-white/4 border border-white/6 rounded-2xl divide-y divide-white/6">
@@ -615,7 +649,7 @@ export function TeamPage() {
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold truncate">{r.team_name}</div>
                         <div className="text-[10px] text-text-muted">
-                          {r.member_count} {locale === 'de' ? 'Spieler' : 'players'}
+                          {r.member_count} {lf(L.players, locale)}
                         </div>
                       </div>
                       <div className="text-right">

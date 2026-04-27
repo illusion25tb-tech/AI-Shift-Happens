@@ -3,6 +3,28 @@ import { Link } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useLocale } from '../hooks/useLocale'
 import { getI18nText, type I18nField } from '../lib/i18n'
+import { lf } from '../lib/constants'
+
+const L = {
+  pageTitle: { de: 'Sponsoren & Preise', en: 'Sponsors & Prizes', tr: 'Sponsorlar & Ödüller', es: 'Patrocinadores y Premios' },
+  currentPrizes: { de: 'Aktuelle Preise', en: 'Current Prizes', tr: 'Mevcut Ödüller', es: 'Premios Actuales' },
+  weeklyPrize: { de: 'Wochenpreis', en: 'Weekly Prize', tr: 'Haftalık Ödül', es: 'Premio Semanal' },
+  monthlyPrize: { de: 'Monatspreis', en: 'Monthly Prize', tr: 'Aylık Ödül', es: 'Premio Mensual' },
+  sponsoredBy: { de: 'Gesponsert von', en: 'Sponsored by', tr: 'Sponsoru', es: 'Patrocinado por' },
+  winner: { de: 'Gewinner:', en: 'Winner:', tr: 'Kazanan:', es: 'Ganador:' },
+  ourSponsors: { de: 'Unsere Sponsoren', en: 'Our Sponsors', tr: 'Sponsorlarımız', es: 'Nuestros Patrocinadores' },
+  noSponsors: { de: 'Noch keine Sponsoren. Interesse? contact@tbai.cloud', en: 'No sponsors yet. Interested? contact@tbai.cloud', tr: 'Henüz sponsor yok. İlgileniyor musun? contact@tbai.cloud', es: 'Aún sin patrocinadores. ¿Interesado? contact@tbai.cloud' },
+  becomeSponsor: { de: 'Sponsor werden?', en: 'Become a sponsor?', tr: 'Sponsor olmak ister misin?', es: '¿Convertirse en patrocinador?' },
+  sponsorPitch: {
+    de: 'Erreiche AI-interessierte Fach- und Führungskräfte. Gold-, Silber- und Standard-Pakete verfügbar.',
+    en: 'Reach AI-interested professionals and leaders. Gold, silver and standard packages available.',
+    tr: 'Yapay zeka ile ilgilenen profesyonellere ve liderlere ulaş. Altın, gümüş ve standart paketler mevcut.',
+    es: 'Llega a profesionales y líderes interesados en IA. Paquetes Oro, Plata y Estándar disponibles.',
+  },
+  goldSponsor: { de: 'Gold-Sponsor', en: 'Gold Sponsor', tr: 'Altın Sponsor', es: 'Patrocinador Oro' },
+  silverSponsor: { de: 'Silber-Sponsor', en: 'Silver Sponsor', tr: 'Gümüş Sponsor', es: 'Patrocinador Plata' },
+  standardSponsor: { de: 'Sponsor', en: 'Sponsor', tr: 'Sponsor', es: 'Patrocinador' },
+}
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -59,7 +81,7 @@ export function SponsorsPage() {
       <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
         <Link to="/app" className="text-text-muted hover:text-text-primary text-lg">&larr;</Link>
         <span className="text-lg font-bold tracking-tight text-primary">
-          {locale === 'de' ? 'Sponsoren & Preise' : 'Sponsors & Prizes'}
+          {lf(L.pageTitle, locale)}
         </span>
       </header>
 
@@ -68,7 +90,7 @@ export function SponsorsPage() {
         {(weeklyPrizes.length > 0 || monthlyPrizes.length > 0) && (
           <div className="space-y-3">
             <h2 className="text-sm font-bold">
-              {locale === 'de' ? 'Aktuelle Preise' : 'Current Prizes'}
+              {lf(L.currentPrizes, locale)}
             </h2>
             {weeklyPrizes.map(p => (
               <div key={p.id} className="bg-gold/5 border border-gold/15 rounded-2xl p-4 space-y-2">
@@ -76,7 +98,7 @@ export function SponsorsPage() {
                   <span className="text-3xl">🏆</span>
                   <div className="flex-1">
                     <p className="text-[10px] font-semibold uppercase text-gold">
-                      {locale === 'de' ? 'Wochenpreis' : 'Weekly Prize'}
+                      {lf(L.weeklyPrize, locale)}
                     </p>
                     <p className="text-lg font-bold">{getI18nText(p.title_i18n, locale, p.title)}</p>
                   </div>
@@ -88,12 +110,12 @@ export function SponsorsPage() {
                 })()}
                 {p.sponsors && (
                   <p className="text-xs text-text-muted">
-                    {locale === 'de' ? 'Gesponsert von' : 'Sponsored by'} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
+                    {lf(L.sponsoredBy, locale)} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
                   </p>
                 )}
                 {p.profiles && (
                   <p className="text-xs text-teal font-semibold">
-                    {locale === 'de' ? 'Gewinner:' : 'Winner:'} {p.profiles.display_name}
+                    {lf(L.winner, locale)} {p.profiles.display_name}
                   </p>
                 )}
               </div>
@@ -104,7 +126,7 @@ export function SponsorsPage() {
                   <span className="text-3xl">🎁</span>
                   <div className="flex-1">
                     <p className="text-[10px] font-semibold uppercase text-primary">
-                      {locale === 'de' ? 'Monatspreis' : 'Monthly Prize'}
+                      {lf(L.monthlyPrize, locale)}
                     </p>
                     <p className="text-lg font-bold">{getI18nText(p.title_i18n, locale, p.title)}</p>
                   </div>
@@ -116,7 +138,7 @@ export function SponsorsPage() {
                 })()}
                 {p.sponsors && (
                   <p className="text-xs text-text-muted">
-                    {locale === 'de' ? 'Gesponsert von' : 'Sponsored by'} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
+                    {lf(L.sponsoredBy, locale)} <span className="text-text-secondary font-semibold">{p.sponsors.name}</span>
                   </p>
                 )}
               </div>
@@ -128,11 +150,11 @@ export function SponsorsPage() {
         {sortedSponsors.length > 0 ? (
           <div className="space-y-3">
             <h2 className="text-sm font-bold">
-              {locale === 'de' ? 'Unsere Sponsoren' : 'Our Sponsors'}
+              {lf(L.ourSponsors, locale)}
             </h2>
             {sortedSponsors.map(s => {
               const tierColors = { gold: 'border-gold/20 bg-gold/5', silver: 'border-white/10 bg-white/4', standard: 'border-white/6 bg-white/2' }
-              const tierLabels = { gold: { de: 'Gold-Sponsor', en: 'Gold Sponsor' }, silver: { de: 'Silber-Sponsor', en: 'Silver Sponsor' }, standard: { de: 'Sponsor', en: 'Sponsor' } }
+              const tierLabels = { gold: L.goldSponsor, silver: L.silverSponsor, standard: L.standardSponsor }
               return (
                 <a
                   key={s.id}
@@ -152,7 +174,7 @@ export function SponsorsPage() {
                     <div className="flex-1">
                       <p className="font-bold">{s.name}</p>
                       <p className="text-[10px] text-text-muted uppercase">
-                        {tierLabels[s.tier as keyof typeof tierLabels]?.[locale as 'de' | 'en'] ?? 'Sponsor'}
+                        {lf(tierLabels[s.tier as keyof typeof tierLabels] ?? L.standardSponsor, locale)}
                       </p>
                       {(() => {
                         const desc = getI18nText(s.description_i18n, locale, s.description)
@@ -168,9 +190,7 @@ export function SponsorsPage() {
           <div className="text-center py-8 space-y-3">
             <div className="text-4xl">🤝</div>
             <p className="text-text-muted text-sm">
-              {locale === 'de'
-                ? 'Noch keine Sponsoren. Interesse? contact@tbai.cloud'
-                : 'No sponsors yet. Interested? contact@tbai.cloud'}
+              {lf(L.noSponsors, locale)}
             </p>
           </div>
         )}
@@ -178,12 +198,10 @@ export function SponsorsPage() {
         {/* CTA for sponsors */}
         <div className="bg-white/4 border border-white/6 rounded-2xl p-5 text-center space-y-2">
           <p className="text-sm font-bold">
-            {locale === 'de' ? 'Sponsor werden?' : 'Become a sponsor?'}
+            {lf(L.becomeSponsor, locale)}
           </p>
           <p className="text-xs text-text-secondary">
-            {locale === 'de'
-              ? 'Erreiche AI-interessierte Fach- und Führungskräfte. Gold-, Silber- und Standard-Pakete verfügbar.'
-              : 'Reach AI-interested professionals and leaders. Gold, silver and standard packages available.'}
+            {lf(L.sponsorPitch, locale)}
           </p>
           <a href="mailto:contact@tbai.cloud?subject=Sponsoring AI-Shift Happens" className="inline-block bg-primary/20 text-primary font-semibold text-sm px-5 py-2 rounded-xl hover:bg-primary/30 transition-colors">
             contact@tbai.cloud

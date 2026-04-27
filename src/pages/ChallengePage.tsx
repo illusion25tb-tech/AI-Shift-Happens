@@ -4,6 +4,24 @@ import { Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useLocale } from '../hooks/useLocale'
 import { useAuth } from '../hooks/useAuth'
+import { lf } from '../lib/constants'
+
+const L = {
+  challenge1v1: { de: '1v1 Challenge', en: '1v1 Challenge', tr: '1v1 Düello', es: 'Duelo 1v1' },
+  challengeSomeone: { de: 'Fordere jemanden heraus!', en: 'Challenge someone!', tr: 'Birine meydan oku!', es: '¡Reta a alguien!' },
+  startChallenge: { de: 'Challenge starten', en: 'Start Challenge', tr: 'Düello Başlat', es: 'Iniciar Duelo' },
+  back: { de: 'Zurück', en: 'Back', tr: 'Geri', es: 'Atrás' },
+  opponent: { de: 'Gegner', en: 'Opponent', tr: 'Rakip', es: 'Oponente' },
+  you: { de: 'Du', en: 'You', tr: 'Sen', es: 'Tú' },
+  waiting: { de: 'Wartet...', en: 'Waiting...', tr: 'Bekliyor...', es: 'Esperando...' },
+  youWin: { de: '🎉 Du gewinnst!', en: '🎉 You win!', tr: '🎉 Kazandın!', es: '🎉 ¡Ganaste!' },
+  closeLoss: { de: '😤 Knapp verloren!', en: '😤 Close loss!', tr: '😤 Kıl payı kaybettin!', es: '😤 ¡Pérdida ajustada!' },
+  tie: { de: '🤝 Unentschieden!', en: '🤝 Tie!', tr: '🤝 Berabere!', es: '🤝 ¡Empate!' },
+  shareLink: { de: 'Challenge-Link teilen', en: 'Share challenge link', tr: 'Düello bağlantısını paylaş', es: 'Compartir enlace del duelo' },
+  copy: { de: 'Kopieren', en: 'Copy', tr: 'Kopyala', es: 'Copiar' },
+  copyLink: { de: '🔗 Challenge-Link kopieren', en: '🔗 Copy challenge link', tr: '🔗 Düello bağlantısını kopyala', es: '🔗 Copiar enlace del duelo' },
+  backToDashboard: { de: 'Zurück zum Dashboard', en: 'Back to Dashboard', tr: 'Panele Geri Dön', es: 'Volver al Panel' },
+}
 import ProgressBar from '../components/ProgressBar'
 import ScoreDisplay from '../components/ScoreDisplay'
 import TimerBar from '../components/TimerBar'
@@ -226,24 +244,27 @@ export function ChallengePage() {
         <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
           <Link to="/app" className="text-text-muted hover:text-text-primary text-lg">&larr;</Link>
           <span className="text-lg font-bold tracking-tight text-primary">
-            {locale === 'de' ? '1v1 Challenge' : '1v1 Challenge'}
+            {lf(L.challenge1v1, locale)}
           </span>
         </header>
         <main className="flex-1 flex flex-col items-center justify-center px-5 gap-6">
           <div className="text-6xl">⚔️</div>
           <h2 className="text-xl font-bold text-center">
-            {locale === 'de' ? 'Fordere jemanden heraus!' : 'Challenge someone!'}
+            {lf(L.challengeSomeone, locale)}
           </h2>
           <p className="text-text-secondary text-sm text-center max-w-xs">
-            {locale === 'de'
-              ? '5 gleiche Fragen für beide Spieler. Wer holt mehr Punkte?'
-              : '5 identical questions for both players. Who scores more?'}
+            {lf({
+              de: '5 gleiche Fragen für beide Spieler. Wer holt mehr Punkte?',
+              en: '5 identical questions for both players. Who scores more?',
+              tr: 'Her iki oyuncu için 5 aynı soru. Kim daha çok puan alır?',
+              es: '5 preguntas idénticas para ambos jugadores. ¿Quién consigue más puntos?',
+            }, locale)}
           </p>
           <button
             onClick={createChallenge}
             className="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl transition-colors"
           >
-            {locale === 'de' ? 'Challenge starten' : 'Start Challenge'}
+            {lf(L.startChallenge, locale)}
           </button>
         </main>
       </div>
@@ -264,7 +285,7 @@ export function ChallengePage() {
     return (
       <div className="min-h-screen bg-bg-base flex flex-col items-center justify-center gap-4 px-5">
         <p className="text-danger text-center">{error}</p>
-        <Link to="/app" className="text-primary hover:underline text-sm">&larr; {locale === 'de' ? 'Zurück' : 'Back'}</Link>
+        <Link to="/app" className="text-primary hover:underline text-sm">&larr; {lf(L.back, locale)}</Link>
       </div>
     )
   }
@@ -273,7 +294,7 @@ export function ChallengePage() {
   if (state === 'result') {
     const myScore = challengeInfo?.is_challenger ? challengeInfo.challenger_score : challengeInfo?.challenged_score
     const opponentScore = challengeInfo?.is_challenger ? challengeInfo.challenged_score : challengeInfo?.challenger_score
-    const opponentName = challengeInfo?.is_challenger ? (locale === 'de' ? 'Gegner' : 'Opponent') : (challengeInfo?.challenger_name ?? 'Challenger')
+    const opponentName = challengeInfo?.is_challenger ? lf(L.opponent, locale) : (challengeInfo?.challenger_name ?? 'Challenger')
     const finalMyScore = myScore ?? totalScore
 
     return (
@@ -290,7 +311,7 @@ export function ChallengePage() {
             <div className="flex items-center justify-center gap-6">
               {/* My score */}
               <div className="text-center flex-1">
-                <p className="text-xs text-text-muted uppercase">{locale === 'de' ? 'Du' : 'You'}</p>
+                <p className="text-xs text-text-muted uppercase">{lf(L.you, locale)}</p>
                 <p className="text-3xl font-mono font-bold text-primary">{finalMyScore}</p>
               </div>
 
@@ -303,7 +324,7 @@ export function ChallengePage() {
                   <p className="text-3xl font-mono font-bold text-fire">{opponentScore}</p>
                 ) : (
                   <p className="text-sm text-text-muted italic mt-2">
-                    {locale === 'de' ? 'Wartet...' : 'Waiting...'}
+                    {lf(L.waiting, locale)}
                   </p>
                 )}
               </div>
@@ -312,10 +333,10 @@ export function ChallengePage() {
             {opponentScore !== null && opponentScore !== undefined && (
               <div className="text-lg font-bold mt-4">
                 {finalMyScore > opponentScore
-                  ? (locale === 'de' ? '🎉 Du gewinnst!' : '🎉 You win!')
+                  ? lf(L.youWin, locale)
                   : finalMyScore < opponentScore
-                  ? (locale === 'de' ? '😤 Knapp verloren!' : '😤 Close loss!')
-                  : (locale === 'de' ? '🤝 Unentschieden!' : '🤝 Tie!')}
+                  ? lf(L.closeLoss, locale)
+                  : lf(L.tie, locale)}
               </div>
             )}
           </div>
@@ -324,7 +345,7 @@ export function ChallengePage() {
           {challengeLink && (
             <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-2">
               <p className="text-xs font-semibold text-text-muted uppercase">
-                {locale === 'de' ? 'Challenge-Link teilen' : 'Share challenge link'}
+                {lf(L.shareLink, locale)}
               </p>
               <div className="flex gap-2">
                 <input
@@ -337,7 +358,7 @@ export function ChallengePage() {
                   onClick={copyLink}
                   className="text-xs font-semibold px-3 py-2 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
                 >
-                  {copied ? '✓' : (locale === 'de' ? 'Kopieren' : 'Copy')}
+                  {copied ? '✓' : lf(L.copy, locale)}
                 </button>
               </div>
             </div>
@@ -355,7 +376,7 @@ export function ChallengePage() {
               }}
               className="w-full bg-primary/20 text-primary font-semibold py-3 rounded-xl hover:bg-primary/30 transition-colors"
             >
-              {locale === 'de' ? '🔗 Challenge-Link kopieren' : '🔗 Copy challenge link'}
+              {lf(L.copyLink, locale)}
             </button>
           )}
 
@@ -363,7 +384,7 @@ export function ChallengePage() {
             to="/app"
             className="w-full text-center border border-white/10 text-text-secondary font-semibold py-3 rounded-xl hover:bg-white/4 transition-colors"
           >
-            {locale === 'de' ? 'Zurück zum Dashboard' : 'Back to Dashboard'}
+            {lf(L.backToDashboard, locale)}
           </Link>
         </main>
       </div>

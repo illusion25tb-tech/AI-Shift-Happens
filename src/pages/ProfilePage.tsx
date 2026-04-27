@@ -5,11 +5,57 @@ import { useLocale } from '../hooks/useLocale'
 import { supabase } from '../lib/supabase'
 import LevelBar from '../components/LevelBar'
 import BadgeGrid from '../components/BadgeGrid'
-import { CATEGORY_LABELS } from '../lib/constants'
+import { CATEGORY_LABELS, lf } from '../lib/constants'
+
 import ShareStatsCard from '../components/ShareStatsCard'
 import StreakCalendar from '../components/StreakCalendar'
 import { canNotify, notificationPermission, requestNotificationPermission, isReminderEnabled, setReminderEnabled, scheduleLocalReminder } from '../lib/notifications'
 import type { CategoryId } from '../lib/constants'
+
+
+const L = {
+  min6: { de: 'Mindestens 6 Zeichen', en: 'Minimum 6 characters', tr: 'En az 6 karakter', es: 'Mínimo 6 caracteres' },
+  pwMismatch: { de: 'Passwörter stimmen nicht überein', en: 'Passwords do not match', tr: 'Şifreler eşleşmiyor', es: 'Las contraseñas no coinciden' },
+  pwChanged: { de: 'Passwort geändert!', en: 'Password changed!', tr: 'Şifre değiştirildi!', es: '¡Contraseña cambiada!' },
+  memberSince: { de: (d) => `Mitglied seit ${d}`, en: (d) => `Member since ${d}`, tr: (d) => `Üye olma: ${d}`, es: (d) => `Miembro desde ${d}` },
+  yourInvite: { de: 'Dein Invite-Code:', en: 'Your invite code:', tr: 'Davet kodun:', es: 'Tu código de invitación:' },
+  copyLink: { de: 'Link kopieren', en: 'Copy link', tr: 'Bağlantıyı kopyala', es: 'Copiar enlace' },
+  inviteFriends: { de: 'Freunde einladen = 200 XP für dich pro Anmeldung', en: 'Invite friends = 200 XP per signup', tr: 'Arkadaşlarını davet et = kayit başına 200 XP', es: 'Invita amigos = 200 XP por registro' },
+  quizzes: { de: 'Quizzes', en: 'Quizzes', tr: 'Quizler', es: 'Quizzes' },
+  accuracy: { de: 'Trefferquote', en: 'Accuracy', tr: 'İsabet Oranı', es: 'Precisión' },
+  correct: { de: 'richtig', en: 'correct', tr: 'doğru', es: 'correcto' },
+  catsPlayed: { de: 'Kategorien gespielt', en: 'Categories played', tr: 'Oynanan kategoriler', es: 'Categorías jugadas' },
+  company: { de: 'Unternehmen', en: 'Company', tr: 'Şirket', es: 'Empresa' },
+  enterCompany: { de: 'Firmenname eingeben...', en: 'Enter company name...', tr: 'Şirket adı gir...', es: 'Ingresa nombre de empresa...' },
+  saving: { de: 'Speichern...', en: 'Saving...', tr: 'Kaydediliyor...', es: 'Guardando...' },
+  save: { de: 'Speichern', en: 'Save', tr: 'Kaydet', es: 'Guardar' },
+  saved: { de: 'Gespeichert', en: 'Saved', tr: 'Kaydedildi', es: 'Guardado' },
+  companyHint: { de: 'Dein Unternehmen erscheint im Firmen-Leaderboard (min. 3 Spieler).', en: 'Your company appears in the company leaderboard (min. 3 players).', tr: 'Şirketin firma siralamasinda gorunur (en az 3 oyuncu).', es: 'Tu empresa aparece en la clasificación (min. 3 jugadores).' },
+  recentActivity: { de: 'Letzte Aktivität', en: 'Recent Activity', tr: 'Son Etkinlik', es: 'Actividad Reciente' },
+  shiftStyle: { de: 'SHIFT-Style', en: 'SHIFT Style', tr: 'SHIFT Stili', es: 'Estilo SHIFT' },
+  shiftBuddyDesc: { de: 'Dein KI-Buddy kommentiert jede Antwort', en: 'Your AI buddy comments on every answer', tr: 'AI dostun her cevabı yorumlar', es: 'Tu compañero de IA comenta cada respuesta' },
+  serious: { de: 'Seriös', en: 'Serious', tr: 'Ciddi', es: 'Serio' },
+  cheeky: { de: 'Frech', en: 'Cheeky', tr: 'Küstah', es: 'Atrevido' },
+  reminders: { de: 'Erinnerungen', en: 'Reminders', tr: 'Hatırlatıcılar', es: 'Recordatorios' },
+  reminderDesc: { de: 'Daily Quiz Erinnerung (Mo-Fr)', en: 'Daily quiz reminder (Mon-Fri)', tr: 'Günlük quiz hatırlatıcısı (Pzt-Cum)', es: 'Recordatorio de quiz diario (Lun-Vie)' },
+  on: { de: 'An', en: 'On', tr: 'Açık', es: 'Activado' },
+  off: { de: 'Aus', en: 'Off', tr: 'Kapalı', es: 'Desactivado' },
+  language: { de: 'Sprache', en: 'Language', tr: 'Dil', es: 'Idioma' },
+  changePw: { de: 'Passwort ändern', en: 'Change password', tr: 'Şifreyi değiştir', es: 'Cambiar contraseña' },
+  newPw: { de: 'Neues Passwort (min. 6 Zeichen)', en: 'New password (min. 6 chars)', tr: 'Yeni şifre (en az 6 karakter)', es: 'Nueva contraseña (min. 6 chars)' },
+  confirmPw: { de: 'Passwort bestätigen', en: 'Confirm password', tr: 'Sifreyi doğrula', es: 'Confirmar contraseña' },
+  savePw: { de: 'Passwort speichern', en: 'Save password', tr: 'Şifreyi kaydet', es: 'Guardar contraseña' },
+  deleteAccount: { de: 'Account löschen...', en: 'Delete account...', tr: 'Hesabı sil...', es: 'Eliminar cuenta...' },
+  reallyDelete: { de: 'Account wirklich löschen? Alle Daten gehen verloren.', en: 'Really delete account? All data will be lost.', tr: 'Hesabı gerçekten sil? Tüm veriler kaybolur.', es: '¿Realmente eliminar cuenta? Todos los datos se perderán.' },
+  yesDelete: { de: 'Ja, löschen', en: 'Yes, delete', tr: 'Evet, sil', es: 'Sí, eliminar' },
+  cancel: { de: 'Abbrechen', en: 'Cancel', tr: 'İptal', es: 'Cancelar' },
+}
+
+const DATE_LOCALES_P = { de: 'de-DE', en: 'en-US', tr: 'tr-TR', es: 'es-ES' }
+
+function lfFn(obj, locale, ...args) {
+  return (obj[locale] || obj.en)(...args)
+}
 
 interface QuizStats {
   totalQuizzes: number
@@ -175,11 +221,11 @@ export function ProfilePage() {
   const changePassword = useCallback(async () => {
     setPasswordMsg(null)
     if (newPassword.length < 6) {
-      setPasswordMsg({ type: 'err', text: locale === 'de' ? 'Mindestens 6 Zeichen' : 'Minimum 6 characters' })
+      setPasswordMsg({ type: 'err', text: lf(L.min6, locale) })
       return
     }
     if (newPassword !== confirmPassword) {
-      setPasswordMsg({ type: 'err', text: locale === 'de' ? 'Passwörter stimmen nicht überein' : 'Passwords do not match' })
+      setPasswordMsg({ type: 'err', text: lf(L.pwMismatch, locale) })
       return
     }
     setPasswordSaving(true)
@@ -188,7 +234,7 @@ export function ProfilePage() {
     if (error) {
       setPasswordMsg({ type: 'err', text: error.message })
     } else {
-      setPasswordMsg({ type: 'ok', text: locale === 'de' ? 'Passwort geändert!' : 'Password changed!' })
+      setPasswordMsg({ type: 'ok', text: lf(L.pwChanged, locale) })
       setNewPassword('')
       setConfirmPassword('')
       setShowPasswordChange(false)
@@ -266,7 +312,7 @@ export function ProfilePage() {
 
   const avatarInitial = (profile.display_name || '?').charAt(0).toUpperCase()
   const memberSince = profile.created_at
-    ? new Date(profile.created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', {
+    ? new Date(profile.created_at).toLocaleDateString(DATE_LOCALES_P[locale], {
         year: 'numeric', month: 'long', day: 'numeric',
       })
     : null
@@ -349,13 +395,13 @@ export function ProfilePage() {
           )}
           {memberSince && (
             <div className="text-xs text-text-muted">
-              {locale === 'de' ? `Mitglied seit ${memberSince}` : `Member since ${memberSince}`}
+              {lfFn(L.memberSince, locale, memberSince)}
             </div>
           )}
           {profile.invite_code && (
             <div className="flex items-center gap-2">
               <span className="text-xs text-text-muted">
-                {locale === 'de' ? 'Dein Invite-Code:' : 'Your invite code:'}
+                {lf(L.yourInvite, locale)}
               </span>
               <span className="font-mono text-primary font-bold text-xs">{profile.invite_code}</span>
               <button
@@ -365,14 +411,12 @@ export function ProfilePage() {
                 }}
                 className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary"
               >
-                {locale === 'de' ? 'Link kopieren' : 'Copy link'}
+                {lf(L.copyLink, locale)}
               </button>
             </div>
           )}
           <p className="text-[10px] text-text-muted">
-            {locale === 'de'
-              ? 'Freunde einladen = 200 XP für dich pro Anmeldung'
-              : 'Invite friends = 200 XP per signup'}
+            {lf(L.inviteFriends, locale)}
           </p>
         </div>
 
@@ -395,7 +439,7 @@ export function ProfilePage() {
           </div>
           <div className="bg-white/4 border border-white/6 rounded-xl p-3 text-center">
             <div className="text-lg font-bold font-mono text-teal">{stats?.totalQuizzes ?? 0}</div>
-            <div className="text-[10px] text-text-muted uppercase">{locale === 'de' ? 'Quizzes' : 'Quizzes'}</div>
+            <div className="text-[10px] text-text-muted uppercase">{lf(L.quizzes, locale)}</div>
           </div>
         </div>
 
@@ -403,7 +447,7 @@ export function ProfilePage() {
         {stats && stats.totalQuestions > 0 && (
           <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold">{locale === 'de' ? 'Trefferquote' : 'Accuracy'}</span>
+              <span className="text-sm font-semibold">{lf(L.accuracy, locale)}</span>
               <span className="font-mono font-bold text-primary">{accuracy}%</span>
             </div>
             <div className="w-full bg-white/6 rounded-full h-2">
@@ -416,13 +460,13 @@ export function ProfilePage() {
               />
             </div>
             <div className="text-xs text-text-muted">
-              {stats.totalCorrect} / {stats.totalQuestions} {locale === 'de' ? 'richtig' : 'correct'}
+              {stats.totalCorrect} / {stats.totalQuestions} {lf(L.correct, locale)}
             </div>
 
             {stats.categoryBreakdown.length > 0 && (
               <div className="pt-2 border-t border-white/6 space-y-1.5">
                 <span className="text-xs font-semibold text-text-muted uppercase">
-                  {locale === 'de' ? 'Kategorien gespielt' : 'Categories played'}
+                  {lf(L.catsPlayed, locale)}
                 </span>
                 {stats.categoryBreakdown.slice(0, 5).map(c => (
                   <div key={c.category} className="flex items-center justify-between text-xs">
@@ -454,7 +498,7 @@ export function ProfilePage() {
         {/* Company */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-2">
           <label className="text-sm font-semibold">
-            {locale === 'de' ? 'Unternehmen' : 'Company'}
+            {lf(L.company, locale)}
           </label>
           <div className="relative">
             <input
@@ -469,7 +513,7 @@ export function ProfilePage() {
                 if (companySuggestions.length > 0) setShowSuggestions(true)
               }}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              placeholder={locale === 'de' ? 'Firmenname eingeben...' : 'Enter company name...'}
+              placeholder={lf(L.enterCompany, locale)}
               className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
             />
             {showSuggestions && companySuggestions.length > 0 && (
@@ -497,17 +541,15 @@ export function ProfilePage() {
               className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors disabled:opacity-50"
             >
               {companySaving
-                ? (locale === 'de' ? 'Speichern...' : 'Saving...')
-                : (locale === 'de' ? 'Speichern' : 'Save')}
+                ? (lf(L.saving, locale))
+                : (lf(L.save, locale))}
             </button>
             {companySaved && (
-              <span className="text-xs text-teal">✓ {locale === 'de' ? 'Gespeichert' : 'Saved'}</span>
+              <span className="text-xs text-teal">✓ {lf(L.saved, locale)}</span>
             )}
           </div>
           <p className="text-[10px] text-text-muted">
-            {locale === 'de'
-              ? 'Dein Unternehmen erscheint im Firmen-Leaderboard (min. 3 Spieler).'
-              : 'Your company appears in the company leaderboard (min. 3 players).'}
+            {lf(L.companyHint, locale)}
           </p>
         </div>
 
@@ -521,13 +563,13 @@ export function ProfilePage() {
         {recentQuizzes.length > 0 && (
           <div>
             <h2 className="text-sm font-bold mb-3">
-              {locale === 'de' ? 'Letzte Aktivität' : 'Recent Activity'}
+              {lf(L.recentActivity, locale)}
             </h2>
             <div className="space-y-2">
               {recentQuizzes.map((q, i) => {
                 const typeEmoji = q.quiz_type === 'daily' ? '🧠' : q.quiz_type === 'freeplay' ? '🎮' : '⚔️'
                 const typeLabel = q.quiz_type === 'daily' ? 'Daily' : q.quiz_type === 'freeplay' ? 'Free Play' : 'Challenge'
-                const date = new Date(q.created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-US', {
+                const date = new Date(q.created_at).toLocaleDateString(DATE_LOCALES_P[locale], {
                   day: 'numeric', month: 'short',
                 })
                 return (
@@ -547,9 +589,9 @@ export function ProfilePage() {
 
         {/* SHIFT Mode Toggle */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4">
-          <span className="text-sm font-semibold">{locale === 'de' ? 'SHIFT-Style' : 'SHIFT Style'}</span>
+          <span className="text-sm font-semibold">{lf(L.shiftStyle, locale)}</span>
           <p className="text-[10px] text-text-muted mt-0.5 mb-3">
-            {locale === 'de' ? 'Dein KI-Buddy kommentiert jede Antwort' : 'Your AI buddy comments on every answer'}
+            {lf(L.shiftBuddyDesc, locale)}
           </p>
           <div className="flex gap-2">
             {(['serious', 'cheeky'] as const).map(mode => {
@@ -577,7 +619,7 @@ export function ProfilePage() {
                 >
                   <span className="text-lg">{mode === 'serious' ? '🎩' : '😎'}</span>
                   <div className="text-xs font-semibold text-text-primary mt-1">
-                    {mode === 'serious' ? (locale === 'de' ? 'Seriös' : 'Serious') : (locale === 'de' ? 'Frech' : 'Cheeky')}
+                    {lf(mode === 'serious' ? L.serious : L.cheeky, locale)}
                   </div>
                 </button>
               )
@@ -589,9 +631,9 @@ export function ProfilePage() {
         {canNotify() && (
           <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">
             <div>
-              <span className="text-sm font-semibold">{locale === 'de' ? 'Erinnerungen' : 'Reminders'}</span>
+              <span className="text-sm font-semibold">{lf(L.reminders, locale)}</span>
               <p className="text-[10px] text-text-muted mt-0.5">
-                {locale === 'de' ? 'Daily Quiz Erinnerung (Mo-Fr)' : 'Daily quiz reminder (Mon-Fri)'}
+                {lf(L.reminderDesc, locale)}
               </p>
             </div>
             <button
@@ -619,14 +661,14 @@ export function ProfilePage() {
                   : 'bg-white/6 text-text-muted'
               }`}
             >
-              {reminderOn ? (locale === 'de' ? 'An' : 'On') : (locale === 'de' ? 'Aus' : 'Off')}
+              {reminderOn ? lf(L.on, locale) : lf(L.off, locale)}
             </button>
           </div>
         )}
 
         {/* Language Toggle */}
         <div className="bg-white/4 border border-white/6 rounded-xl p-4 flex items-center justify-between">
-          <span className="text-sm font-semibold">{locale === 'de' ? 'Sprache' : 'Language'}</span>
+          <span className="text-sm font-semibold">{lf(L.language, locale)}</span>
           <div className="flex gap-1.5">
             {(['de', 'en', 'tr', 'es'] as const).map(l => (
               <button
@@ -647,7 +689,7 @@ export function ProfilePage() {
               onClick={() => setShowPasswordChange(!showPasswordChange)}
               className="text-sm font-semibold w-full text-left flex items-center justify-between"
             >
-              <span>{locale === 'de' ? 'Passwort ändern' : 'Change password'}</span>
+              <span>{lf(L.changePw, locale)}</span>
               <span className="text-text-muted text-xs">{showPasswordChange ? '▲' : '▼'}</span>
             </button>
 
@@ -657,7 +699,7 @@ export function ProfilePage() {
                   type="password"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
-                  placeholder={locale === 'de' ? 'Neues Passwort (min. 6 Zeichen)' : 'New password (min. 6 chars)'}
+                  placeholder={lf(L.newPw, locale)}
                   className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
                 <input
@@ -665,7 +707,7 @@ export function ProfilePage() {
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && changePassword()}
-                  placeholder={locale === 'de' ? 'Passwort bestätigen' : 'Confirm password'}
+                  placeholder={lf(L.confirmPw, locale)}
                   className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
                 />
                 {passwordMsg && (
@@ -679,8 +721,8 @@ export function ProfilePage() {
                   className="w-full bg-primary/20 text-primary font-semibold py-2 rounded-lg text-sm hover:bg-primary/30 transition-colors disabled:opacity-50"
                 >
                   {passwordSaving
-                    ? (locale === 'de' ? 'Speichern...' : 'Saving...')
-                    : (locale === 'de' ? 'Passwort speichern' : 'Save password')}
+                    ? (lf(L.saving, locale))
+                    : (lf(L.savePw, locale))}
                 </button>
               </div>
             )}
@@ -702,27 +744,25 @@ export function ProfilePage() {
               onClick={() => setShowDeleteConfirm(true)}
               className="text-xs text-text-muted hover:text-danger transition-colors"
             >
-              {locale === 'de' ? 'Account löschen...' : 'Delete account...'}
+              {lf(L.deleteAccount, locale)}
             </button>
           ) : (
             <div className="bg-danger/10 border border-danger/20 rounded-xl p-4 space-y-3">
               <p className="text-sm text-danger font-semibold">
-                {locale === 'de'
-                  ? 'Account wirklich löschen? Alle Daten gehen verloren.'
-                  : 'Really delete account? All data will be lost.'}
+                {lf(L.reallyDelete, locale)}
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={deleteAccount}
                   className="text-xs font-bold px-4 py-2 rounded-lg bg-danger text-white hover:bg-danger/80 transition-colors"
                 >
-                  {locale === 'de' ? 'Ja, löschen' : 'Yes, delete'}
+                  {lf(L.yesDelete, locale)}
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
                   className="text-xs font-semibold px-4 py-2 rounded-lg bg-white/6 text-text-secondary hover:text-text-primary transition-colors"
                 >
-                  {locale === 'de' ? 'Abbrechen' : 'Cancel'}
+                  {lf(L.cancel, locale)}
                 </button>
               </div>
             </div>
