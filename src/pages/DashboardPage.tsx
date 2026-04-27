@@ -74,7 +74,7 @@ interface FreezeStatus {
   can_afford: boolean
 }
 
-const DAILY_TIPS = {
+const DAILY_TIPS: Record<Locale, string[]> = {
   de: [
     'KI ersetzt nicht dein Urteil — sie erweitert es.',
     'Iterieren statt akzeptieren: Der erste Output ist ein Entwurf.',
@@ -99,11 +99,35 @@ const DAILY_TIPS = {
     'Small daily improvements = exponential growth.',
     'Your AI mindset is your most valuable skill upgrade.',
   ],
+  tr: [
+    'Yapay zekâ muhakemeni değiştirmez — onu genişletir.',
+    'Kabul etmek yerine yinele: İlk çıktı bir taslaktır.',
+    'Ne kadar çok bağlam verirsen, sonuç o kadar iyi olur.',
+    'Düşünmeyi devret, kararı sende tut.',
+    'Yapay zekâ araçları aletlerdir, otomatik pilot değil.',
+    'En iyi cevap, doğru soruyla gelir.',
+    'Seriler tutarlılığı ödüllendirir — mükemmelliği değil.',
+    'Yapay zekâyı ortak olarak kullanan, öne geçer.',
+    'Küçük günlük iyileştirmeler = üstel büyüme.',
+    'Yapay zekâ zihniyetin, en değerli yetenek güncellemen.',
+  ],
+  es: [
+    'La IA no reemplaza tu juicio — lo amplifica.',
+    'Itera, no aceptes: El primer resultado es un borrador.',
+    'Cuanto más contexto das, mejor es el resultado.',
+    'Delega el pensamiento, conserva la decisión.',
+    'Las herramientas de IA son instrumentos, no pilotos automáticos.',
+    'La mejor respuesta viene de la pregunta correcta.',
+    'Las rachas premian la constancia — no la perfección.',
+    'Quien usa la IA como socio, gana ventaja.',
+    'Pequeñas mejoras diarias = crecimiento exponencial.',
+    'Tu mentalidad IA es tu actualización de habilidades más valiosa.',
+  ],
 }
 
 function DailyTip({ locale }: { locale: Locale }) {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-  const tips = DAILY_TIPS[(locale as 'de' | 'en') in DAILY_TIPS ? (locale as 'de' | 'en') : 'en']
+  const tips = DAILY_TIPS[locale] ?? DAILY_TIPS.en
   const tip = tips[dayOfYear % tips.length]
 
   return (
