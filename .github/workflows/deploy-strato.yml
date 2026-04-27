@@ -41,6 +41,8 @@ jobs:
           sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/manifest.json
           sed -i "s|__BASE_PATH__|/ai-shift-happens/|g" dist/sw.js
           sed -i "s|__SITE_URL__|https://tbai.com.de/ai-shift-happens|g" dist/index.html
+          sed -i "s|__SITE_URL__|https://tbai.com.de/ai-shift-happens|g" dist/sitemap.xml
+          sed -i "s|__SITE_URL__|https://tbai.com.de/ai-shift-happens|g" dist/robots.txt
 
       - name: Rename dist for upload
         run: mv dist ai-shift-happens

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /app/admin
+Disallow: /app/profile
+Disallow: /app/team
+Disallow: /app/stats
+Disallow: /app/leaderboard
+Disallow: /app/challenge
+
+Sitemap: __SITE_URL__/sitemap.xml
