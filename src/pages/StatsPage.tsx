@@ -47,7 +47,7 @@ interface StatsData {
 }
 
 // SVG Radar Chart
-function RadarChart({ scores, locale }: { scores: Record<string, number>; locale: string }) {
+function RadarChart({ scores, locale }: { scores: Record<string, number>; locale: import('../types').Locale }) {
   const size = 280
   const cx = size / 2
   const cy = size / 2
@@ -124,7 +124,7 @@ function RadarChart({ scores, locale }: { scores: Record<string, number>; locale
 }
 
 // Score History Chart
-function ScoreChart({ history, locale }: { history: StatsData['score_history']; locale: string }) {
+function ScoreChart({ history, locale }: { history: StatsData['score_history']; locale: import('../types').Locale }) {
   if (history.length < 2) {
     return (
       <p className="text-text-muted text-sm text-center py-4">

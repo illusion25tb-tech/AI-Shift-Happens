@@ -53,8 +53,8 @@ const L = {
 
 const DATE_LOCALES_P = { de: 'de-DE', en: 'en-US', tr: 'tr-TR', es: 'es-ES' }
 
-function lfFn(obj, locale, ...args) {
-  return (obj[locale] || obj.en)(...args)
+function lfFn<T extends (...args: any[]) => string>(obj: Record<string, T>, locale: string, ...args: Parameters<T>): string {
+  return (obj[locale] ?? obj.en)(...args)
 }
 
 interface QuizStats {
