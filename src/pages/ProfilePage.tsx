@@ -17,7 +17,7 @@ const L = {
   min6: { de: 'Mindestens 6 Zeichen', en: 'Minimum 6 characters', tr: 'En az 6 karakter', es: 'Mínimo 6 caracteres' },
   pwMismatch: { de: 'Passwörter stimmen nicht überein', en: 'Passwords do not match', tr: 'Şifreler eşleşmiyor', es: 'Las contraseñas no coinciden' },
   pwChanged: { de: 'Passwort geändert!', en: 'Password changed!', tr: 'Şifre değiştirildi!', es: '¡Contraseña cambiada!' },
-  memberSince: { de: (d) => `Mitglied seit ${d}`, en: (d) => `Member since ${d}`, tr: (d) => `Üye olma: ${d}`, es: (d) => `Miembro desde ${d}` },
+  memberSince: { de: (d: string) => `Mitglied seit ${d}`, en: (d: string) => `Member since ${d}`, tr: (d: string) => `Üye olma: ${d}`, es: (d: string) => `Miembro desde ${d}` },
   yourInvite: { de: 'Dein Invite-Code:', en: 'Your invite code:', tr: 'Davet kodun:', es: 'Tu código de invitación:' },
   copyLink: { de: 'Link kopieren', en: 'Copy link', tr: 'Bağlantıyı kopyala', es: 'Copiar enlace' },
   inviteFriends: { de: 'Freunde einladen = 200 XP für dich pro Anmeldung', en: 'Invite friends = 200 XP per signup', tr: 'Arkadaşlarını davet et = kayit başına 200 XP', es: 'Invita amigos = 200 XP por registro' },
