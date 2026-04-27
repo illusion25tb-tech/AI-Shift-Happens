@@ -314,6 +314,8 @@ function UsersTab() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
+  const [busyId, setBusyId] = useState<string | null>(null)
+  const [msg, setMsg] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -329,17 +331,41 @@ function UsersTab() {
 
   useEffect(() => { load() }, [load])
 
+  const resetUser = async (u: any) => {
+    if (!window.confirm(`${u.display_name || u.email} wirklich zurücksetzen? Alle Scores, Badges, XP werden gelöscht.`)) return
+    setBusyId(u.id); setMsg(null)
+    try {
+      const r = await adminCall('reset_user', { user_id: u.id })
+      setMsg(r.message ?? `${u.display_name} zurückgesetzt`)
+      load()
+    } catch (e: any) { setMsg(`Fehler: ${e.message}`) }
+    setBusyId(null)
+  }
+
+  const deleteUser = async (u: any) => {
+    if (!window.confirm(`${u.display_name || u.email} KOMPLETT LÖSCHEN? Account + alle Daten unwiderruflich!`)) return
+    setBusyId(u.id); setMsg(null)
+    try {
+      const r = await adminCall('delete_user', { user_id: u.id })
+      setMsg(r.message ?? `${u.display_name} gelöscht`)
+      load()
+    } catch (e: any) { setMsg(`Fehler: ${e.message}`) }
+    setBusyId(null)
+  }
+
   return (
     <div className="space-y-4">
       <input
         type="text"
         value={search}
         onChange={e => { setSearch(e.target.value); setPage(0) }}
-        placeholder="User suchen..."
+        placeholder="User suchen (Name oder E-Mail)..."
         className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
       />
 
       <span className="text-xs text-text-muted">{total} User</span>
+
+      {msg && <div className="bg-white/4 border border-white/6 rounded-xl p-3 text-xs text-text-secondary">{msg}</div>}
 
       {loading ? (
         <Loader2 className="w-6 h-6 text-primary animate-spin mx-auto my-4" />
@@ -348,22 +374,41 @@ function UsersTab() {
           {users.map(u => (
             <div key={u.id} className="bg-white/4 border border-white/6 rounded-xl p-3 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-teal flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                {(u.display_name || '?').charAt(0).toUpperCase()}
+                {(u.display_name || u.email || '?').charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-semibold truncate">
                   {u.display_name || 'Anonym'}
                   {u.is_admin && <span className="ml-1 text-[10px] bg-gold/10 text-gold px-1.5 py-0.5 rounded">Admin</span>}
                 </div>
-                <div className="text-[10px] text-text-muted flex gap-3">
+                {u.email && (
+                  <div className="text-[10px] text-text-muted truncate font-mono">{u.email}</div>
+                )}
+                <div className="text-[10px] text-text-muted flex gap-3 flex-wrap">
                   <span>Lv {u.level}</span>
                   <span>{(u.total_xp ?? 0).toLocaleString()} XP</span>
                   <span>🔥 {u.current_streak ?? 0}</span>
                   {u.company_name && <span>🏢 {u.company_name}</span>}
+                  <span>· {u.last_played_at ?? 'nie'}</span>
                 </div>
               </div>
-              <div className="text-[10px] text-text-muted text-right">
-                {u.last_played_at ?? 'nie'}
+              <div className="flex flex-col gap-1 flex-shrink-0">
+                <button
+                  onClick={() => resetUser(u)}
+                  disabled={busyId === u.id}
+                  title="Scores/XP/Badges zurücksetzen"
+                  className="text-[10px] px-2 py-1 rounded bg-gold/10 text-gold hover:bg-gold/20 disabled:opacity-50"
+                >
+                  ↺ Reset
+                </button>
+                <button
+                  onClick={() => deleteUser(u)}
+                  disabled={busyId === u.id}
+                  title="User komplett löschen"
+                  className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger hover:bg-danger/20 disabled:opacity-50"
+                >
+                  ✕ Löschen
+                </button>
               </div>
             </div>
           ))}

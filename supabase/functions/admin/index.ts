@@ -130,14 +130,45 @@ Deno.serve(async (req: Request) => {
 
     if (action === 'list_users') {
       const { offset, limit, search } = body as { offset?: number; limit?: number; search?: string }
+
+      // Step 1: Wenn search nach E-Mail aussieht oder explizit Mail-pattern, auth.users durchsuchen
+      let userIdFilter: string[] | null = null
+      if (search) {
+        const looksLikeEmail = search.includes('@') || search.includes('.')
+        if (looksLikeEmail) {
+          // Sucht in auth.users (nur via service-role möglich)
+          const { data: authUsers } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 })
+          const matchingIds = (authUsers?.users ?? [])
+            .filter(u => (u.email ?? '').toLowerCase().includes(search.toLowerCase()))
+            .map(u => u.id)
+          if (matchingIds.length > 0) userIdFilter = matchingIds
+        }
+      }
+
       let query = db.from('profiles').select('*', { count: 'exact' })
-      if (search) query = query.ilike('display_name', `%${search}%`)
+      if (userIdFilter) {
+        query = query.in('id', userIdFilter)
+      } else if (search) {
+        query = query.ilike('display_name', `%${search}%`)
+      }
       query = query.order('created_at', { ascending: false })
         .range(offset ?? 0, (offset ?? 0) + (limit ?? 20) - 1)
 
-      const { data, count, error } = await query
+      const { data: profiles, count, error } = await query
       if (error) return jsonResponse({ error: error.message }, 500)
-      return jsonResponse({ users: data, total: count })
+
+      // Step 2: emails fuer angezeigte User mit-laden
+      const ids = (profiles ?? []).map(p => p.id)
+      const emailMap: Record<string, string> = {}
+      if (ids.length > 0) {
+        const { data: authData } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 })
+        for (const u of authData?.users ?? []) {
+          if (ids.includes(u.id) && u.email) emailMap[u.id] = u.email
+        }
+      }
+      const enriched = (profiles ?? []).map(p => ({ ...p, email: emailMap[p.id] ?? null }))
+
+      return jsonResponse({ users: enriched, total: count })
     }
 
     // ─── STATS ───
