@@ -17,6 +17,7 @@
   --color-text-primary: #E8E6F0;
   --color-text-secondary: #D4D1E0;
   --color-text-muted: #A09CB5;
+  --color-text-quiz: #F4F2FA; /* Quiz-Lesetext: heller als text-primary, sanfter als reines Weiss */
   --font-sans: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }

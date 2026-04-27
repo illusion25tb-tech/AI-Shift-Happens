@@ -441,6 +441,38 @@ const fromExisting = (i18n: Record<string, string> | null | undefined, fallback:
   es: i18n?.es ?? '',
 })
 
+// Spiegelt die Logik aus get-sponsors/index.ts: UTC-Montag der laufenden Woche.
+function getCurrentMondayISO(): string {
+  const now = new Date()
+  const dow = now.getUTCDay()
+  const diff = dow === 0 ? 6 : dow - 1
+  const monday = new Date(now)
+  monday.setUTCDate(monday.getUTCDate() - diff)
+  return monday.toISOString().split('T')[0]
+}
+
+// 1. des laufenden Monats (passt zu month_start in get-sponsors).
+function getCurrentMonthStartISO(): string {
+  const now = new Date()
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-01`
+}
+
+// "Live in dieser Woche/Monat?" — Anzeige-Hilfe in der Prize-Liste.
+function isPrizeLive(p: { prize_type?: string; week_start?: string | null; month_start?: string | null }): boolean {
+  if (p.prize_type === 'weekly') return p.week_start === getCurrentMondayISO()
+  if (p.prize_type === 'monthly') return p.month_start === getCurrentMonthStartISO()
+  return false
+}
+
+type PrizeMeta = {
+  prize_type: string
+  week_start: string
+  month_start: string
+  value_eur: string
+  sponsor_id: string
+}
+const emptyPrizeMeta = (): PrizeMeta => ({ prize_type: 'weekly', week_start: '', month_start: '', value_eur: '', sponsor_id: '' })
+
 function SponsorsTab() {
   const [sponsors, setSponsors] = useState<any[]>([])
   const [prizes, setPrizes] = useState<any[]>([])
@@ -453,6 +485,7 @@ function SponsorsTab() {
   const [prizeForm, setPrizeForm] = useState({ sponsor_id: '', title_i18n: emptyI18n(), description_i18n: emptyI18n(), prize_type: 'weekly', value_eur: '', week_start: '', month_start: '' })
   const [editSponsorI18n, setEditSponsorI18n] = useState<I18nFields>(emptyI18n())
   const [editPrizeI18n, setEditPrizeI18n] = useState<{ title: I18nFields; description: I18nFields }>({ title: emptyI18n(), description: emptyI18n() })
+  const [editPrizeMeta, setEditPrizeMeta] = useState<PrizeMeta>(emptyPrizeMeta())
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -515,6 +548,13 @@ function SponsorsTab() {
       title: fromExisting(p.title_i18n, p.title),
       description: fromExisting(p.description_i18n, p.description),
     })
+    setEditPrizeMeta({
+      prize_type: p.prize_type ?? 'weekly',
+      week_start: p.week_start ?? '',
+      month_start: p.month_start ?? '',
+      value_eur: p.value_eur != null ? String(p.value_eur) : '',
+      sponsor_id: p.sponsor_id ?? '',
+    })
   }
 
   const saveEditPrize = async (prize_id: string) => {
@@ -523,6 +563,11 @@ function SponsorsTab() {
       updates: {
         title_i18n: stripEmpty(editPrizeI18n.title),
         description_i18n: stripEmpty(editPrizeI18n.description),
+        prize_type: editPrizeMeta.prize_type,
+        week_start: editPrizeMeta.week_start || null,
+        month_start: editPrizeMeta.month_start || null,
+        value_eur: editPrizeMeta.value_eur ? Number(editPrizeMeta.value_eur) : null,
+        sponsor_id: editPrizeMeta.sponsor_id || null,
       },
     })
     setEditingPrizeId(null)
@@ -667,8 +712,14 @@ function SponsorsTab() {
             <input value={prizeForm.value_eur} onChange={e => setPrizeForm(f => ({...f, value_eur: e.target.value}))} placeholder="Wert €" type="number" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-primary" />
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <input value={prizeForm.week_start} onChange={e => setPrizeForm(f => ({...f, week_start: e.target.value}))} placeholder="KW-Start (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
-            <input value={prizeForm.month_start} onChange={e => setPrizeForm(f => ({...f, month_start: e.target.value}))} placeholder="Monat (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+            <div className="flex flex-col gap-1">
+              <input value={prizeForm.week_start} onChange={e => setPrizeForm(f => ({...f, week_start: e.target.value}))} placeholder="KW-Start (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+              <button type="button" onClick={() => setPrizeForm(f => ({...f, week_start: getCurrentMondayISO()}))} className="text-[10px] text-primary hover:underline text-left">→ Diese Woche ({getCurrentMondayISO()})</button>
+            </div>
+            <div className="flex flex-col gap-1">
+              <input value={prizeForm.month_start} onChange={e => setPrizeForm(f => ({...f, month_start: e.target.value}))} placeholder="Monat (YYYY-MM-DD)" type="date" className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+              <button type="button" onClick={() => setPrizeForm(f => ({...f, month_start: getCurrentMonthStartISO()}))} className="text-[10px] text-primary hover:underline text-left">→ Dieser Monat ({getCurrentMonthStartISO()})</button>
+            </div>
           </div>
           <button onClick={createPrize} disabled={!prizeForm.title_i18n.de.trim() && !prizeForm.title_i18n.en.trim()} className="w-full bg-gold/20 text-gold font-semibold py-2 rounded-lg text-sm disabled:opacity-50">Preis erstellen</button>
         </div>
@@ -679,9 +730,15 @@ function SponsorsTab() {
           <div className="p-3 flex items-center gap-3">
             <span className="text-xl">{p.prize_type === 'weekly' ? '🏆' : p.prize_type === 'monthly' ? '🎁' : '⭐'}</span>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold truncate">{p.title_i18n?.de ?? p.title_i18n?.en ?? p.title ?? '—'}</div>
+              <div className="text-sm font-semibold truncate flex items-center gap-2">
+                <span className="truncate">{p.title_i18n?.de ?? p.title_i18n?.en ?? p.title ?? '—'}</span>
+                {isPrizeLive(p) && <span className="text-[9px] bg-teal/20 text-teal px-1.5 py-0.5 rounded font-mono uppercase tracking-wider flex-shrink-0">live</span>}
+              </div>
               <div className="text-[10px] text-text-muted">
-                {p.prize_type} · {p.sponsors?.name ?? 'kein Sponsor'}
+                {p.prize_type}
+                {p.prize_type === 'weekly' && p.week_start && ` · KW-Start ${p.week_start}`}
+                {p.prize_type === 'monthly' && p.month_start && ` · Monat ${p.month_start}`}
+                {' · '}{p.sponsors?.name ?? 'kein Sponsor'}
                 {p.value_eur && ` · ${p.value_eur}€`}
                 {p.winner_id && ` · Gewinner: ${p.profiles?.display_name ?? '?'}`}
                 {' · i18n: '}
@@ -690,7 +747,7 @@ function SponsorsTab() {
             </div>
             <button onClick={() => editingPrizeId === p.id ? setEditingPrizeId(null) : startEditPrize(p)}
               className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary">
-              {editingPrizeId === p.id ? '×' : 'i18n'}
+              {editingPrizeId === p.id ? '×' : 'edit'}
             </button>
             <button onClick={async () => { if (confirm('Löschen?')) { await adminCall('delete_prize', { prize_id: p.id }); load() } }}
               className="text-[10px] px-2 py-1 rounded bg-danger/10 text-danger">✕</button>
@@ -720,6 +777,29 @@ function SponsorsTab() {
                   />
                 </div>
               ))}
+              <p className="text-[10px] uppercase tracking-wider text-text-muted pt-2">Metadaten (Aktivierung)</p>
+              <div className="grid grid-cols-2 gap-2">
+                <select value={editPrizeMeta.prize_type} onChange={e => setEditPrizeMeta(prev => ({...prev, prize_type: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
+                  <option value="weekly">Wöchentlich</option>
+                  <option value="monthly">Monatlich</option>
+                  <option value="special">Special</option>
+                </select>
+                <select value={editPrizeMeta.sponsor_id} onChange={e => setEditPrizeMeta(prev => ({...prev, sponsor_id: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs">
+                  <option value="">Kein Sponsor</option>
+                  {sponsors.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-1">
+                  <input type="date" value={editPrizeMeta.week_start} onChange={e => setEditPrizeMeta(prev => ({...prev, week_start: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+                  <button type="button" onClick={() => setEditPrizeMeta(prev => ({...prev, week_start: getCurrentMondayISO()}))} className="text-[10px] text-primary hover:underline text-left">→ Diese Woche ({getCurrentMondayISO()})</button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <input type="date" value={editPrizeMeta.month_start} onChange={e => setEditPrizeMeta(prev => ({...prev, month_start: e.target.value}))} className="bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs" />
+                  <button type="button" onClick={() => setEditPrizeMeta(prev => ({...prev, month_start: getCurrentMonthStartISO()}))} className="text-[10px] text-primary hover:underline text-left">→ Dieser Monat ({getCurrentMonthStartISO()})</button>
+                </div>
+              </div>
+              <input type="number" value={editPrizeMeta.value_eur} onChange={e => setEditPrizeMeta(prev => ({...prev, value_eur: e.target.value}))} placeholder="Wert €" className="w-full bg-white/6 border border-white/10 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-primary" />
               <button onClick={() => saveEditPrize(p.id)} className="w-full bg-primary text-white font-semibold py-2 rounded-lg text-sm">Speichern</button>
             </div>
           )}

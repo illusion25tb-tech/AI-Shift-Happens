@@ -94,7 +94,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
         className="bg-white/4 rounded-2xl p-5 relative overflow-hidden"
         style={{ border: '1.5px solid var(--color-primary)' }}
       >
-        <p className="text-text-primary text-base leading-relaxed">{question.scenario_text}</p>
+        <p className="text-text-quiz text-base leading-relaxed">{question.scenario_text}</p>
       </div>
 
       {/* Options */}
@@ -138,7 +138,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
               >
                 {LETTERS[i]}
               </span>
-              <span className="text-text-primary text-sm">{option.text}</span>
+              <span className="text-text-quiz text-sm">{option.text}</span>
             </button>
           )
         })}
@@ -178,7 +178,7 @@ export default function QuizCard({ question, locale, disabled, onSubmit }: QuizC
                     }}
                   >
                     <div className="text-xl mb-1">{label.emoji}</div>
-                    <div className="text-xs font-semibold text-text-primary">{lf(label, locale)}</div>
+                    <div className="text-xs font-semibold text-text-quiz">{lf(label, locale)}</div>
                   </button>
                 )
               })}

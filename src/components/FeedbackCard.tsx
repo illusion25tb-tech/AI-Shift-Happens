@@ -82,7 +82,7 @@ export default function FeedbackCard({ result, streak, isLast, onNext, t }: Feed
         >
           <div className="text-2xl flex-shrink-0 mt-1">{shiftEmoji}</div>
           <div
-            className="flex-1 rounded-xl px-4 py-3 text-sm text-text-primary leading-relaxed"
+            className="flex-1 rounded-xl px-4 py-3 text-sm text-text-quiz leading-relaxed"
             style={{
               backgroundColor: is_bullshit_trap && !is_correct && confidence === 3
                 ? 'rgba(249,115,22,0.1)'

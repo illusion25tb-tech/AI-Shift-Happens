@@ -111,7 +111,7 @@ export function DailyQuizPage() {
         <header className="flex items-center px-5 py-4 border-b border-bg-card-border">
           <button
             onClick={handleBack}
-            className="text-text-secondary hover:text-text-primary transition-colors text-lg"
+            className="text-text-secondary hover:text-text-quiz transition-colors text-lg"
           >
             ←
           </button>
@@ -155,7 +155,7 @@ export function DailyQuizPage() {
       <header className="flex items-center justify-between px-5 py-4 border-b border-bg-card-border">
         <button
           onClick={handleBack}
-          className="text-text-secondary hover:text-text-primary transition-colors text-lg"
+          className="text-text-secondary hover:text-text-quiz transition-colors text-lg"
         >
           ←
         </button>

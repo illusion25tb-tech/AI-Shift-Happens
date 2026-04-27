@@ -138,9 +138,9 @@ export function FreePlayPage() {
   // Category selection screen
   if (state === 'select') {
     return (
-      <div className="min-h-screen bg-bg-base text-text-primary font-sans flex flex-col">
+      <div className="min-h-screen bg-bg-base text-text-quiz font-sans flex flex-col">
         <header className="flex items-center gap-3 px-5 py-4 border-b border-white/6">
-          <Link to="/app" className="text-text-muted hover:text-text-primary transition-colors text-lg">&larr;</Link>
+          <Link to="/app" className="text-text-muted hover:text-text-quiz transition-colors text-lg">&larr;</Link>
           <span className="text-lg font-bold tracking-tight text-primary">Free Play</span>
         </header>
 
@@ -206,7 +206,7 @@ export function FreePlayPage() {
     return (
       <div className="min-h-screen bg-bg-base flex flex-col">
         <header className="flex items-center px-5 py-4 border-b border-bg-card-border">
-          <button onClick={playAgain} className="text-text-secondary hover:text-text-primary transition-colors text-lg">&larr;</button>
+          <button onClick={playAgain} className="text-text-secondary hover:text-text-quiz transition-colors text-lg">&larr;</button>
         </header>
         <div className="flex-1 flex flex-col justify-center px-5 py-8 max-w-md mx-auto w-full">
           <ResultScreen
@@ -231,7 +231,7 @@ export function FreePlayPage() {
   return (
     <div className="min-h-screen bg-bg-base flex flex-col">
       <header className="flex items-center justify-between px-5 py-4 border-b border-bg-card-border">
-        <button onClick={() => navigate('/app')} className="text-text-secondary hover:text-text-primary transition-colors text-lg">&larr;</button>
+        <button onClick={() => navigate('/app')} className="text-text-secondary hover:text-text-quiz transition-colors text-lg">&larr;</button>
         <ScoreDisplay score={totalScore} streak={currentStreak} />
       </header>
 

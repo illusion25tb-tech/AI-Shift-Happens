@@ -58,7 +58,7 @@ export default function ResultScreen({
       {/* Trophy + level */}
       <div className="space-y-2">
         <div className="text-6xl">{levelEmoji}</div>
-        <h2 className="text-2xl font-bold text-text-primary">{levelTitle}</h2>
+        <h2 className="text-2xl font-bold text-text-quiz">{levelTitle}</h2>
       </div>
 
       {/* Score ring */}
@@ -70,7 +70,7 @@ export default function ResultScreen({
           }}
         >
           <div className="w-28 h-28 rounded-full bg-bg-base flex flex-col items-center justify-center">
-            <AnimatedCounter value={score} className="text-3xl font-mono font-bold text-text-primary" />
+            <AnimatedCounter value={score} className="text-3xl font-mono font-bold text-text-quiz" />
             <span className="text-xs text-text-muted uppercase tracking-wider">
               {t('result.points')}
             </span>
@@ -152,7 +152,7 @@ export default function ResultScreen({
       {/* Back button */}
       <button
         onClick={onBack}
-        className="w-full border border-bg-card-border hover:border-primary text-text-secondary hover:text-text-primary font-semibold py-3 px-4 rounded-xl transition-colors"
+        className="w-full border border-bg-card-border hover:border-primary text-text-secondary hover:text-text-quiz font-semibold py-3 px-4 rounded-xl transition-colors"
       >
         {t('result.back')}
       </button>
