@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { CATEGORIES, CATEGORY_LABELS, lf } from '../lib/constants'
 import type { CategoryId } from '../lib/constants'
+import { invalidateSiteSettingsCache } from '../hooks/useSiteSettings'
 
 type AdminTab = 'dashboard' | 'questions' | 'users' | 'sponsors' | 'reset'
 
@@ -34,18 +35,80 @@ function DashboardTab() {
   if (loading) return <Loader2 className="w-6 h-6 text-primary animate-spin mx-auto my-8" />
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {[
-        { label: 'User', value: stats?.users, color: 'text-primary' },
-        { label: 'Fragen (aktiv)', value: stats?.questions, color: 'text-teal' },
-        { label: 'Quiz-Versuche', value: stats?.attempts, color: 'text-gold' },
-        { label: 'Heute aktiv', value: stats?.active_today, color: 'text-fire' },
-      ].map(s => (
-        <div key={s.label} className="bg-white/4 border border-white/6 rounded-xl p-4 text-center">
-          <div className={`text-2xl font-bold font-mono ${s.color}`}>{s.value ?? 0}</div>
-          <div className="text-xs text-text-muted mt-1">{s.label}</div>
-        </div>
-      ))}
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { label: 'User', value: stats?.users, color: 'text-primary' },
+          { label: 'Fragen (aktiv)', value: stats?.questions, color: 'text-teal' },
+          { label: 'Quiz-Versuche', value: stats?.attempts, color: 'text-gold' },
+          { label: 'Heute aktiv', value: stats?.active_today, color: 'text-fire' },
+        ].map(s => (
+          <div key={s.label} className="bg-white/4 border border-white/6 rounded-xl p-4 text-center">
+            <div className={`text-2xl font-bold font-mono ${s.color}`}>{s.value ?? 0}</div>
+            <div className="text-xs text-text-muted mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <SettingsBlock />
+    </div>
+  )
+}
+
+// ─── Settings Block (innerhalb Dashboard-Tab) ───
+function SettingsBlock() {
+  const [settings, setSettings] = useState<Array<{ key: string; value: unknown; description: string | null }>>([])
+  const [loading, setLoading] = useState(true)
+  const [busyKey, setBusyKey] = useState<string | null>(null)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    const data = await adminCall('list_settings')
+    setSettings(data.settings ?? [])
+    setLoading(false)
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  const toggle = async (key: string, currentValue: unknown) => {
+    setBusyKey(key)
+    try {
+      await adminCall('set_setting', { key, value: !currentValue })
+      invalidateSiteSettingsCache()
+      await load()
+    } finally {
+      setBusyKey(null)
+    }
+  }
+
+  if (loading) return <div className="text-xs text-text-muted text-center py-2">Lade Settings…</div>
+
+  return (
+    <div className="bg-white/4 border border-white/6 rounded-xl p-4 space-y-3">
+      <h3 className="text-sm font-bold">Feature-Flags</h3>
+      {settings.length === 0 && <p className="text-xs text-text-muted">Keine Settings konfiguriert.</p>}
+      {settings.map(s => {
+        const isBool = typeof s.value === 'boolean'
+        return (
+          <div key={s.key} className="flex items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-mono font-semibold">{s.key}</div>
+              {s.description && <div className="text-[10px] text-text-muted leading-snug">{s.description}</div>}
+            </div>
+            {isBool ? (
+              <button
+                onClick={() => toggle(s.key, s.value)}
+                disabled={busyKey === s.key}
+                className={`text-[10px] px-2 py-1 rounded font-semibold flex-shrink-0 disabled:opacity-50
+                  ${s.value ? 'bg-teal/10 text-teal' : 'bg-danger/10 text-danger'}`}
+              >
+                {busyKey === s.key ? '…' : s.value ? 'AN' : 'AUS'}
+              </button>
+            ) : (
+              <span className="text-[10px] text-text-muted font-mono">{JSON.stringify(s.value)}</span>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

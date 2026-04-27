@@ -487,6 +487,23 @@ Return JSON array with same structure but rebalanced option texts. ONLY JSON, no
       return jsonResponse({ fixed, remaining: imbalanced.length - fixed, total_imbalanced: imbalanced.length })
     }
 
+    // ─── SITE SETTINGS ───
+
+    if (action === 'list_settings') {
+      const { data, error } = await db.from('site_settings').select('*').order('key', { ascending: true })
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ settings: data })
+    }
+
+    if (action === 'set_setting') {
+      const { key, value } = body as { key: string; value: unknown }
+      if (!key) return jsonResponse({ error: 'key required' }, 400)
+      const { error } = await db.from('site_settings')
+        .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+      if (error) return jsonResponse({ error: error.message }, 500)
+      return jsonResponse({ ok: true })
+    }
+
     return jsonResponse({ error: `Unknown action: ${action}` }, 400)
 
   } catch (err) {

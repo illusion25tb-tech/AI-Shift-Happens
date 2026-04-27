@@ -3,6 +3,7 @@ import type { AnswerResult, Locale } from '../types'
 import { LEVELS, BADGES, lf } from '../lib/constants'
 import Confetti from './Confetti'
 import AnimatedCounter from './AnimatedCounter'
+import { useSiteSettings } from '../hooks/useSiteSettings'
 
 interface ResultScreenProps {
   score: number
@@ -29,6 +30,8 @@ export default function ResultScreen({
   t,
   gamificationResult,
 }: ResultScreenProps) {
+  const settings = useSiteSettings()
+  const linkedinShareEnabled = settings.linkedin_share_enabled !== false
   const correctCount = answers.filter(a => a.is_correct).length
   const totalSpeedBonus = answers.reduce((sum, a) => sum + (a.speed_bonus ?? 0), 0)
 
@@ -118,36 +121,40 @@ export default function ResultScreen({
         </div>
       )}
 
-      {/* LinkedIn Share with pre-filled text */}
-      <button
-        onClick={() => {
-          const pct = correctCount > 0 ? Math.round((correctCount / answers.length) * 100) : 0
-          const postText = locale === 'de'
-            ? `🧠 Gerade mein AI-Mindset getestet: ${score} Punkte, ${pct}% richtig!\n\nAI-Shift Happens — das tägliche KI-Quiz. Wie AI-ready bist du?\n\n👉 `
-            : `🧠 Just tested my AI mindset: ${score} points, ${pct}% correct!\n\nAI-Shift Happens — the daily AI quiz. How AI-ready are you?\n\n👉 `
-          const url = `${window.location.origin}${import.meta.env.BASE_URL}`
+      {/* LinkedIn Share with pre-filled text — admin-toggleable via site_settings.linkedin_share_enabled */}
+      {linkedinShareEnabled && (
+        <>
+          <button
+            onClick={() => {
+              const pct = correctCount > 0 ? Math.round((correctCount / answers.length) * 100) : 0
+              const postText = locale === 'de'
+                ? `🧠 Gerade mein AI-Mindset getestet: ${score} Punkte, ${pct}% richtig!\n\nAI-Shift Happens — das tägliche KI-Quiz. Wie AI-ready bist du?\n\n👉 `
+                : `🧠 Just tested my AI mindset: ${score} points, ${pct}% correct!\n\nAI-Shift Happens — the daily AI quiz. How AI-ready are you?\n\n👉 `
+              const url = `${window.location.origin}${import.meta.env.BASE_URL}`
 
-          // Copy post text to clipboard, then open LinkedIn
-          navigator.clipboard.writeText(postText + url).then(() => {
-            window.open(
-              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-              '_blank',
-              'width=600,height=400'
-            )
-          })
-        }}
-        className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
-      >
-        🔗 {t('result.shareLinkedin')}
-      </button>
-      <p className="text-[10px] text-text-muted text-center">
-        {lf({
-          de: 'Post-Text wird in die Zwischenablage kopiert',
-          en: 'Post text copied to clipboard',
-          tr: 'Gönderi metni panoya kopyalanır',
-          es: 'Texto de la publicación copiado al portapapeles',
-        }, locale)}
-      </p>
+              // Copy post text to clipboard, then open LinkedIn
+              navigator.clipboard.writeText(postText + url).then(() => {
+                window.open(
+                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+                  '_blank',
+                  'width=600,height=400'
+                )
+              })
+            }}
+            className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            🔗 {t('result.shareLinkedin')}
+          </button>
+          <p className="text-[10px] text-text-muted text-center">
+            {lf({
+              de: 'Post-Text wird in die Zwischenablage kopiert',
+              en: 'Post text copied to clipboard',
+              tr: 'Gönderi metni panoya kopyalanır',
+              es: 'Texto de la publicación copiado al portapapeles',
+            }, locale)}
+          </p>
+        </>
+      )}
 
       {/* Back button */}
       <button
