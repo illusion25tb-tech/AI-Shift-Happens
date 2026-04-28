@@ -2,10 +2,12 @@ import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { registerServiceWorker, scheduleLocalReminder, isReminderEnabled } from './lib/notifications'
+import { incrementVisitCount } from './lib/pwa'
 import { useLocale } from './hooks/useLocale'
 import CookieConsent from './components/CookieConsent'
 import ErrorBoundary from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
+import InstallPrompt from './components/InstallPrompt'
 
 // Eager: landing + dashboard (first paint)
 import { LandingPage } from './pages/LandingPage'
@@ -52,6 +54,7 @@ export default function App() {
   useEffect(() => {
     registerServiceWorker()
     if (isReminderEnabled()) scheduleLocalReminder()
+    incrementVisitCount()
   }, [])
 
   return (
@@ -60,6 +63,7 @@ export default function App() {
       <div className="min-h-screen bg-bg-base text-text-primary font-sans">
         <CookieConsent locale={locale} />
         <BottomNav locale={locale} />
+        <InstallPrompt locale={locale} />
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
