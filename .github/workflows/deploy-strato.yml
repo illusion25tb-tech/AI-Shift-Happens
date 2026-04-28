@@ -34,6 +34,9 @@ jobs:
           VITE_BASE_PATH: '/ai-shift-happens/'
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Optional: leer lassen → Sentry inaktiv. Secret in GitHub Repo
+          # Settings → Secrets → Actions setzen, um Error-Tracking zu aktivieren.
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
       - name: Substitute base path and site URL in static files
         run: |

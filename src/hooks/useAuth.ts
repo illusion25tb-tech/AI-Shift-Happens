@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import type { Profile } from '../types'
+import { setSentryUser, clearSentryUser } from '../lib/sentry'
 
 interface UseAuthReturn {
   session: Session | null
@@ -72,6 +73,7 @@ export function useAuth(): UseAuthReturn {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
+          setSentryUser({ id: session.user.id, email: session.user.email })
           const p = await fetchProfile(session.user.id)
           if (!mounted) return
           setProfile(p)
@@ -92,6 +94,7 @@ export function useAuth(): UseAuthReturn {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
+          setSentryUser({ id: session.user.id, email: session.user.email })
           const p = await fetchProfile(session.user.id)
           if (!mounted) return
           setProfile(p)
@@ -113,6 +116,7 @@ export function useAuth(): UseAuthReturn {
           }
         } else {
           setProfile(null)
+          clearSentryUser()
         }
         if (mounted) {
           initDone = true
