@@ -46,13 +46,19 @@ export default function HeroSection({ onStart, locale }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-5 py-16 overflow-hidden">
 
-      {/* Video background — mobile optimized */}
+      {/* Video background — mobile optimized
+          preload="metadata" + fetchpriority="low": LCP-relevanter Content
+          rendert zuerst, Video laedt async im Hintergrund (~1.9 MB Ersparnis
+          auf initial paint). */}
       <video
         autoPlay
         loop
         muted
         playsInline
         disablePictureInPicture
+        preload="metadata"
+        // @ts-expect-error fetchpriority ist HTML-standard, in React-Types noch experimental
+        fetchpriority="low"
         className="absolute inset-0 w-full h-full object-cover object-center"
         style={{
           filter: 'brightness(0.3) saturate(1.2)',

@@ -3,8 +3,9 @@ import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { useLeaderboard } from '../hooks/useLeaderboard'
 import LeaderboardTable from '../components/LeaderboardTable'
+import HallOfFameList from '../components/HallOfFameList'
 import { Loader2 } from 'lucide-react'
-import type { Locale } from '../types'
+import type { HallOfFameEntry, Locale } from '../types'
 
 function CompanyLeaderboard({ entries, locale }: { entries: any[]; locale: Locale }) {
   if (entries.length === 0) {
@@ -92,6 +93,8 @@ export function LeaderboardPage() {
           <p className="text-danger text-center py-8 text-sm">{lb.error}</p>
         ) : lb.tab === 'company' ? (
           <CompanyLeaderboard entries={lb.entries} locale={locale} />
+        ) : lb.tab === 'halloffame' ? (
+          <HallOfFameList entries={lb.entries as unknown as HallOfFameEntry[]} locale={locale} />
         ) : (
           <LeaderboardTable entries={lb.entries} currentUserId={user?.id ?? ''} locale={locale} />
         )}

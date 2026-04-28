@@ -86,6 +86,19 @@ export interface LeaderboardEntry {
   rank: number
 }
 
+export interface HallOfFameEntry {
+  rank: number
+  user_id: string
+  display_name: string
+  avatar_url: string | null
+  level: number
+  weekly_wins: number
+  monthly_wins: number
+  last_weekly_wins: string[]
+  last_monthly_wins: string[]
+  latest_win_date: string
+}
+
 export type Locale = 'de' | 'en' | 'tr' | 'es'
 
 export type GameState =

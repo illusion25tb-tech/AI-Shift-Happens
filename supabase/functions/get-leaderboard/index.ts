@@ -52,16 +52,73 @@ Deno.serve(async (req: Request) => {
     }
 
     if (tab === 'halloffame') {
-      const { data } = await db.from('weekly_scores')
-        .select('user_id, week_start, total_score, profiles(display_name, avatar_url, level)')
-        .eq('is_champion', true).order('week_start', { ascending: false }).limit(20)
+      // Aggregiert: pro User die Anzahl Wochen-/Monats-Siege + letzte 4 Wochen-Siege
+      const [weekly, monthly] = await Promise.all([
+        db.from('weekly_scores')
+          .select('user_id, week_start, total_score, profiles(display_name, avatar_url, level)')
+          .eq('is_champion', true).order('week_start', { ascending: false }),
+        db.from('monthly_champions')
+          .select('user_id, month_start, total_score, profiles(display_name, avatar_url, level)')
+          .order('month_start', { ascending: false }),
+      ])
 
-      const entries = (data ?? []).map((row: any, i: number) => ({
-        rank: i + 1, user_id: row.user_id, display_name: row.profiles?.display_name ?? '',
-        avatar_url: row.profiles?.avatar_url ?? null, total_score: row.total_score,
-        level: row.profiles?.level ?? 1, current_streak: 0, is_champion: true,
-      }))
-      return new Response(JSON.stringify({ tab: 'halloffame', entries }),
+      type Champion = {
+        user_id: string
+        display_name: string
+        avatar_url: string | null
+        level: number
+        weekly_wins: number
+        monthly_wins: number
+        last_weekly_wins: string[]
+        last_monthly_wins: string[]
+        latest_win_date: string
+      }
+      const champs = new Map<string, Champion>()
+
+      const ensure = (uid: string, profile: any): Champion => {
+        let c = champs.get(uid)
+        if (!c) {
+          c = {
+            user_id: uid,
+            display_name: profile?.display_name ?? '',
+            avatar_url: profile?.avatar_url ?? null,
+            level: profile?.level ?? 1,
+            weekly_wins: 0,
+            monthly_wins: 0,
+            last_weekly_wins: [],
+            last_monthly_wins: [],
+            latest_win_date: '',
+          }
+          champs.set(uid, c)
+        }
+        return c
+      }
+
+      for (const row of (weekly.data ?? []) as any[]) {
+        const c = ensure(row.user_id, row.profiles)
+        c.weekly_wins += 1
+        if (c.last_weekly_wins.length < 4) c.last_weekly_wins.push(row.week_start)
+        if (row.week_start > c.latest_win_date) c.latest_win_date = row.week_start
+      }
+      for (const row of (monthly.data ?? []) as any[]) {
+        const c = ensure(row.user_id, row.profiles)
+        c.monthly_wins += 1
+        if (c.last_monthly_wins.length < 4) c.last_monthly_wins.push(row.month_start)
+        if (row.month_start > c.latest_win_date) c.latest_win_date = row.month_start
+      }
+
+      const sorted = [...champs.values()]
+        .sort((a, b) => {
+          // Total wins (Monthly zaehlt doppelt — schwerer zu erreichen)
+          const aw = a.weekly_wins + a.monthly_wins * 2
+          const bw = b.weekly_wins + b.monthly_wins * 2
+          if (aw !== bw) return bw - aw
+          return b.latest_win_date.localeCompare(a.latest_win_date)
+        })
+        .slice(0, 50)
+        .map((c, i) => ({ rank: i + 1, ...c }))
+
+      return new Response(JSON.stringify({ tab: 'halloffame', entries: sorted }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
