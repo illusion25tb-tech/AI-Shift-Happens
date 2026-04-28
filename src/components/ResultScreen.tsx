@@ -4,6 +4,7 @@ import { LEVELS, BADGES, lf } from '../lib/constants'
 import Confetti from './Confetti'
 import AnimatedCounter from './AnimatedCounter'
 import { useSiteSettings } from '../hooks/useSiteSettings'
+import { useAuth } from '../hooks/useAuth'
 
 interface ResultScreenProps {
   score: number
@@ -32,6 +33,7 @@ export default function ResultScreen({
 }: ResultScreenProps) {
   const settings = useSiteSettings()
   const linkedinShareEnabled = settings.linkedin_share_enabled !== false
+  const { profile } = useAuth()
   const correctCount = answers.filter(a => a.is_correct).length
   const totalSpeedBonus = answers.reduce((sum, a) => sum + (a.speed_bonus ?? 0), 0)
 
@@ -127,15 +129,30 @@ export default function ResultScreen({
           <button
             onClick={() => {
               const pct = correctCount > 0 ? Math.round((correctCount / answers.length) * 100) : 0
+              const userLevel = gamificationResult?.level ?? 1
+              const userName = profile?.display_name ?? ''
+
               const postText = locale === 'de'
                 ? `🧠 Gerade mein AI-Mindset getestet: ${score} Punkte, ${pct}% richtig!\n\nAI-Shift Happens — das tägliche KI-Quiz. Wie AI-ready bist du?\n\n👉 `
                 : `🧠 Just tested my AI mindset: ${score} points, ${pct}% correct!\n\nAI-Shift Happens — the daily AI quiz. How AI-ready are you?\n\n👉 `
-              const url = `${window.location.origin}${import.meta.env.BASE_URL}`
+              const landingUrl = `${window.location.origin}${import.meta.env.BASE_URL}`
 
-              // Copy post text to clipboard, then open LinkedIn
-              navigator.clipboard.writeText(postText + url).then(() => {
+              // share-page Edge Function liefert HTML mit personalisierten
+              // OG-Tags (LinkedIn-Crawler liest die)
+              const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+              const shareParams = new URLSearchParams({
+                type: 'quiz',
+                score: String(score),
+                pct: String(pct),
+                level: String(userLevel),
+                locale: locale === 'de' ? 'de' : 'en',
+              })
+              if (userName) shareParams.set('name', userName)
+              const shareUrl = `${supabaseUrl}/functions/v1/share-page?${shareParams.toString()}`
+
+              navigator.clipboard.writeText(postText + landingUrl).then(() => {
                 window.open(
-                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
                   '_blank',
                   'width=600,height=400'
                 )
